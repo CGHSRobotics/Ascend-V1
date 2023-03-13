@@ -44,8 +44,8 @@ namespace ace {
 	#define BTN_CONVEYOR_FWD DIGITAL_LEFT
 	#define BTN_CONVEYOR_REVERSE DIGITAL_RIGHT
 	#define BTN_ROLLER_FWD DIGITAL_A
-	#define BTN_ROLER_REVERSE DIGITAL_B
-	#define INTAKE_REVERSE DIGITAL_L2
+	#define BTN_ROLLER_REVERSE DIGITAL_B
+	#define BTN_INTAKE_REVERSE DIGITAL_L2
 	#define BTN_FLAP_TOGGLE DIGITAL_A
 	#define BTN_ROLLER_LAUNCHER_REVERSE DIGITAL_R1
 
@@ -118,9 +118,9 @@ namespace ace {
 	/* ------------------------------- Long Launch ------------------------------ */
 
 	/* --------------------------------- Endgame -------------------------------- */
-	extern void endgame_toggle(bool enabled)
+	extern void endgame_toggle(bool enabled);
 		/* ------------------------------- Flap Toggle ------------------------------ */
-
+	extern void flap_toggle(bool enabled);
 
 
 
