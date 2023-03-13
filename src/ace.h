@@ -61,10 +61,22 @@ namespace ace {
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
 
 
-	/* ========================================================================== */
-	/*                             Custom Motor Class                             */
-	/* ========================================================================== */
+	/* --------------------------- Custom Motor Class --------------------------- */
+	class Motor {
+		public:
+		// constructor
+		Motor(pros::Motor motor) {
+			pros_motor = motor;
+		};
+		// pros motor
+		pros::Motor pros_motor;
+		// get temp in farenheit
+		float get_temp() {
+			return cel_2_faren(pros_motor.get_temperature());
+		}
 
+
+	};
 
 	/* ========================================================================== */
 	/*                      Device Declaration / Definitions                      */
@@ -83,11 +95,17 @@ namespace ace {
 			{ PORT_CHASSIS_L_F, PORT_CHASSIS_L_C, PORT_CHASSIS_L_B },
 			{ PORT_CHASSIS_R_F, PORT_CHASSIS_R_C, PORT_CHASSIS_R_B }
 		)
-		.withDimensions(okapi::AbstractMotor::gearset::blue, { {chassis_wheel_diameter, chassis_wheel_track}, imev5GreenTPR })
+		.withDimensions(okapi::AbstractMotor::gearset::blue, { {chassis_wheel_diameter, chassis_wheel_track}, okapi::imev5BlueTPR })
 		.build();
 
 
 	/* ------------------------- Other Motors / Devices ------------------------- */
+
+	// Controller
+	const pros::Controller master(pros::E_CONTROLLER_MASTER);
+
+	const pros::Controller partner(pros::E_CONTROLLER_PARTNER);
+	extern bool is_partner;
 
 	// Launcher motor
 	const pros::Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
@@ -113,13 +131,15 @@ namespace ace {
 
 	/* ------------------------ Emergency Intake Reverse ------------------------ */
 	extern void intake_reverse_toggle(bool enabled);
+
 	/* --------------------------------- Launch --------------------------------- */
 
 	/* ------------------------------- Long Launch ------------------------------ */
 
 	/* --------------------------------- Endgame -------------------------------- */
-	extern void endgame_toggle(bool enabled)
-		/* ------------------------------- Flap Toggle ------------------------------ */
+	extern void endgame_toggle(bool enabled);
+
+	/* ------------------------------- Flap Toggle ------------------------------ */
 
 
 
