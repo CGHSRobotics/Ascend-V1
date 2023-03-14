@@ -22,7 +22,7 @@ void initialize() {
 	}
 
 	// load image screen
-	//ace::lvgl::create_img_screen();
+	ace::lvgl::create_img_screen();
 
 }
 
@@ -45,10 +45,10 @@ void opcontrol() {
 
 	while (true) {
 
-		/*
+
 		if (ace::btn_intake_toggle.get_press_new())
 			ace::intake_toggle();
-		*/
+
 
 		ace::create_cntrlr_screen_txt(
 			"partner",
