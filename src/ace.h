@@ -24,6 +24,13 @@ namespace ace::util {
 		return (float)((farenheit - 32.0) * 5.0 / 9.0);
 	}
 
+	/* ----------------------------- Bool To String ----------------------------- */
+	static std::string bool_to_str(bool input) {
+		if (input)
+			return "true";
+		else
+			return "false";
+	}
 }
 
 
@@ -211,10 +218,12 @@ namespace ace {
 	/* ========================================================================== */
 
 	/* ------------------------- Intake Toggle Function ------------------------- */
-	extern void intake_toggle(bool enabled);
+	extern bool intake_enabled;
+	extern void intake_toggle();
 
 	/* ------------------------ Emergency Intake Reverse ------------------------ */
-	extern void intake_reverse_toggle(bool enabled);
+	extern bool intake_reverse_enabled;
+	extern void intake_reverse_toggle();
 
 	/* --------------------------------- Launch --------------------------------- */
 
@@ -227,6 +236,109 @@ namespace ace {
 
 
 
+	/* ========================================================================== */
+	/*                           Controller Screen Task                           */
+	/* ========================================================================== */
+
+	// Struct that holds info for drawing stuff to screen
+	// Default priority is 4; Max is 8
+	struct cntrlr_scr_txt {
+		u_int8_t priority;
+
+		std::string name;
+		std::string txt_to_display;
+
+		u_int8_t col;
+		u_int8_t row;
+	};
+
+	// Array that holds past drawing operations for priority
+	extern std::vector<std::string> cntr_draw_priority_arr;
+
+	// array of things to draw on controller scree
+	extern std::vector<cntrlr_scr_txt> cntr_to_draw_arr;
+
+	// adds controller txt to array
+	static void add_cntrlr_txt(cntrlr_scr_txt input) {
+
+		// add to priority arr if not already in it
+		bool has_name_already = false;
+		for (int i = 0; i < cntr_draw_priority_arr.size(); i++)
+		{
+			if (input.name == cntr_draw_priority_arr[i])
+				has_name_already = true;
+		}
+		if (!has_name_already)
+			cntr_draw_priority_arr.insert(cntr_draw_priority_arr.begin(), input.name);
+
+
+		// clear array of old txt if they havent been drawn by the time the newest one comes around
+		for (int i = 0; i < cntr_to_draw_arr.size(); i++) {
+			cntrlr_scr_txt element = cntr_to_draw_arr[i];
+			if (element.name == input.name)
+				cntr_to_draw_arr.erase(cntr_to_draw_arr.begin() + i);
+		}
+
+		cntr_to_draw_arr.push_back(input);
+	};
+
+	// Function that creates struct from parameters
+	static void create_cntrlr_screen_txt(std::string name, std::string txt_to_display, u_int8_t col, u_int8_t row, u_int8_t priority = 4) {
+
+		cntrlr_scr_txt output;
+
+		output.name = name;
+		output.txt_to_display = txt_to_display;
+		output.col = col;
+		output.row = row;
+		output.priority = priority;
+
+		add_cntrlr_txt(output);
+	}
+
+	// draw controller screen
+	static void draw_controller_screen() {
+
+		while (1) {
+
+			for (int p = 8; p >= 0; p--)
+			{
+				for (int i = 0; i < cntr_draw_priority_arr.size(); i++)
+				{
+					const std::string cur_priority = cntr_draw_priority_arr[i];
+
+					for (int j = 0; j < cntr_to_draw_arr.size(); j++)
+					{
+						const cntrlr_scr_txt element = cntr_to_draw_arr[j];
+						if (element.priority == p)
+						{
+							if (element.name == cur_priority)
+							{
+								// set text to controller
+								master.set_text(element.row, element.col, element.txt_to_display);
+
+								// delete draw request from array
+								cntr_to_draw_arr.erase(cntr_to_draw_arr.begin() + j);
+
+								// move name to back of priority list
+								cntr_draw_priority_arr.erase(cntr_draw_priority_arr.begin() + i);
+								cntr_draw_priority_arr.push_back(cur_priority);
+
+								goto delay_label;
+							}
+						}
+					}
+				}
+			}
+
+		delay_label:
+
+			pros::delay(50);
+		}
+	};
+
+	// pros task for function
+	const pros::Task cntr_screen_task(draw_controller_screen, "draw_cntr_screen");
 
 }
 
@@ -264,9 +376,36 @@ namespace ace::launch {
 /* ========================================================================== */
 namespace ace::lvgl {
 
+	/* ========================================================================== */
+	/*                              Global Variables                              */
+	/* ========================================================================== */
 
 
 
+
+	/* ========================================================================== */
+	/*                               Loading Screen                               */
+	/* ========================================================================== */
+
+	extern lv_obj_t* load_screen;	// lv_obj for loading screen
+
+	extern lv_obj_t* lbl_loading;	// label for loading 
+
+	extern void create_load_screen();
+
+
+
+
+	/* ========================================================================== */
+	/*                             Brain Image Screen                             */
+	/* ========================================================================== */
+
+	extern lv_obj_t* img_screen;	// lv_obj for loading screen
+
+	extern lv_obj_t* lbl_img;	// label for loading 
+
+
+	extern void create_img_screen();
 
 
 
