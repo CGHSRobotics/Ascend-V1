@@ -6,6 +6,28 @@
 
 
 /* ========================================================================== */
+/*                             Ace Util Namespace                             */
+/* ========================================================================== */
+namespace ace::util {
+
+	/* ========================================================================== */
+	/*                            Function Declarations                           */
+	/* ========================================================================== */
+
+	/* -------------------------- Celsius To Farenheit -------------------------- */
+	static float cel_to_faren(float celsius) {
+		return (float)((celsius * 9.0 / 5.0) + 32.0);
+	}
+
+	/* -------------------------- Farenheit To Celsius -------------------------- */
+	static float faren_to_cel(float farenheit) {
+		return (float)((farenheit - 32.0) * 5.0 / 9.0);
+	}
+
+}
+
+
+/* ========================================================================== */
 /*                             Main Ace Namespace                             */
 /* ========================================================================== */
 namespace ace {
@@ -35,23 +57,6 @@ namespace ace {
 
 
 	/* ========================================================================== */
-	/*                                   Buttons                                  */
-	/* ========================================================================== */
-
-	#define BTN_INTAKE_TOGGLE  DIGITAL_L1
-	#define BTN_LAUNCH_DISKS DIGITAL_R2
-	#define BTN_ENDGAME_TOGGLE DIGITAL_UP
-	#define BTN_CONVEYOR_FWD DIGITAL_LEFT
-	#define BTN_CONVEYOR_REVERSE DIGITAL_RIGHT
-	#define BTN_ROLLER_FWD DIGITAL_A
-	#define BTN_ROLLER_REVERSE DIGITAL_B
-	#define BTN_INTAKE_REVERSE DIGITAL_L2
-	#define BTN_FLAP_TOGGLE DIGITAL_A
-	#define BTN_ROLLER_LAUNCHER_REVERSE DIGITAL_R1
-
-
-
-	/* ========================================================================== */
 	/*                              Global Variables                              */
 	/* ========================================================================== */
 
@@ -62,20 +67,15 @@ namespace ace {
 
 
 	/* --------------------------- Custom Motor Class --------------------------- */
-	class Motor {
+	class A_Motor: public pros::Motor {
 		public:
-		// constructor
-		Motor(pros::Motor motor) {
-			pros_motor = motor;
-		};
-		// pros motor
-		pros::Motor pros_motor;
+
+		using Motor::Motor;
+
 		// get temp in farenheit
 		float get_temp() {
-			return cel_2_faren(pros_motor.get_temperature());
+			return util::cel_to_faren(get_temperature());
 		}
-
-
 	};
 
 	/* ========================================================================== */
@@ -102,13 +102,12 @@ namespace ace {
 	/* ------------------------- Other Motors / Devices ------------------------- */
 
 	// Controller
-	const pros::Controller master(pros::E_CONTROLLER_MASTER);
+	extern pros::Controller master;
 
-	const pros::Controller partner(pros::E_CONTROLLER_PARTNER);
-	extern bool is_partner;
+	extern pros::Controller partner;
 
 	// Launcher motor
-	const pros::Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
+	const A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
 
 	// Motor for intake, roller, and DTS
 	const pros::Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_06, false);
@@ -121,6 +120,91 @@ namespace ace {
 	const pros::IMU imuSensor(PORT_IMU);
 
 	const pros::ADIDigitalOut endgamePneumatics(false);
+
+
+	/* ========================================================================== */
+	/*                                   Buttons                                  */
+	/* ========================================================================== */
+
+	class Btn_Digi {
+		public:
+
+		// Constructor with one btn
+		Btn_Digi(pros::controller_digital_e_t btn_assign, bool is_master = true) {
+
+			keybinds[0] = btn_assign;
+
+			if (is_master)
+				mode = 1;
+			else
+				mode = 2;
+
+		};
+
+		// Constructor with both keybinds
+		Btn_Digi(pros::controller_digital_e_t btn_master, pros::controller_digital_e_t btn_partner) {
+
+			keybinds[0] = btn_master;
+			keybinds[1] = btn_partner;
+
+			mode = 3;
+		};
+
+		// array of keybinds
+		std::vector<pros::controller_digital_e_t> keybinds;
+
+		// operating mode for btn. 0 == ur mum gay, 1 == master only, 2 == partner only, 3 == both but preferably partner
+		u_int8_t mode;
+
+		// get whether button pressed
+		bool get_press() {
+
+			if (mode == 3)
+				if (partner.is_connected())
+					return partner.get_digital(keybinds[1]);
+				else
+					return master.get_digital(keybinds[0]);
+
+			else if (mode == 2)
+				if (partner.is_connected())
+					return partner.get_digital(keybinds[0]);
+				else
+					return false;
+
+			else if (mode == 1)
+				return master.get_digital(keybinds[0]);
+
+			return false;
+		};
+
+		// get whether new button press
+		bool get_press_new() {
+
+			if (mode == 3)
+				if (partner.is_connected())
+					return partner.get_digital_new_press(keybinds[1]);
+				else
+					return master.get_digital_new_press(keybinds[0]);
+
+			else if (mode == 2)
+				if (partner.is_connected())
+					return partner.get_digital_new_press(keybinds[0]);
+				else
+					return false;
+
+			else if (mode == 1)
+				return master.get_digital_new_press(keybinds[0]);
+
+			return false;
+		};
+	};
+
+	extern Btn_Digi btn_intake_toggle;
+	extern Btn_Digi btn_intake_reverse;
+
+	extern Btn_Digi btn_launch_short;
+	extern Btn_Digi btn_launch_long;
+
 
 	/* ========================================================================== */
 	/*                            Function Declarations                           */
@@ -137,30 +221,9 @@ namespace ace {
 	/* ------------------------------- Long Launch ------------------------------ */
 
 	/* --------------------------------- Endgame -------------------------------- */
-	extern void endgame_toggle(bool enabled)
-		/* ------------------------------- Flap Toggle ------------------------------ */
+	extern void endgame_toggle(bool enabled);
 
-
-
-
-}
-
-
-/* ========================================================================== */
-/*                             Ace Util Namespace                             */
-/* ========================================================================== */
-namespace ace::util {
-
-	/* ========================================================================== */
-	/*                            Function Declarations                           */
-	/* ========================================================================== */
-
-	/* -------------------------- Celsius To Farenheit -------------------------- */
-
-	/* -------------------------- Farenheit To Celsius -------------------------- */
-
-
-
+	/* ------------------------------- Flap Toggle ------------------------------ */
 
 
 
