@@ -6,24 +6,21 @@
 /* ========================================================================== */
 void initialize() {
 
+	printf(std::to_string(errno).c_str());
+
 	// load lvgl loading screen
 	ace::lvgl::create_load_screen();
-
-	// Start imu Calibration
-	ace::imuSensor.reset();
-
-	/* ------------------- DO STUFF HERE WHISLT IMU CALIBRATES ------------------ */
 
 	// clear screen on master controller
 	ace::master.clear();
 
-	while (ace::imuSensor.is_calibrating()) {
-		pros::delay(10);
-	}
+	pros::delay(200);
+
+	// clear screen on master controller
+	ace::partner.clear();
 
 	// load image screen
 	ace::lvgl::create_img_screen();
-
 }
 
 /* -------------------------------- Disabled -------------------------------- */
@@ -45,16 +42,49 @@ void opcontrol() {
 
 	while (true) {
 
+		/* ------------------------------ Chassis Drive ----------------------------- */
 
-		if (ace::btn_intake_toggle.get_press_new())
-			ace::intake_toggle();
-
-
-		ace::create_cntrlr_screen_txt(
-			"partner",
-			"Partner: " + ace::util::bool_to_str(ace::partner.is_connected()),
-			0, 0
+		ace::chassis->getModel()->tank(
+			ace::master.get_analog(ANALOG_LEFT_Y),
+			ace::master.get_analog(ANALOG_RIGHT_Y),
+			10.0
 		);
+
+		/* ------------------------------ User Control ------------------------------ */
+
+		// Intake Toggle
+		if (ace::btn_intake_toggle.get_press_new()) {
+			ace::intake_toggle();
+		}
+
+		// Intake Reverse
+		if (ace::btn_intake_reverse.get_press_new()) {
+			ace::intake_reverse();
+		}
+
+
+		if (ace::btn_roller_forward.get_press_new()) {
+			ace::roller_forward(true);
+		}
+		else {
+			ace::roller_forward(false);
+		}
+
+		if (ace::btn_roller_reverse.get_press_new()) {
+			ace::roller_reverse(true);
+		}
+		else {
+			ace::roller_reverse(false);
+		}
+
+		/* --------------------------- Controller Drawing --------------------------- */
+
+		ace::create_cntrlr_screen_txt("partner", "Partner: " + std::to_string(ace::partner.is_connected()) + "   ", 1, 1, 1);
+
+		//ace::create_cntrlr_screen_txt("ross", "Ross is bad   ", 1, 1, 2);
+
+
+		/* ---------------------------------- Delay --------------------------------- */
 
 		pros::delay(20);
 	}

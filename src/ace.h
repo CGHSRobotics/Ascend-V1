@@ -67,11 +67,17 @@ namespace ace {
 	/*                              Global Variables                              */
 	/* ========================================================================== */
 
-	/* ------------------------------ Miscellaneuos ----------------------------- */
+	/* ------------------------------ Miscellaneous ----------------------------- */
+	extern bool launcher_standby_enabled;
 
+	extern bool intake_enabled;
+
+	extern bool intake_reverse_enabled;
 
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
+	const float roller_speed = 80.0;
 
+	const float intake_speed = 90.0;
 
 	/* --------------------------- Custom Motor Class --------------------------- */
 	class A_Motor: public pros::Motor {
@@ -83,7 +89,12 @@ namespace ace {
 		float get_temp() {
 			return util::cel_to_faren(get_temperature());
 		}
+		void spin_percent(float percent) {
+			move_velocity(percent / 100.0f * 600.0f);
+		}
 	};
+
+
 
 	/* ========================================================================== */
 	/*                      Device Declaration / Definitions                      */
@@ -114,14 +125,14 @@ namespace ace {
 	extern pros::Controller partner;
 
 	// Launcher motor
-	const A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
+	extern A_Motor launcherMotor;
 
 	// Motor for intake, roller, and DTS
-	const pros::Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_06, false);
+	extern A_Motor intakeMotor;
 
 
-	//Vision sensor
-	const pros::Vision  visionSensor(PORT_VISION);
+	// Vision sensor
+	const pros::Vision visionSensor(PORT_VISION);
 
 	//
 	const pros::IMU imuSensor(PORT_IMU);
@@ -136,50 +147,54 @@ namespace ace {
 	class Btn_Digi {
 		public:
 
+		// vars for btns
+		pros::controller_digital_e_t btn_master;
+
+		pros::controller_digital_e_t btn_partner;
+
+		// operating mode for btn. 0 == ur mum gay, 1 == master only, 2 == partner only, 3 == both but preferably partner
+		u_int8_t mode;
+
 		// Constructor with one btn
 		Btn_Digi(pros::controller_digital_e_t btn_assign, bool is_master = true) {
 
-			keybinds[0] = btn_assign;
-
-			if (is_master)
+			if (is_master) {
 				mode = 1;
-			else
+				btn_master = btn_assign;
+			}
+			else {
 				mode = 2;
+				btn_partner = btn_assign;
+			}
 
 		};
 
 		// Constructor with both keybinds
 		Btn_Digi(pros::controller_digital_e_t btn_master, pros::controller_digital_e_t btn_partner) {
 
-			keybinds[0] = btn_master;
-			keybinds[1] = btn_partner;
+			btn_master = btn_master;
+			btn_partner = btn_partner;
 
 			mode = 3;
 		};
-
-		// array of keybinds
-		std::vector<pros::controller_digital_e_t> keybinds;
-
-		// operating mode for btn. 0 == ur mum gay, 1 == master only, 2 == partner only, 3 == both but preferably partner
-		u_int8_t mode;
 
 		// get whether button pressed
 		bool get_press() {
 
 			if (mode == 3)
 				if (partner.is_connected())
-					return partner.get_digital(keybinds[1]);
+					return partner.get_digital(btn_partner);
 				else
-					return master.get_digital(keybinds[0]);
+					return master.get_digital(btn_master);
 
 			else if (mode == 2)
 				if (partner.is_connected())
-					return partner.get_digital(keybinds[0]);
+					return partner.get_digital(btn_partner);
 				else
 					return false;
 
 			else if (mode == 1)
-				return master.get_digital(keybinds[0]);
+				return master.get_digital(btn_master);
 
 			return false;
 		};
@@ -189,18 +204,18 @@ namespace ace {
 
 			if (mode == 3)
 				if (partner.is_connected())
-					return partner.get_digital_new_press(keybinds[1]);
+					return partner.get_digital_new_press(btn_partner);
 				else
-					return master.get_digital_new_press(keybinds[0]);
+					return master.get_digital_new_press(btn_master);
 
 			else if (mode == 2)
 				if (partner.is_connected())
-					return partner.get_digital_new_press(keybinds[0]);
+					return partner.get_digital_new_press(btn_partner);
 				else
 					return false;
 
 			else if (mode == 1)
-				return master.get_digital_new_press(keybinds[0]);
+				return master.get_digital_new_press(btn_master);
 
 			return false;
 		};
@@ -212,19 +227,24 @@ namespace ace {
 	extern Btn_Digi btn_launch_short;
 	extern Btn_Digi btn_launch_long;
 
+	extern Btn_Digi btn_roller_forward;
+	extern Btn_Digi btn_roller_reverse;
+
 
 	/* ========================================================================== */
 	/*                            Function Declarations                           */
 	/* ========================================================================== */
 
+	/* --------------------------------- Standby -------------------------------- */
+
 	/* ------------------------- Intake Toggle Function ------------------------- */
-	extern bool intake_enabled;
 	extern void intake_toggle();
 
 	/* ------------------------ Emergency Intake Reverse ------------------------ */
-	extern bool intake_reverse_enabled;
-	extern void intake_reverse_toggle();
-
+	extern void intake_reverse();
+	/* --------------------------------- Roller --------------------------------- */
+	extern void roller_forward(bool enabled);
+	extern void roller_reverse(bool enabled);
 	/* --------------------------------- Launch --------------------------------- */
 
 	/* ------------------------------- Long Launch ------------------------------ */
@@ -234,6 +254,8 @@ namespace ace {
 
 	/* ------------------------------- Flap Toggle ------------------------------ */
 
+	/* --------------------------------- Motors --------------------------------- */
+	extern void reset_motors();
 
 
 	/* ========================================================================== */
@@ -244,6 +266,8 @@ namespace ace {
 	// Default priority is 4; Max is 8
 	struct cntrlr_scr_txt {
 		u_int8_t priority;
+
+		u_int8_t mode;
 
 		std::string name;
 		std::string txt_to_display;
@@ -283,12 +307,13 @@ namespace ace {
 	};
 
 	// Function that creates struct from parameters
-	static void create_cntrlr_screen_txt(std::string name, std::string txt_to_display, u_int8_t col, u_int8_t row, u_int8_t priority = 4) {
+	static void create_cntrlr_screen_txt(std::string name, std::string txt_to_display, u_int8_t mode, u_int8_t col, u_int8_t row, u_int8_t priority = 4) {
 
 		cntrlr_scr_txt output;
 
 		output.name = name;
 		output.txt_to_display = txt_to_display;
+		output.mode = mode;
 		output.col = col;
 		output.row = row;
 		output.priority = priority;
@@ -316,6 +341,7 @@ namespace ace {
 							{
 								// set text to controller
 								master.set_text(element.row, element.col, element.txt_to_display);
+								partner.set_text(element.row, element.col, element.txt_to_display);
 
 								// delete draw request from array
 								cntr_to_draw_arr.erase(cntr_to_draw_arr.begin() + j);
@@ -337,8 +363,14 @@ namespace ace {
 		}
 	};
 
+	// things to draw during user control 
+	static void controller_screen_user() {
+
+	}
+
 	// pros task for function
 	const pros::Task cntr_screen_task(draw_controller_screen, "draw_cntr_screen");
+
 
 }
 
@@ -387,13 +419,12 @@ namespace ace::lvgl {
 	/*                               Loading Screen                               */
 	/* ========================================================================== */
 
+
 	extern lv_obj_t* load_screen;	// lv_obj for loading screen
 
-	extern lv_obj_t* lbl_loading;	// label for loading 
+	extern lv_obj_t* lbl_loading;	// label for loading
 
 	extern void create_load_screen();
-
-
 
 
 	/* ========================================================================== */
