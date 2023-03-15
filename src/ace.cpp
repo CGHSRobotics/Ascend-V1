@@ -8,9 +8,11 @@ namespace ace {
 	/* ========================================================================== */
 
 	// Variables
-	s	bool launcher_standby_enabled = false;
+	bool launcher_standby_enabled = false;
 	bool intake_enabled = false;
 	bool intake_reverse_enabled = false;
+
+	bool partner_connected = false;
 
 	// Controllers
 	pros::Controller master(pros::E_CONTROLLER_MASTER);

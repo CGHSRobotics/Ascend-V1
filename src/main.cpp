@@ -16,9 +16,6 @@ void initialize() {
 
 	pros::delay(200);
 
-	// clear screen on master controller
-	ace::partner.clear();
-
 	// load image screen
 	ace::lvgl::create_img_screen();
 }

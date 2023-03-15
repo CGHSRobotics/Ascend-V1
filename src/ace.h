@@ -262,6 +262,8 @@ namespace ace {
 	/*                           Controller Screen Task                           */
 	/* ========================================================================== */
 
+	extern bool partner_connected;
+
 	// Struct that holds info for drawing stuff to screen
 	// Default priority is 4; Max is 8
 	struct cntrlr_scr_txt {
@@ -326,6 +328,24 @@ namespace ace {
 
 		while (1) {
 
+			if (partner.is_connected())
+			{
+				if (!partner_connected)
+				{
+					partner_connected = true;
+					partner.clear();
+					pros::delay(110);
+				}
+			}
+			else
+			{
+				if (partner_connected)
+				{
+					partner_connected = false;
+				}
+			}
+
+
 			for (int p = 8; p >= 0; p--)
 			{
 				for (int i = 0; i < cntr_draw_priority_arr.size(); i++)
@@ -341,7 +361,12 @@ namespace ace {
 							{
 								// set text to controller
 								master.set_text(element.row, element.col, element.txt_to_display);
-								partner.set_text(element.row, element.col, element.txt_to_display);
+
+								if (partner_connected)
+								{
+									pros::delay(50);
+									partner.set_text(element.row, element.col, element.txt_to_display);
+								}
 
 								// delete draw request from array
 								cntr_to_draw_arr.erase(cntr_to_draw_arr.begin() + j);
