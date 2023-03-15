@@ -13,7 +13,10 @@ void initialize() {
 
 	// clear screen on master controller
 	ace::master.clear();
+	pros::delay(50);
+	ace::master.set_text(0, 1, "I am Master Chief");
 
+	// hello
 	pros::delay(200);
 
 	// load image screen
@@ -77,8 +80,7 @@ void opcontrol() {
 		/* --------------------------- Controller Drawing --------------------------- */
 
 		ace::create_cntrlr_screen_txt("partner", "Partner: " + std::to_string(ace::partner.is_connected()) + "   ", 1, 1, 1);
-
-		//ace::create_cntrlr_screen_txt("ross", "Ross is bad   ", 1, 1, 2);
+		ace::create_cntrlr_screen_txt("auton", "Auton: " + std::to_string(666) + "   ", 3, 2, 1);
 
 
 		/* ---------------------------------- Delay --------------------------------- */

@@ -335,6 +335,9 @@ namespace ace {
 					partner_connected = true;
 					partner.clear();
 					pros::delay(110);
+
+					partner.set_text(0, 1, "I am Sidekick Joe");
+					pros::delay(50);
 				}
 			}
 			else
@@ -359,10 +362,14 @@ namespace ace {
 						{
 							if (element.name == cur_priority)
 							{
-								// set text to controller
-								master.set_text(element.row, element.col, element.txt_to_display);
 
-								if (partner_connected)
+								if (element.mode != 2)
+								{
+									// set text to controller
+									master.set_text(element.row, element.col, element.txt_to_display);
+								}
+
+								if (partner_connected && element.mode != 1)
 								{
 									pros::delay(50);
 									partner.set_text(element.row, element.col, element.txt_to_display);
