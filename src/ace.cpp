@@ -42,6 +42,8 @@ namespace ace {
 	// array of things to draw on controller scree
 	std::vector<cntrlr_scr_txt> cntr_to_draw_arr = {};
 
+	std::vector<cntrlr_scr_txt> cntrlr_next_to_draw = {};
+
 	/* -------------------------------------------------------------------------- */
 	/*                             User Control Stuffs                            */
 	/* -------------------------------------------------------------------------- */

@@ -6,15 +6,13 @@
 /* ========================================================================== */
 void initialize() {
 
-	printf(std::to_string(errno).c_str());
-
 	// load lvgl loading screen
 	ace::lvgl::create_load_screen();
 
 	// clear screen on master controller
 	ace::master.clear();
-	pros::delay(50);
-	ace::master.set_text(0, 1, "I am Master Chief");
+	pros::delay(110);
+	ace::master.set_text(0, 1, "Master");
 
 	// hello
 	pros::delay(200);
@@ -79,8 +77,8 @@ void opcontrol() {
 
 		/* --------------------------- Controller Drawing --------------------------- */
 
-		ace::create_cntrlr_screen_txt("partner", "Partner: " + std::to_string(ace::partner.is_connected()) + "   ", 1, 1, 1);
-		ace::create_cntrlr_screen_txt("auton", "Auton: " + std::to_string(666) + "   ", 3, 2, 1);
+		ace::create_cntrlr_screen_txt((std::string)"auton", "Auton: " + std::to_string(666) + "   ", 3, 1, 2);
+		//ace::create_cntrlr_screen_txt("partner2", "Partner: " + ace::util::bool_to_str(ace::partner_connected) + "   ", 1, 1, 1);
 
 
 		/* ---------------------------------- Delay --------------------------------- */

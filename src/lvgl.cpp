@@ -23,7 +23,7 @@ namespace ace::lvgl {
 		lv_obj_t* load_screen = lv_obj_create(NULL, NULL);
 
 		lv_obj_t* lbl_loading = lv_label_create(load_screen, NULL);
-		lv_label_set_text(lbl_loading, "loading random shit...");
+		lv_label_set_text(lbl_loading, " loading random shit...");
 
 
 		// Delete current screen from memory and load this one
@@ -41,7 +41,7 @@ namespace ace::lvgl {
 		lv_obj_t* img_screen = lv_obj_create(NULL, NULL);
 
 		lv_obj_t* lbl_img = lv_label_create(img_screen, NULL);
-		lv_label_set_text(lbl_img, "I identify as an image and use png/jpeg pronouns");
+		lv_label_set_text(lbl_img, " I identify as an image and use png/jpeg pronouns");
 
 
 		// Delete current screen from memory and load this one

@@ -4,6 +4,8 @@
 
 #include "main.h"
 
+using std::string;
+
 
 /* ========================================================================== */
 /*                             Ace Util Namespace                             */
@@ -291,18 +293,23 @@ namespace ace {
 		bool has_name_already = false;
 		for (int i = 0; i < cntr_draw_priority_arr.size(); i++)
 		{
-			if (input.name == cntr_draw_priority_arr[i])
+			if (input.name == cntr_draw_priority_arr[i]) {
 				has_name_already = true;
+				//printf(cntr_draw_priority_arr[i].c_str());
+			}
 		}
-		if (!has_name_already)
+		if (!has_name_already) {
+			printf((input.name).c_str());
 			cntr_draw_priority_arr.insert(cntr_draw_priority_arr.begin(), input.name);
-
+		}
 
 		// clear array of old txt if they havent been drawn by the time the newest one comes around
 		for (int i = 0; i < cntr_to_draw_arr.size(); i++) {
 			cntrlr_scr_txt element = cntr_to_draw_arr[i];
-			if (element.name == input.name)
-				cntr_to_draw_arr.erase(cntr_to_draw_arr.begin() + i);
+			if (element.name == input.name) {
+				cntr_to_draw_arr[i] = input;
+				return;
+			}
 		}
 
 		cntr_to_draw_arr.push_back(input);
@@ -323,81 +330,140 @@ namespace ace {
 		add_cntrlr_txt(output);
 	}
 
+	extern std::vector<cntrlr_scr_txt> cntrlr_next_to_draw;
+
 	// draw controller screen
-	static void draw_controller_screen() {
+	static void pick_next_screen() {
 
-		while (1) {
 
-			if (partner.is_connected())
+		if (partner.is_connected())
+		{
+			if (!partner_connected)
 			{
-				if (!partner_connected)
-				{
-					partner_connected = true;
-					partner.clear();
-					pros::delay(110);
+				partner_connected = true;
 
-					partner.set_text(0, 1, "I am Sidekick Joe");
-					pros::delay(50);
+				cntrlr_scr_txt blank;
+				blank.txt_to_display = "";
+				blank.mode = 0;
+				blank.col = 1;
+				blank.row = 1;
+				blank.name = "name";
+
+				for (int i = 0; i <= 1000; i += 50)
+				{
+					cntrlr_next_to_draw.push_back(blank);
 				}
-			}
-			else
-			{
-				if (partner_connected)
+
+				cntrlr_scr_txt clear;
+				clear.mode = 4;
+				cntrlr_next_to_draw.push_back(clear);
+
+				for (int i = 0; i <= 150; i += 50)
 				{
-					partner_connected = false;
+					cntrlr_next_to_draw.push_back(blank);
 				}
+
+				cntrlr_scr_txt partner_txt;
+				partner_txt.txt_to_display = "Partner";
+				partner_txt.mode = 2;
+				partner_txt.col = 1;
+				partner_txt.row = 0;
+				partner_txt.name = "partner";
+
+				cntrlr_next_to_draw.push_back(partner_txt);
+
+				return;
 			}
-
-
-			for (int p = 8; p >= 0; p--)
+		}
+		else
+		{
+			if (partner_connected)
 			{
-				for (int i = 0; i < cntr_draw_priority_arr.size(); i++)
-				{
-					const std::string cur_priority = cntr_draw_priority_arr[i];
+				partner_connected = false;
+			}
+		}
 
-					for (int j = 0; j < cntr_to_draw_arr.size(); j++)
+		// For priority starting at 8, decreasing
+		for (int p = 8; p >= 0; p--)
+		{
+			// Get last thing to be drawn
+			for (int i = 0; i < cntr_draw_priority_arr.size(); i++)
+			{
+				const std::string cur_priority = std::string(cntr_draw_priority_arr[i]);
+
+				for (int j = 0; j < cntr_to_draw_arr.size(); j++)
+				{
+					cntrlr_scr_txt element = cntrlr_scr_txt(cntr_to_draw_arr[j]);
+					if (element.priority == p)
 					{
-						const cntrlr_scr_txt element = cntr_to_draw_arr[j];
-						if (element.priority == p)
+						if (element.name == cur_priority)
 						{
-							if (element.name == cur_priority)
+							if (element.mode == 1)
 							{
-
-								if (element.mode != 2)
-								{
-									// set text to controller
-									master.set_text(element.row, element.col, element.txt_to_display);
-								}
-
-								if (partner_connected && element.mode != 1)
-								{
-									pros::delay(50);
-									partner.set_text(element.row, element.col, element.txt_to_display);
-								}
-
-								// delete draw request from array
-								cntr_to_draw_arr.erase(cntr_to_draw_arr.begin() + j);
-
-								// move name to back of priority list
-								cntr_draw_priority_arr.erase(cntr_draw_priority_arr.begin() + i);
-								cntr_draw_priority_arr.push_back(cur_priority);
-
-								goto delay_label;
+								cntrlr_next_to_draw.push_back(cntrlr_scr_txt(element));
 							}
+							else if (element.mode == 2)
+							{
+								cntrlr_next_to_draw.push_back(cntrlr_scr_txt(element));
+							}
+							else if (element.mode == 3)
+							{
+								element.mode = 1;
+								cntrlr_next_to_draw.push_back(cntrlr_scr_txt(element));
+								element.mode = 2;
+								cntrlr_next_to_draw.push_back(cntrlr_scr_txt(element));
+							}
+
+							// delete draw request from array
+							cntr_to_draw_arr.erase(std::next(cntr_to_draw_arr.begin(), j));
+
+							// move name to back of priority list
+							cntr_draw_priority_arr.erase(std::next(cntr_draw_priority_arr.begin(), i));
+							cntr_draw_priority_arr.push_back(cur_priority);
+
+							return;
 						}
 					}
 				}
 			}
-
-		delay_label:
-
-			pros::delay(50);
 		}
 	};
 
-	// things to draw during user control 
-	static void controller_screen_user() {
+	static void draw_controller_screen() {
 
+		while (1)
+		{
+			if (cntrlr_next_to_draw.size() < 1) {
+				pick_next_screen();
+			}
+
+			if (cntrlr_next_to_draw.size() > 0) {
+
+				cntrlr_scr_txt element = cntrlr_next_to_draw[0];
+
+				if (element.mode == 1)
+				{
+					master.set_text(element.row, element.col, element.txt_to_display);
+					cntrlr_next_to_draw.erase(std::next(cntrlr_next_to_draw.begin(), 0));
+				}
+				else if (element.mode == 2)
+				{
+					partner.set_text(element.row, element.col, element.txt_to_display);
+					cntrlr_next_to_draw.erase(std::next(cntrlr_next_to_draw.begin(), 0));
+				}
+				else if (element.mode == 4)
+				{
+					partner.clear();
+					cntrlr_next_to_draw.erase(std::next(cntrlr_next_to_draw.begin(), 0));
+				}
+				else if (element.mode == 0)
+				{
+					cntrlr_next_to_draw.erase(std::next(cntrlr_next_to_draw.begin(), 0));
+				}
+			}
+
+			pros::delay(50);
+		}
 	}
 
 	// pros task for function
