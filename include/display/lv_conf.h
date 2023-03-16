@@ -6,12 +6,12 @@
 #ifndef LV_CONF_H
 #define LV_CONF_H
 
-/*----------------
- * Dynamic memory
- *----------------*/
+ /*----------------
+  * Dynamic memory
+  *----------------*/
 
-/* Memory size which will be used by the library
- * to store the graphical objects and other data */
+  /* Memory size which will be used by the library
+   * to store the graphical objects and other data */
 #define LV_MEM_CUSTOM                                                          \
   1 /*1: use custom malloc/free, 0: use the built-in                           \
        lv_mem_alloc/lv_mem_free*/
@@ -28,11 +28,11 @@
 #endif                              /*LV_MEM_CUSTOM*/
 #define LV_ENABLE_GC 0
 
-/*===================
-   Graphical settings
- *===================*/
+   /*===================
+	  Graphical settings
+	*===================*/
 
-/* Horizontal and vertical resolution of the library.*/
+	/* Horizontal and vertical resolution of the library.*/
 #define LV_HOR_RES (480)
 #define LV_VER_RES (240)
 #define LV_DPI 126
@@ -49,15 +49,15 @@
   0 /*Place VDB to a specific address (e.g. in external RAM) (0: allocate      \
        automatically into RAM)*/
 
-/* Use two Virtual Display buffers (VDB) parallelize rendering and flushing
- * (optional)
- * The flushing should use DMA to write the frame buffer in the background*/
+ /* Use two Virtual Display buffers (VDB) parallelize rendering and flushing
+  * (optional)
+  * The flushing should use DMA to write the frame buffer in the background*/
 #define LV_VDB_DOUBLE 0 /*1: Enable the use of 2 VDBs*/
 #define LV_VDB2_ADR                                                            \
   0 /*Place VDB2 to a specific address (e.g. in external RAM) (0: allocate     \
        automatically into RAM)*/
 
-/* Enable anti-aliasing (lines, and radiuses will be smoothed) */
+  /* Enable anti-aliasing (lines, and radiuses will be smoothed) */
 #define LV_ANTIALIAS 1 /*1: Enable anti-aliasing*/
 
 /*Screen refresh settings*/
@@ -68,7 +68,7 @@
    Misc. setting
  *=================*/
 
-/*Input device settings*/
+ /*Input device settings*/
 #define LV_INDEV_READ_PERIOD 50 /*Input device read period in milliseconds*/
 #define LV_INDEV_POINT_MARKER                                                  \
   0 /*Mark the pressed points  (required: USE_LV_REAL_DRAW = 1)*/
@@ -124,15 +124,15 @@
 #define USE_LV_THEME_MATERIAL 1 /*Flat theme with bold colors and light shadows*/
 #define USE_LV_THEME_ZEN 1 /*Peaceful, mainly light theme */
 
-/*==================
- *    FONT USAGE
- *===================*/
+ /*==================
+  *    FONT USAGE
+  *===================*/
 
-/* More info about fonts: https://littlevgl.com/basics#fonts
- * To enable a built-in font use 1,2,4 or 8 values
- * which will determine the bit-per-pixel */
+  /* More info about fonts: https://littlevgl.com/basics#fonts
+   * To enable a built-in font use 1,2,4 or 8 values
+   * which will determine the bit-per-pixel */
 #define LV_FONT_DEFAULT                                                        \
-  &lv_font_dejavu_20 /*Always set a default font from the built-in fonts*/
+  &lv_font_dejavu_40 /*Always set a default font from the built-in fonts*/
 
 #define USE_LV_FONT_DEJAVU_10 4
 #define USE_LV_FONT_DEJAVU_10_LATIN_SUP 4
@@ -144,28 +144,28 @@
 #define USE_LV_FONT_DEJAVU_20_CYRILLIC 4
 #define USE_LV_FONT_SYMBOL_20 4
 
-#define USE_LV_FONT_DEJAVU_30 0
-#define USE_LV_FONT_DEJAVU_30_LATIN_SUP 0
-#define USE_LV_FONT_DEJAVU_30_CYRILLIC 0
-#define USE_LV_FONT_SYMBOL_30 0
+#define USE_LV_FONT_DEJAVU_30 4
+#define USE_LV_FONT_DEJAVU_30_LATIN_SUP 4
+#define USE_LV_FONT_DEJAVU_30_CYRILLIC 4
+#define USE_LV_FONT_SYMBOL_30 4
 
-#define USE_LV_FONT_DEJAVU_40 0
-#define USE_LV_FONT_DEJAVU_40_LATIN_SUP 0
-#define USE_LV_FONT_DEJAVU_40_CYRILLIC 0
-#define USE_LV_FONT_SYMBOL_40 0
+#define USE_LV_FONT_DEJAVU_40 4
+#define USE_LV_FONT_DEJAVU_40_LATIN_SUP 4
+#define USE_LV_FONT_DEJAVU_40_CYRILLIC 4
+#define USE_LV_FONT_SYMBOL_40 4
 
-/* PROS adds the mono variant of DejaVu sans */
+   /* PROS adds the mono variant of DejaVu sans */
 #define USE_PROS_FONT_DEJAVU_MONO_10 4
 #define USE_PROS_FONT_DEJAVU_MONO_10_LATIN_SUP 4
 
 #define USE_PROS_FONT_DEJAVU_MONO_20 4
 #define USE_PROS_FONT_DEJAVU_MONO_LATIN_SUP_20 4
 
-#define USE_PROS_FONT_DEJAVU_MONO_30 0
-#define USE_PROS_FONT_DEJAVU_MONO_30_LATIN_SUP 0
+#define USE_PROS_FONT_DEJAVU_MONO_30 4
+#define USE_PROS_FONT_DEJAVU_MONO_30_LATIN_SUP 4
 
-#define USE_PROS_FONT_DEJAVU_MONO_40 0
-#define USE_PROS_FONT_DEJAVU_MONO_40_LATIN_SUP 0
+#define USE_PROS_FONT_DEJAVU_MONO_40 4
+#define USE_PROS_FONT_DEJAVU_MONO_40_LATIN_SUP 4
 
 /*===================
  *  LV_OBJ SETTINGS
@@ -174,18 +174,18 @@
   uint32_t /*Type of free number attribute (comment out disable free number)*/
 #define LV_OBJ_FREE_PTR 1 /*Enable the free pointer attribute*/
 
-/*==================
- *  LV OBJ X USAGE
- *================*/
-/*
- * Documentation of the object types: https://littlevgl.com/object-types
- */
+ /*==================
+  *  LV OBJ X USAGE
+  *================*/
+  /*
+   * Documentation of the object types: https://littlevgl.com/object-types
+   */
 
-/*****************
- * Simple object
- *****************/
+   /*****************
+	* Simple object
+	*****************/
 
-/*Label (dependencies: -*/
+	/*Label (dependencies: -*/
 #define USE_LV_LABEL 1
 #if USE_LV_LABEL != 0
 #define LV_LABEL_SCROLL_SPEED                                                  \
@@ -208,7 +208,7 @@
  * Container objects
  *******************/
 
-/*Container (dependencies: -*/
+ /*Container (dependencies: -*/
 #define USE_LV_CONT 1
 
 /*Page (dependencies: lv_cont)*/
@@ -233,7 +233,7 @@
  * Data visualizer objects
  *************************/
 
-/*Bar (dependencies: -)*/
+ /*Bar (dependencies: -)*/
 #define USE_LV_BAR 1
 
 /*Line meter (dependencies: *;)*/
@@ -278,7 +278,7 @@
  * User input objects
  *************************/
 
-/*Button (dependencies: lv_cont*/
+ /*Button (dependencies: lv_cont*/
 #define USE_LV_BTN 1
 #if USE_LV_BTN != 0
 #  define LV_BTN_INK_EFFECT 1
@@ -307,7 +307,7 @@
          animation)  */
 #endif
 
-/*Drop down list (dependencies: lv_page, lv_label)*/
+ /*Drop down list (dependencies: lv_page, lv_label)*/
 #define USE_LV_DDLIST 1
 #if USE_LV_DDLIST != 0
 #define LV_DDLIST_ANIM_TIME                                                    \

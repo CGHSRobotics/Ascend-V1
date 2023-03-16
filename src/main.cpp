@@ -1,5 +1,17 @@
 #include "ace.h"
 
+/*
+	arm-none-eabi-addr2line -faps -e ./bin/hot.package.elf
+*/
+
+/*
+	0x381e3a4
+		0x7801680
+		0x7802100
+		0x384f098
+		0x384d584
+		0x3847a14
+*/
 
 /* ========================================================================== */
 /*                                 Initialize                                 */
@@ -7,7 +19,7 @@
 void initialize() {
 
 	// load lvgl loading screen
-	ace::lvgl::create_load_screen();
+	ace::lvgl::init_lvgl();
 
 	// clear screen on master controller
 	ace::master.clear();
@@ -17,8 +29,6 @@ void initialize() {
 	// hello
 	pros::delay(200);
 
-	// load image screen
-	ace::lvgl::create_img_screen();
 }
 
 /* -------------------------------- Disabled -------------------------------- */
@@ -77,8 +87,8 @@ void opcontrol() {
 
 		/* --------------------------- Controller Drawing --------------------------- */
 
-		ace::create_cntrlr_screen_txt((std::string)"auton", "Auton: " + std::to_string(666) + "   ", 3, 1, 2);
-		//ace::create_cntrlr_screen_txt("partner2", "Partner: " + ace::util::bool_to_str(ace::partner_connected) + "   ", 1, 1, 1);
+		ace::create_cntrlr_screen_txt((std::string)"auton", "Auton: " + std::to_string(666) + "   ", 1, 1, 2);
+		ace::create_cntrlr_screen_txt("partner2", "Partner: " + ace::util::bool_to_str(ace::partner_connected) + "   ", 1, 1, 1);
 
 
 		/* ---------------------------------- Delay --------------------------------- */
