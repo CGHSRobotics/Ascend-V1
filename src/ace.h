@@ -48,13 +48,13 @@ namespace ace {
 
 	/* --------------------------------- Chassis -------------------------------- */
 
-	#define PORT_CHASSIS_L_F 5
-	#define PORT_CHASSIS_L_C 3
-	#define PORT_CHASSIS_L_B 1
+	#define PORT_CHASSIS_L_F -1
+	#define PORT_CHASSIS_L_C -3
+	#define PORT_CHASSIS_L_B -5
 
-	#define PORT_CHASSIS_R_F 6
+	#define PORT_CHASSIS_R_F 2
 	#define PORT_CHASSIS_R_C 4
-	#define PORT_CHASSIS_R_B 2
+	#define PORT_CHASSIS_R_B 6
 
 
 	/* ------------------------- Other Motors / Devices ------------------------- */
