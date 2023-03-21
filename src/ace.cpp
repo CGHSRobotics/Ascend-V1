@@ -112,9 +112,19 @@ namespace ace {
 		intakeMotor.spin_percent(-intake_speed);
 	}
 
+	/* -------------------------------------------------------------------------- */
+	/*                              Controller Stuffs                             */
+	/* -------------------------------------------------------------------------- */
+
+	void auton_page_up() {
 
 
 
+	}
+	void auton_page_down() {
+
+		
+	}
 
 
 

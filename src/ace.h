@@ -48,13 +48,13 @@ namespace ace {
 
 	/* --------------------------------- Chassis -------------------------------- */
 
-	#define PORT_CHASSIS_L_F 1
-	#define PORT_CHASSIS_L_C 2
-	#define PORT_CHASSIS_L_B 3
+	#define PORT_CHASSIS_L_F 5
+	#define PORT_CHASSIS_L_C 3
+	#define PORT_CHASSIS_L_B 1
 
-	#define PORT_CHASSIS_R_F 4
-	#define PORT_CHASSIS_R_C 5
-	#define PORT_CHASSIS_R_B 6
+	#define PORT_CHASSIS_R_F 6
+	#define PORT_CHASSIS_R_C 4
+	#define PORT_CHASSIS_R_B 2
 
 
 	/* ------------------------- Other Motors / Devices ------------------------- */
@@ -75,6 +75,8 @@ namespace ace {
 	extern bool intake_enabled;
 
 	extern bool intake_reverse_enabled;
+
+	const std::vector<std::string> auton_selection = {"One Side", "Two Side", "Three Side", "Skills"};
 
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
 	const float roller_speed = 80.0;
@@ -232,6 +234,9 @@ namespace ace {
 	extern Btn_Digi btn_roller_forward;
 	extern Btn_Digi btn_roller_reverse;
 
+	extern Btn_Digi btn_auton_page_up;
+	extern Btn_Digi btn_auton_page_down;
+
 
 	/* ========================================================================== */
 	/*                            Function Declarations                           */
@@ -258,7 +263,9 @@ namespace ace {
 
 	/* --------------------------------- Motors --------------------------------- */
 	extern void reset_motors();
-
+	/* ------------------------------- controller ------------------------------- */
+	extern void auton_page_up();
+	extern void auton_page_down();
 
 	/* ========================================================================== */
 	/*                           Controller Screen Task                           */
