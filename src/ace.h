@@ -521,7 +521,10 @@ namespace ace::lvgl {
 
 	extern lv_obj_t* load_screen;	// lv_obj for loading screen
 
-	extern lv_obj_t* lbl_loading;	// label for loading
+	static lv_obj_t* label_load = lv_obj_create(NULL, NULL);	// label for loading
+	static lv_obj_t* label_load_imu = lv_obj_create(NULL, NULL);	// label for loading
+	static lv_obj_t* label_load_flap = lv_obj_create(NULL, NULL);	// label for loading
+	static lv_obj_t* label_load_shenan = lv_obj_create(NULL, NULL);	// label for loading
 
 	/* ------------------------------ Init Function ----------------------------- */
 	extern void init_loading_screen();

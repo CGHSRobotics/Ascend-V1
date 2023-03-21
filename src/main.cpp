@@ -5,12 +5,12 @@
 */
 
 /*
-	0x381e3a4
-		0x7801680
-		0x7802100
-		0x384f098
-		0x384d584
-		0x3847a14
+		0x3835714
+        0x3835700
+        0x7802450
+        0x384f098
+        0x384d584
+        0x3847a14
 */
 
 /* ========================================================================== */
@@ -21,14 +21,21 @@ void initialize() {
 	// load lvgl loading screen
 	ace::lvgl::init_lvgl();
 
+	// init flap
+	lv_label_set_text(ace::lvgl::label_load_flap, "Init Flap       -  OK");
+
 	// clear screen on master controller
 	ace::master.clear();
 	pros::delay(110);
 	ace::master.set_text(0, 1, "Master");
+	lv_label_set_text(ace::lvgl::label_load_shenan, "Init Shenan     -  OK");
 
-	// hello
+	//imu
 	pros::delay(200);
 
+	lv_label_set_text(ace::lvgl::label_load_shenan, "IMU Calibrate -  OK");
+
+	lv_scr_load(ace::lvgl::img_screen);
 }
 
 /* -------------------------------- Disabled -------------------------------- */
