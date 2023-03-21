@@ -78,6 +78,11 @@ namespace ace {
 
 	const std::vector<std::string> auton_selection = {"One Side", "Two Side", "Three Side", "Skills"};
 
+	extern std::string selected_auton;
+
+	extern float selected_auton_num;
+
+	extern float auton_selection_index;
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
 	const float roller_speed = 80.0;
 
@@ -94,11 +99,18 @@ namespace ace {
 			return util::cel_to_faren(get_temperature());
 		}
 		void spin_percent(float percent) {
+			if(get_gearing() == MOTOR_GEARSET_06) {
+				move_velocity(percent / 100.0f * 600.0f);
+			} else if(get_gearing() == MOTOR_GEARSET_18) {
+				move_velocity(percent / 100.0f * 200.0f);
+			} else if(get_gearing() == MOTOR_GEARSET_36) {
+				move_velocity(percent / 100.0f * 100.0f);
+			} else {
+				printf("ERROR CARTRIDGE NOT FOUND");
+			}
 			move_velocity(percent / 100.0f * 600.0f);
 		}
 	};
-
-
 
 	/* ========================================================================== */
 	/*                      Device Declaration / Definitions                      */
@@ -565,30 +577,5 @@ namespace ace::lvgl {
 
 }
 
-/*
-I can't do this!
 
-
-Vanessa, pull yourself together.
-You have to snap out of it!
-
-
-You snap out of it.
-
-
-You snap out of it.
-
-
-- You snap out of it!
-- You snap out of it!
-
-
-- You snap out of it!
-- You snap out of it!
-
-
-- You snap out of it!
-- You snap out of it!
-
-*/
 #endif 

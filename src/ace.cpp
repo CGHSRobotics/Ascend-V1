@@ -19,7 +19,7 @@ namespace ace {
 	pros::Controller partner(pros::E_CONTROLLER_PARTNER);
 
 	// Motors
-	A_Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_06, false);
+	A_Motor intakeMotor(PORT_INTAKE,MOTOR_GEARSET_18, false);
 	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
 
 	// Other Devices
@@ -117,13 +117,18 @@ namespace ace {
 	/* -------------------------------------------------------------------------- */
 
 	void auton_page_up() {
+		selected_auton_num = auton_selection_index += 1;
 
 
 
 	}
 	void auton_page_down() {
+		selected_auton_num -= 1;
+		if (selected_auton_num <= 0) {
+			selected_auton_num = 4;
+		} 
 
-		
+
 	}
 
 
