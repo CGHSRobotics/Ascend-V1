@@ -60,9 +60,8 @@ void opcontrol() {
 		/* ------------------------------ Chassis Drive ----------------------------- */
 
 		ace::chassis->getModel()->tank(
-			ace::master.get_analog(ANALOG_LEFT_Y),
-			ace::master.get_analog(ANALOG_RIGHT_Y),
-			10.0
+			((double)ace::master.get_analog(ANALOG_LEFT_Y)) / 127.0,
+			((double)ace::master.get_analog(ANALOG_RIGHT_Y)) / 127.0
 		);
 
 		/* ------------------------------ User Control ------------------------------ */
