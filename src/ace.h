@@ -76,7 +76,7 @@ namespace ace {
 
 	extern bool intake_reverse_enabled;
 
-	const std::vector<std::string> auton_selection = {"One Side", "Two Side", "Three Side", "Skills"};
+	const std::vector<std::string> auton_selection = { "One Side", "Two Side", "Three Side", "Skills" };
 
 	extern std::string selected_auton;
 
@@ -86,7 +86,7 @@ namespace ace {
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
 	const float roller_speed = 80.0;
 
-	const float intake_speed = 90.0;
+	const float intake_speed = 100.0;
 
 	/* --------------------------- Custom Motor Class --------------------------- */
 	class A_Motor: public pros::Motor {
@@ -94,18 +94,37 @@ namespace ace {
 
 		using Motor::Motor;
 
+		bool has_init = false;
+
+		void init() {
+			if (!has_init) {
+				has_init = true;
+
+				set_encoder_units(MOTOR_ENCODER_DEGREES);
+			}
+		}
+
 		// get temp in farenheit
 		float get_temp() {
+
+			init();
+
 			return util::cel_to_faren(get_temperature());
 		}
 		void spin_percent(float percent) {
-			if(get_gearing() == MOTOR_GEARSET_06) {
+
+			init();
+
+			if (get_gearing() == MOTOR_GEARSET_06) {
 				move_velocity(percent / 100.0f * 600.0f);
-			} else if(get_gearing() == MOTOR_GEARSET_18) {
+			}
+			else if (get_gearing() == MOTOR_GEARSET_18) {
 				move_velocity(percent / 100.0f * 200.0f);
-			} else if(get_gearing() == MOTOR_GEARSET_36) {
+			}
+			else if (get_gearing() == MOTOR_GEARSET_36) {
 				move_velocity(percent / 100.0f * 100.0f);
-			} else {
+			}
+			else {
 				printf("ERROR CARTRIDGE NOT FOUND");
 			}
 			move_velocity(percent / 100.0f * 600.0f);
@@ -162,18 +181,13 @@ namespace ace {
 
 	class Btn_Digi {
 		public:
-
 		// vars for btns
 		pros::controller_digital_e_t btn_master;
-
 		pros::controller_digital_e_t btn_partner;
-
 		// operating mode for btn. 0 == ur mum gay, 1 == master only, 2 == partner only, 3 == both but preferably partner
 		u_int8_t mode;
-
 		// Constructor with one btn
 		Btn_Digi(pros::controller_digital_e_t btn_assign, bool is_master = true) {
-
 			if (is_master) {
 				mode = 1;
 				btn_master = btn_assign;
@@ -182,57 +196,43 @@ namespace ace {
 				mode = 2;
 				btn_partner = btn_assign;
 			}
-
 		};
-
 		// Constructor with both keybinds
 		Btn_Digi(pros::controller_digital_e_t btn_master, pros::controller_digital_e_t btn_partner) {
-
 			btn_master = btn_master;
 			btn_partner = btn_partner;
-
 			mode = 3;
 		};
-
 		// get whether button pressed
 		bool get_press() {
-
 			if (mode == 3)
 				if (partner.is_connected())
 					return partner.get_digital(btn_partner);
 				else
 					return master.get_digital(btn_master);
-
 			else if (mode == 2)
 				if (partner.is_connected())
 					return partner.get_digital(btn_partner);
 				else
 					return false;
-
 			else if (mode == 1)
 				return master.get_digital(btn_master);
-
 			return false;
 		};
-
 		// get whether new button press
 		bool get_press_new() {
-
 			if (mode == 3)
 				if (partner.is_connected())
 					return partner.get_digital_new_press(btn_partner);
 				else
 					return master.get_digital_new_press(btn_master);
-
 			else if (mode == 2)
 				if (partner.is_connected())
 					return partner.get_digital_new_press(btn_partner);
 				else
 					return false;
-
 			else if (mode == 1)
 				return master.get_digital_new_press(btn_master);
-
 			return false;
 		};
 	};
@@ -519,63 +519,4 @@ namespace ace::launch {
 
 }
 
-
-/* ========================================================================== */
-/*                             Ace LVGL Namespace                             */
-/* ========================================================================== */
-namespace ace::lvgl {
-
-	/* ========================================================================== */
-	/*                              Global Variables                              */
-	/* ========================================================================== */
-
-
-	extern lv_style_t style_screen;
-
-
-	/* ========================================================================== */
-	/*                               Loading Screen                               */
-	/* ========================================================================== */
-
-
-	extern lv_obj_t* load_screen;	// lv_obj for loading screen
-
-	static lv_obj_t* label_load = lv_obj_create(NULL, NULL);	// label for loading
-	static lv_obj_t* label_load_imu = lv_obj_create(NULL, NULL);	// label for loading
-	static lv_obj_t* label_load_flap = lv_obj_create(NULL, NULL);	// label for loading
-	static lv_obj_t* label_load_shenan = lv_obj_create(NULL, NULL);	// label for loading
-
-	/* ------------------------------ Init Function ----------------------------- */
-	extern void init_loading_screen();
-
-
-	/* ========================================================================== */
-	/*                             Brain Image Screen                             */
-	/* ========================================================================== */
-
-	extern lv_obj_t* img_screen;	// lv_obj for loading screen
-
-	extern lv_obj_t* lbl_img;	// label for loading 
-
-
-	/* ------------------------------ Init Function ----------------------------- */
-	extern void init_image_screen();
-
-
-	/* ========================================================================== */
-	/*                              Main Menu Screen                              */
-	/* ========================================================================== */
-
-	/* ------------------------------ Init Function ----------------------------- */
-	extern void init_menu_screen();
-
-	/* ========================================================================== */
-	/*                            Global Init Function                            */
-	/* ========================================================================== */
-
-	extern void init_lvgl();
-
-}
-
-
-#endif 
+#endif

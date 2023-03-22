@@ -10,10 +10,13 @@ import time
 
 def cmd_menu():
 
+    print("\x1B[31m")
     cmd_str = input(
-        "(1) for Build, (2) for MU, (3) for Brain Terminal, (4) for Stack Trace \n")
+        "(1) for Build, (2) for MU, (3) for Brain Terminal, \n (4) for Stack Trace or (e) for exit \n \x1B[33m")
+    print("\x1B[34m")
 
     if cmd_str == "e":
+        print("\x1B[0m")
         sys.exit()
 
     elif cmd_str == "1":
@@ -55,7 +58,8 @@ def cmd_menu():
 
         for line in str:
             if "??" in arr[str.index(line)]:
-                arr[str.index(line)] = subprocess.run(line, shell=True).stdout
+                arr[str.index(line)] = subprocess.run(
+                    line, shell=True).stdout
 
         print(arr)
 
@@ -63,10 +67,13 @@ def cmd_menu():
         print("INVALID ENTRY")
         cmd_menu()
 
-    print("\n Thy command has been finished \n")
+    print("\x1B[31m")
+    print("\n Finished")
 
 
 def main():
+    print("\n")
+
     while True:
         cmd_menu()
 

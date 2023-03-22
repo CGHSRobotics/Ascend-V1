@@ -22,9 +22,6 @@ namespace ace {
 	A_Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_06, false);
 	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
 
-	// Other Devices
-
-
 	// Buttons
 	Btn_Digi btn_intake_toggle(pros::E_CONTROLLER_DIGITAL_L1);
 	Btn_Digi btn_intake_reverse(pros::E_CONTROLLER_DIGITAL_L2);
@@ -94,15 +91,10 @@ namespace ace {
 
 		intake_enabled = !intake_enabled;
 
-		if (!intake_enabled) {
+		if (intake_enabled)
 			intakeMotor.spin_percent(intake_speed);
-		}
-		else {
+		else
 			intakeMotor.spin_percent(0);
-
-
-
-		}
 	}
 
 	void intake_reverse() {
