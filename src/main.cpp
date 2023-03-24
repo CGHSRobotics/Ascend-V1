@@ -64,18 +64,25 @@ void opcontrol() {
 
 		/* ------------------------------ User Control ------------------------------ */
 
+
+		if (ace::master.get_digital(DIGITAL_R1))
+			ace::launch(480, false);
+		else
+			ace::launch_standby(true, 300);
+
+
 		// Intake Toggle
-		if (ace::btn_intake_toggle.get_press_new()) {
+		if (ace::master.get_digital(DIGITAL_L1)) {
 			ace::intake_toggle();
 		}
 
 		// Intake Reverse
-		if (ace::btn_intake_reverse.get_press_new()) {
+		if (ace::master.get_digital(DIGITAL_L2)) {
 			ace::intake_reverse();
 		}
 
 
-		if (ace::btn_roller_forward.get_press_new()) {
+		/*if (ace::btn_roller_forward.get_press_new()) {
 			ace::roller_forward(true);
 		}
 		else {
@@ -88,6 +95,7 @@ void opcontrol() {
 		else {
 			ace::roller_reverse(false);
 		}
+		*/
 
 		/* --------------------------- Controller Drawing --------------------------- */
 

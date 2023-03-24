@@ -45,6 +45,35 @@ namespace ace {
 	/*                             User Control Stuffs                            */
 	/* -------------------------------------------------------------------------- */
 
+	void launch(float speed, bool isLong) {
+
+		if (launcherMotor.get_actual_velocity() < speed - (LAUNCHER_SPEED_CUTOFF / 100.0) * 600.0)
+		{
+
+			launcherMotor.move_velocity(600);
+			return;
+
+		}
+		else {
+
+			launcherMotor.move_velocity(speed);
+			intakeMotor.spin_percent(-100);
+
+		}
+
+	}
+
+	void launch_standby(bool enabled, float speed) {
+
+		intakeMotor.spin_percent(0);
+
+		if (enabled)
+			launcherMotor.move_velocity(speed);
+		else
+			launcherMotor.move_voltage(0);
+	}
+
+
 
 	void reset_motors() {
 		launcherMotor.move_voltage(0);
@@ -88,13 +117,15 @@ namespace ace {
 	}
 
 	void intake_toggle() {
-
-		intake_enabled = !intake_enabled;
-
-		if (intake_enabled)
+		intakeMotor.spin_percent(intake_speed);
+		/*if (intake_enabled) {
+			intake_enabled = false;
 			intakeMotor.spin_percent(intake_speed);
-		else
+		}
+		else {
+			intake_enabled = true;
 			intakeMotor.spin_percent(0);
+		}*/
 	}
 
 	void intake_reverse() {

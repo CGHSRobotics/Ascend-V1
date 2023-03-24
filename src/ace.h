@@ -47,22 +47,20 @@ namespace ace {
 	/* ========================================================================== */
 
 	/* --------------------------------- Chassis -------------------------------- */
+	#define PORT_CHASSIS_L_F -13
+	#define PORT_CHASSIS_L_C -12
+	#define PORT_CHASSIS_L_B -14
 
-	#define PORT_CHASSIS_L_F -1
-	#define PORT_CHASSIS_L_C -3
-	#define PORT_CHASSIS_L_B -5
-
-	#define PORT_CHASSIS_R_F 2
-	#define PORT_CHASSIS_R_C 4
-	#define PORT_CHASSIS_R_B 6
-
+	#define PORT_CHASSIS_R_F 17
+	#define PORT_CHASSIS_R_C 18
+	#define PORT_CHASSIS_R_B 16
 
 	/* ------------------------- Other Motors / Devices ------------------------- */
-	#define PORT_INTAKE 7
-	#define PORT_LAUNCHER 8
+	#define PORT_INTAKE 19
+	#define PORT_LAUNCHER 11
 
 	#define PORT_VISION 9
-	#define PORT_IMU 10
+	#define PORT_IMU 15
 
 
 	/* ========================================================================== */
@@ -87,6 +85,8 @@ namespace ace {
 	const float roller_speed = 80.0;
 
 	const float intake_speed = 100.0;
+
+	const float LAUNCHER_SPEED_CUTOFF = 10.0;
 
 	/* --------------------------- Custom Motor Class --------------------------- */
 	class A_Motor: public pros::Motor {
@@ -261,12 +261,14 @@ namespace ace {
 
 	/* ------------------------ Emergency Intake Reverse ------------------------ */
 	extern void intake_reverse();
+
 	/* --------------------------------- Roller --------------------------------- */
 	extern void roller_forward(bool enabled);
 	extern void roller_reverse(bool enabled);
-	/* --------------------------------- Launch --------------------------------- */
 
-	/* ------------------------------- Long Launch ------------------------------ */
+	/* --------------------------------- Launch --------------------------------- */
+	extern void launch(float speed, bool isLong);
+	extern void launch_standby(bool enabled, float speed);
 
 	/* --------------------------------- Endgame -------------------------------- */
 	extern void endgame_toggle(bool enabled);
@@ -509,14 +511,6 @@ namespace ace::auton {
 /* ========================================================================== */
 /*                            Ace Launch Namespace                            */
 /* ========================================================================== */
-namespace ace::launch {
 
-
-
-
-
-
-
-}
 
 #endif

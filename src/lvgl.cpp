@@ -29,6 +29,13 @@ namespace ace::lvgl {
 	static lv_style_t style_preload;
 	static lv_style_t style_container_empty;
 	static lv_style_t style_container_red;
+	static lv_style_t style_bar;
+	static lv_style_t style_bar_indic;
+	static lv_style_t style_btn;
+	static lv_style_t style_tabview_bg;
+	static lv_style_t style_tabview_indic;
+	static lv_style_t style_tabview_pr;
+	static lv_style_t style_tabview_rel;
 
 	/* ----------------------------- Loading Screen ----------------------------- */
 	static lv_obj_t* load_screen;
@@ -46,28 +53,52 @@ namespace ace::lvgl {
 	static lv_obj_t* preload3;
 
 	static lv_obj_t* ross_img;
-	static lv_obj_t* main_img_load_cont;
-	static lv_obj_t* main_img_load;
 
-	/* ------------------------------ Image Screen ------------------------------ */
-	static lv_obj_t* img_screen;
+	/* ------------------------------- Main Screen ------------------------------ */
+	static lv_obj_t* main_screen;
 
+	static lv_obj_t* main_cont;
 	static lv_obj_t* main_img;
 
+	static lv_obj_t* main_bar;
+	static lv_obj_t* main_bar_label;
+
+	static lv_obj_t* main_btn;
+	static lv_obj_t* main_btn_label;
+
+	/* ------------------------------- Menu Screen ------------------------------ */
+	static lv_obj_t* menu_screen;
+
+	static lv_obj_t* menu_tabview;
+
+	static lv_obj_t* menu_tab1;
+	static lv_obj_t* menu_tab1_cont_main;
+	static lv_obj_t* menu_tab1_cont1;
+	static lv_obj_t* menu_tab1_cont2;
+	static lv_obj_t* menu_tab1_cont2_btn_main;
+	static lv_obj_t* menu_tab1_cont2_btn_main_label;
+
+	static lv_obj_t* menu_tab2;
+
+	static lv_obj_t* menu_tab3;
+
+	static lv_obj_t* menu_tab4;
 
 	/* -------------------------- Function Declarations ------------------------- */
 	static void init_lvgl();
+	static void init_styles();
 
 	static void init_loading_screen();
+	static void init_main_screen();
+	static void init_menu_screen();
+
 	static void start_preloader_anim();
 
-	static void init_image_screen();
-	static void init_menu_screen();
+	static lv_res_t main_btn_click(lv_obj_t* btn);
 
 	/* ========================================================================== */
 	/*                             Init Lvgl Function                             */
 	/* ========================================================================== */
-
 	static void init_lvgl() {
 
 		/* ------------------------------ File Drivers ------------------------------ */
@@ -82,6 +113,27 @@ namespace ace::lvgl {
 		pcfs_drv.seek = pcfs_seek;
 		pcfs_drv.tell = pcfs_tell;
 		lv_fs_add_drv(&pcfs_drv);
+
+		/* ------------------------------- Init Styles ------------------------------ */
+		init_styles();
+
+		/* --------------------------- init loading screen -------------------------- */
+		init_loading_screen();
+
+		/* ---------------------------- init image screen --------------------------- */
+		init_main_screen();
+
+		/* ---------------------------- init menu screen ---------------------------- */
+		init_menu_screen();
+
+		/* --------------------------- load loading screen -------------------------- */
+		lv_scr_load(load_screen);
+	}
+
+	/* ========================================================================== */
+	/*                                 Init Styles                                */
+	/* ========================================================================== */
+	static void init_styles() {
 
 		/* ------------------------------ Setup Styles ------------------------------ */
 
@@ -125,19 +177,95 @@ namespace ace::lvgl {
 		style_container_red.body.padding.ver = 10;
 		style_container_empty.body.padding.inner = 10;
 
-		/* --------------------------- init loading screen -------------------------- */
-		init_loading_screen();
+		// Preloader Style
+		lv_style_copy(&style_preload, &lv_style_plain);
+		style_preload.line.width = 10;
+		style_preload.line.color = LV_COLOR_RED;
+		style_preload.body.border.width = 6;
+		style_preload.body.padding.hor = 0;
+		style_preload.body.main_color = LV_COLOR_BLACK;
+		style_preload.body.grad_color = LV_COLOR_BLACK;
+		style_preload.body.border.color = LV_COLOR_BLACK;
 
-		/* ---------------------------- init image screen --------------------------- */
-		init_image_screen();
+		// Bar Style
+		lv_style_copy(&style_bar, &lv_style_pretty);
+		style_bar.body.main_color = LV_COLOR_BLACK;
+		style_bar.body.grad_color = LV_COLOR_GRAY;
+		style_bar.body.radius = 0;
+		style_bar.body.border.color = LV_COLOR_WHITE;
 
-		/* ---------------------------- init menu screen ---------------------------- */
-		init_menu_screen();
+		// Bar Style Indicator
+		lv_style_copy(&style_bar_indic, &lv_style_pretty);
+		style_bar_indic.body.grad_color = LV_COLOR_YELLOW;
+		style_bar_indic.body.main_color = LV_COLOR_RED;
+		style_bar_indic.body.radius = 0;
+		style_bar_indic.body.shadow.width = 5;
+		style_bar_indic.body.shadow.color = LV_COLOR_ORANGE;
+		style_bar_indic.body.padding.hor = 3;
+		style_bar_indic.body.padding.ver = 3;
 
-		/* --------------------------- load loading screen -------------------------- */
-		lv_scr_load(load_screen);
+		// Button Style Indicator
+		lv_style_copy(&style_btn, &lv_style_pretty);
+		style_btn.body.grad_color = LV_COLOR_BLACK;
+		style_btn.body.main_color = LV_COLOR_BLACK;
+		style_btn.body.border.color = LV_COLOR_RED;
+		style_btn.body.border.width = 3;
+		style_btn.body.radius = 0;
+		style_btn.body.padding.hor = 5;
+		style_btn.body.padding.ver = 5;
+		style_btn.body.border.opa = 255;
+		style_btn.body.shadow.width = 0;
+
+		// Tabview BG Style Indicator
+		lv_style_copy(&style_tabview_bg, &lv_style_pretty);
+		style_tabview_bg.body.grad_color = LV_COLOR_BLACK;
+		style_tabview_bg.body.main_color = LV_COLOR_BLACK;
+		style_tabview_bg.body.border.color = LV_COLOR_RED;
+		style_tabview_bg.body.border.width = 2;
+		style_tabview_bg.body.radius = 0;
+		style_tabview_bg.body.padding.hor = 5;
+		style_tabview_bg.body.padding.ver = 5;
+		style_tabview_bg.body.border.opa = 255;
+		style_tabview_bg.body.shadow.width = 0;
+
+		// Tabview Indicator Style Indicator
+		lv_style_copy(&style_tabview_indic, &lv_style_pretty);
+		style_tabview_indic.body.grad_color = LV_COLOR_RED;
+		style_tabview_indic.body.main_color = LV_COLOR_RED;
+		style_tabview_indic.body.border.color = LV_COLOR_RED;
+		style_tabview_indic.body.border.width = 2;
+		style_tabview_indic.body.radius = 0;
+		style_tabview_indic.body.padding.hor = 5;
+		style_tabview_indic.body.padding.ver = 5;
+		style_tabview_indic.body.border.opa = 255;
+		style_tabview_indic.body.shadow.width = 0;
+
+		// Tabview Indicator Style Indicator
+		lv_style_copy(&style_tabview_pr, &lv_style_pretty);
+		style_tabview_pr.body.grad_color = LV_COLOR_RED;
+		style_tabview_pr.body.main_color = LV_COLOR_RED;
+		style_tabview_pr.body.border.color = LV_COLOR_RED;
+		style_tabview_pr.body.border.width = 3;
+		style_tabview_pr.body.radius = 0;
+		style_tabview_pr.body.padding.hor = 5;
+		style_tabview_pr.body.padding.ver = 5;
+		style_tabview_pr.body.border.opa = 255;
+		style_tabview_pr.body.shadow.width = 0;
+
+		// Tabview Indicator Style Indicator
+		lv_style_copy(&style_tabview_rel, &lv_style_pretty);
+		style_tabview_rel.body.grad_color = LV_COLOR_BLACK;
+		style_tabview_rel.body.main_color = LV_COLOR_BLACK;
+		style_tabview_rel.body.border.color = LV_COLOR_RED;
+		style_tabview_rel.body.border.width = 2;
+		style_tabview_rel.body.radius = 0;
+		style_tabview_rel.body.padding.hor = 5;
+		style_tabview_rel.body.padding.ver = 15;
+		style_tabview_rel.body.border.opa = 255;
+		style_tabview_rel.body.shadow.width = 0;
+		style_tabview_rel.text = style_text_title.text;
+
 	}
-
 
 	/* ========================================================================== */
 	/*                               Loading Screen                               */
@@ -193,16 +321,6 @@ namespace ace::lvgl {
 		lv_obj_set_size(container_preloader, 200, 220);
 		lv_obj_set_style(container_preloader, &style_container_empty);
 
-		/* ----------------------------- Preloader Style ---------------------------- */
-		lv_style_copy(&style_preload, &lv_style_plain);
-		style_preload.line.width = 10;
-		style_preload.line.color = LV_COLOR_RED;
-		style_preload.body.border.width = 6;
-		style_preload.body.padding.hor = 0;
-		style_preload.body.main_color = LV_COLOR_BLACK;
-		style_preload.body.grad_color = LV_COLOR_BLACK;
-		style_preload.body.border.color = LV_COLOR_BLACK;
-
 		/* -------------------------------- Preload 1 ------------------------------- */
 		preload1 = lv_preload_create(container_preloader, NULL);
 		lv_obj_set_size(preload1, 175, 175);
@@ -232,19 +350,114 @@ namespace ace::lvgl {
 		lv_obj_set_hidden(ross_img, true);
 		lv_obj_align(ross_img, NULL, LV_ALIGN_CENTER, 28, -12);
 		lv_img_set_src(ross_img, "S:/usd/ross_background.bin");
-
-		main_img_load_cont = lv_cont_create(load_screen, NULL);
-		lv_cont_set_fit(main_img_load_cont, true, true);
-		lv_obj_align(main_img_load_cont, NULL, LV_ALIGN_CENTER, 0, -240);
-		lv_preload_set_style(main_img_load_cont, LV_PRELOAD_STYLE_MAIN, &style_preload);
-
-		main_img_load = lv_img_create(main_img_load_cont, NULL);
-		lv_obj_set_hidden(main_img_load, true);
-		lv_obj_align(main_img_load, NULL, LV_ALIGN_CENTER, 0, 0);
-		lv_img_set_src(main_img_load, "S:/usd/ace.bin");
 	}
 
+	/* ========================================================================== */
+	/*                             Brain Image Screen                             */
+	/* ========================================================================== */
+	static void init_main_screen() {
+
+		/* -------------------------- Screen And Container -------------------------- */
+		main_screen = lv_obj_create(NULL, NULL);
+		lv_obj_set_style(main_screen, &style_screen);
+
+		main_cont = lv_cont_create(main_screen, NULL);
+		lv_obj_set_size(main_cont, 480, 240);
+		lv_cont_set_fit(main_cont, false, false);
+		lv_obj_align(main_cont, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+		lv_preload_set_style(main_cont, LV_PRELOAD_STYLE_MAIN, &style_preload);
+
+		/* ------------------------------- Main Image ------------------------------- */
+		main_img = lv_img_create(main_cont, NULL);
+		lv_obj_align(main_img, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+		lv_img_set_src(main_img, "S:/usd/ace.bin");
+
+		/* ----------------------------- Launcher Speed ----------------------------- */
+		main_bar = lv_bar_create(main_cont, NULL);
+		lv_obj_set_size(main_bar, 30, 220);
+		lv_bar_set_range(main_bar, 0, 3600);
+		lv_bar_set_value(main_bar, 0.70 * 3600);
+		lv_bar_set_style(main_bar, LV_BAR_STYLE_BG, &style_bar);
+		lv_bar_set_style(main_bar, LV_BAR_STYLE_INDIC, &style_bar_indic);
+		lv_obj_align(main_bar, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 10);
+
+		main_bar_label = lv_label_create(main_cont, NULL);
+		lv_obj_align(main_bar_label, NULL, LV_ALIGN_IN_TOP_LEFT, 50, (1 - ((float)lv_bar_get_value(main_bar) / 3600.0)) * 220 + 5);
+		lv_label_set_text(main_bar_label, std::to_string(lv_bar_get_value(main_bar)).c_str());
+		lv_label_set_style(main_bar_label, &style_text);
+
+		/* ------------------------------- Menu Button ------------------------------ */
+		main_btn = lv_btn_create(main_cont, NULL);
+		lv_btn_set_fit(main_btn, false, false);
+		lv_obj_set_size(main_btn, 90, 50);
+		lv_obj_align(main_btn, NULL, LV_ALIGN_IN_TOP_LEFT, 370, 170);
+		lv_btn_set_style(main_btn, LV_BTN_STYLE_REL, &style_btn);
+		lv_btn_set_action(main_btn, LV_BTN_ACTION_PR, main_btn_click);
+
+		main_btn_label = lv_label_create(main_btn, NULL);
+		lv_label_set_text(main_btn_label, "Menu");
+		lv_label_set_style(main_btn_label, &style_text_title);
+
+	}
+
+
+	/* ========================================================================== */
+	/*                                 Menu Screen                                */
+	/* ========================================================================== */
+	static void init_menu_screen() {
+
+		/* --------------------------------- Screen --------------------------------- */
+		menu_screen = lv_obj_create(NULL, NULL);
+
+		menu_tabview = lv_tabview_create(menu_screen, NULL);
+		lv_tabview_set_style(menu_tabview, LV_TABVIEW_STYLE_BG, &style_tabview_bg);
+		lv_tabview_set_style(menu_tabview, LV_TABVIEW_STYLE_INDIC, &style_tabview_indic);
+		lv_tabview_set_style(menu_tabview, LV_TABVIEW_STYLE_BTN_PR, &style_tabview_pr);
+		lv_tabview_set_style(menu_tabview, LV_TABVIEW_STYLE_BTN_TGL_PR, &style_tabview_pr);
+		lv_tabview_set_style(menu_tabview, LV_TABVIEW_STYLE_BTN_REL, &style_tabview_rel);
+		lv_tabview_set_style(menu_tabview, LV_TABVIEW_STYLE_BTN_TGL_REL, &style_tabview_rel);
+
+		/* ------------------------------ Tab 1 - Home ------------------------------ */
+		menu_tab1 = lv_tabview_add_tab(menu_tabview, "Home");
+
+		menu_tab1_cont_main = lv_cont_create(menu_tab1, NULL);
+		lv_cont_set_fit(menu_tab1_cont_main, false, false);
+		lv_obj_set_style(menu_tab1_cont_main, &style_container_empty);
+		lv_cont_set_layout(menu_tab1_cont_main, LV_LAYOUT_ROW_M);
+
+		menu_tab1_cont1 = lv_cont_create(menu_tab1_cont_main, NULL);
+		lv_cont_set_fit(menu_tab1_cont1, false, false);
+		lv_obj_set_size(menu_tab1_cont1, 220, 180);
+		lv_obj_set_style(menu_tab1_cont1, &style_container_red);
+
+		menu_tab1_cont2 = lv_cont_create(menu_tab1_cont_main, NULL);
+		lv_cont_set_fit(menu_tab1_cont2, false, false);
+		lv_obj_set_size(menu_tab1_cont2, 220, 180);
+		lv_obj_set_style(menu_tab1_cont2, &style_container_red);
+
+		menu_tab1_cont2_btn_main = lv_btn_create(menu_tab1_cont2, NULL);
+
+		menu_tab1_cont2_btn_main_label = lv_label_create(menu_tab1_cont2_btn_main, NULL);
+		lv_label_set_text(menu_tab1_cont2_btn_main_label, "Main");
+
+		/* ------------------------------ Tab 2 - Auton ----------------------------- */
+		menu_tab2 = lv_tabview_add_tab(menu_tabview, "Auton");
+
+		/* ------------------------------ Tab 3 - Temp ------------------------------ */
+		menu_tab3 = lv_tabview_add_tab(menu_tabview, "Temp");
+
+		/* ------------------------------ Tab 4 - Ross ------------------------------ */
+		menu_tab4 = lv_tabview_add_tab(menu_tabview, "Ross");
+	}
+
+
+	/* ========================================================================== */
+	/*                             Animation Functions                            */
+	/* ========================================================================== */
 	static void start_preloader_anim() {
+
+		lv_obj_set_hidden(ross_img, false);
+
 		lv_anim_t a;
 		a.var = preload1;
 		a.start = lv_preload_get_arc_length(preload1);
@@ -259,45 +472,23 @@ namespace ace::lvgl {
 		a.repeat = 0;
 		a.repeat_pause = 0;
 
-		lv_anim_t img;
-		img.var = main_img_load_cont;
-		img.start = -120;
-		img.end = 120;
-		img.fp = (lv_anim_fp_t)lv_obj_set_y;
-		img.path = lv_anim_path_linear;
-		img.end_cb = NULL;
-		img.act_time = -200;
-		img.time = 200;
-		img.playback = 0;
-		img.playback_pause = 0;
-		img.repeat = 0;
-		img.repeat_pause = 0;
-
-		lv_obj_set_hidden(main_img_load, false);
-		lv_obj_set_hidden(ross_img, false);
-
+		lv_anim_create(&a);
 		lv_obj_set_hidden(preload2, true);
 		lv_obj_set_hidden(preload3, true);
 
-		lv_anim_create(&a);
+		pros::delay(1000);
+
+		lv_scr_load(main_screen);
 	}
 
 	/* ========================================================================== */
-	/*                             Brain Image Screen                             */
+	/*                             Button Click Events                            */
 	/* ========================================================================== */
-	static void init_image_screen() {
-
-
+	static lv_res_t main_btn_click(lv_obj_t* btn)
+	{
+		lv_scr_load(menu_screen);
+		return LV_RES_OK; /*Return OK if the button is not deleted*/
 	}
-
-
-	/* ========================================================================== */
-	/*                                 Menu Screen                                */
-	/* ========================================================================== */
-	static void init_menu_screen() {
-
-	}
-
 
 	/* ========================================================================== */
 	/*                                File Drivers                                */
