@@ -208,7 +208,7 @@ namespace ace {
 	//
 	const pros::IMU imuSensor(PORT_IMU);
 
-	const pros::ADIDigitalOut endgamePneumatics(false);
+	const pros::ADIDigitalOut endgamePneumatics(1, false);
 
 
 	/* ========================================================================== */
