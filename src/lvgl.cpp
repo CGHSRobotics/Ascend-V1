@@ -35,8 +35,8 @@ namespace ace::lvgl {
 	static lv_style_t style_tabview_bg;
 	static lv_style_t style_tabview_indic;
 	static lv_style_t style_tabview_pr;
-	static lv_style_t style_tabview_rel;	
-	static lv_style_t style_tabview_adm;
+	static lv_style_t style_tabview_rel;
+	static lv_style_t style_ddm;
 
 	/* ----------------------------- Loading Screen ----------------------------- */
 	static lv_obj_t* load_screen;
@@ -83,12 +83,24 @@ namespace ace::lvgl {
 	static lv_obj_t* menu_tab2_auton_drop;
 	static lv_obj_t* menu_tab2_cont_main;
 	static lv_obj_t* menu_tab2_cont1;
+	static lv_obj_t* menu_tab2_cont2;
+
 
 	static lv_obj_t* menu_tab3;
+	static lv_obj_t* menu_tab3_cont_main;
+	static lv_obj_t* menu_tab3_cont1;
+	static lv_obj_t* menu_tab3_cont2;
+	static lv_obj_t* menu_tab3_cont1_labelTemp1;
+	static lv_obj_t* menu_tab3_cont2_labelTemp2;
 
 	static lv_obj_t* menu_tab4;
+	static lv_obj_t* menu_tab4_ross;
 
 	/* -------------------------- Function Declarations ------------------------- */
+	static void brain_screen_update();
+	static pros::Task __task_brain_screen_update = pros::Task(brain_screen_update, "screen_update");
+
+	static bool has_init = false;
 	static void init_lvgl();
 	static void init_styles();
 
@@ -99,6 +111,7 @@ namespace ace::lvgl {
 	static void start_preloader_anim();
 
 	static lv_res_t main_btn_click(lv_obj_t* btn);
+	static lv_res_t menu_btn_click(lv_obj_t* btn);
 
 	/* ========================================================================== */
 	/*                             Init Lvgl Function                             */
@@ -123,6 +136,7 @@ namespace ace::lvgl {
 
 		/* --------------------------- init loading screen -------------------------- */
 		init_loading_screen();
+		lv_scr_load(load_screen);
 
 		/* ---------------------------- init image screen --------------------------- */
 		init_main_screen();
@@ -130,8 +144,40 @@ namespace ace::lvgl {
 		/* ---------------------------- init menu screen ---------------------------- */
 		init_menu_screen();
 
-		/* --------------------------- load loading screen -------------------------- */
-		lv_scr_load(load_screen);
+		/* ------------------------------- Start Task ------------------------------- */
+		__task_brain_screen_update.set_priority(TASK_PRIORITY_DEFAULT - 1);
+		has_init = true;
+	}
+
+	/* ========================================================================== */
+	/*                             Screen Update Task                             */
+	/* ========================================================================== */
+	static void brain_screen_update() {
+
+		while (1)
+		{
+			if (has_init) {
+
+				//Launcher Slider
+				int launch_rpm = ace::launcherMotor.get_actual_velocity() * 6;
+				lv_bar_set_value(main_bar, launch_rpm);
+				lv_label_set_text(main_bar_label, std::to_string(launch_rpm).c_str());
+				lv_obj_align(main_bar_label, NULL, LV_ALIGN_IN_TOP_LEFT, 50, (1 - ((float)lv_bar_get_value(main_bar) / 3600.0)) * 220 + 5);
+
+				// Set temp Text
+				lv_label_set_text(menu_tab3_cont1_labelTemp1,
+
+					((std::string)"Launcher: " + std::to_string(ace::launcherMotor.get_temp())).c_str()
+
+				);
+				lv_label_set_text(menu_tab3_cont2_labelTemp2,
+
+					((std::string)"Intake: " + std::to_string(ace::intakeMotor.get_temp())).c_str()
+
+				);
+			}
+			pros::delay(100);
+		}
 	}
 
 	/* ========================================================================== */
@@ -165,17 +211,17 @@ namespace ace::lvgl {
 		style_container_empty.body.grad_color = LV_COLOR_BLACK;
 		style_container_empty.body.main_color = LV_COLOR_BLACK;
 		style_container_empty.body.border.color = LV_COLOR_BLACK;
-		style_container_empty.body.border.width = 2;
-		style_container_empty.body.padding.hor = 10;
-		style_container_empty.body.padding.ver = 10;
+		style_container_empty.body.border.width = 0;
+		style_container_empty.body.padding.hor = 0;
+		style_container_empty.body.padding.ver = 0;
 		style_container_empty.body.padding.inner = 10;
 
-		// Style for COntainer with Red Border
+		// Style for Container with Red Border
 		lv_style_copy(&style_container_red, &lv_style_plain);
 		style_container_red.body.grad_color = LV_COLOR_BLACK;
 		style_container_red.body.main_color = LV_COLOR_BLACK;
 		style_container_red.body.border.color = LV_COLOR_RED;
-		style_container_red.body.border.width = 4;
+		style_container_red.body.border.width = 2;
 		style_container_red.body.radius = 10;
 		style_container_red.body.padding.hor = 10;
 		style_container_red.body.padding.ver = 10;
@@ -227,8 +273,8 @@ namespace ace::lvgl {
 		style_tabview_bg.body.border.color = LV_COLOR_RED;
 		style_tabview_bg.body.border.width = 2;
 		style_tabview_bg.body.radius = 0;
-		style_tabview_bg.body.padding.hor = 5;
-		style_tabview_bg.body.padding.ver = 5;
+		style_tabview_bg.body.padding.hor = 0;
+		style_tabview_bg.body.padding.ver = 0;
 		style_tabview_bg.body.border.opa = 255;
 		style_tabview_bg.body.shadow.width = 0;
 
@@ -239,8 +285,8 @@ namespace ace::lvgl {
 		style_tabview_indic.body.border.color = LV_COLOR_RED;
 		style_tabview_indic.body.border.width = 2;
 		style_tabview_indic.body.radius = 0;
-		style_tabview_indic.body.padding.hor = 5;
-		style_tabview_indic.body.padding.ver = 5;
+		style_tabview_indic.body.padding.hor = 0;
+		style_tabview_indic.body.padding.ver = 0;
 		style_tabview_indic.body.border.opa = 255;
 		style_tabview_indic.body.shadow.width = 0;
 
@@ -251,8 +297,8 @@ namespace ace::lvgl {
 		style_tabview_pr.body.border.color = LV_COLOR_RED;
 		style_tabview_pr.body.border.width = 3;
 		style_tabview_pr.body.radius = 0;
-		style_tabview_pr.body.padding.hor = 5;
-		style_tabview_pr.body.padding.ver = 5;
+		style_tabview_pr.body.padding.hor = 0;
+		style_tabview_pr.body.padding.ver = 0;
 		style_tabview_pr.body.border.opa = 255;
 		style_tabview_pr.body.shadow.width = 0;
 
@@ -263,22 +309,24 @@ namespace ace::lvgl {
 		style_tabview_rel.body.border.color = LV_COLOR_RED;
 		style_tabview_rel.body.border.width = 2;
 		style_tabview_rel.body.radius = 0;
-		style_tabview_rel.body.padding.hor = 5;
+		style_tabview_rel.body.padding.hor = 0;
 		style_tabview_rel.body.padding.ver = 15;
 		style_tabview_rel.body.border.opa = 255;
 		style_tabview_rel.body.shadow.width = 0;
 		style_tabview_rel.text = style_text_title.text;
+
 		// Tab 2 Auton Dropdown Style
-		lv_style_copy(&style_tabview_adm, &lv_style_pretty);
-		style_tabview_adm.body.grad_color = LV_COLOR_BLACK;
-		style_tabview_adm.body.main_color = LV_COLOR_BLACK;
-		style_tabview_adm.body.border.color = LV_COLOR_RED;
-		style_tabview_adm.body.border.width = 2;
-		style_tabview_adm.body.radius = 0;
-		style_tabview_adm.body.padding.hor = 5;
-		style_tabview_adm.body.padding.ver = 15;
-		style_tabview_adm.body.border.opa = 255;
-		style_tabview_adm.body.shadow.width = 0;
+		lv_style_copy(&style_ddm, &lv_style_pretty);
+		style_ddm.body.grad_color = LV_COLOR_BLACK;
+		style_ddm.body.main_color = LV_COLOR_BLACK;
+		style_ddm.body.border.color = LV_COLOR_RED;
+		style_ddm.body.border.width = 2;
+		style_ddm.body.radius = 0;
+		style_ddm.body.padding.hor = 5;
+		style_ddm.body.padding.ver = 5;
+		style_ddm.body.border.opa = 255;
+		style_ddm.body.shadow.width = 0;
+		style_ddm.text = style_text.text;
 
 	}
 
@@ -435,54 +483,81 @@ namespace ace::lvgl {
 		/* ------------------------------ Tab 1 - Home ------------------------------ */
 		menu_tab1 = lv_tabview_add_tab(menu_tabview, "Home");
 
+		// Main Container
 		menu_tab1_cont_main = lv_cont_create(menu_tab1, NULL);
 		lv_cont_set_fit(menu_tab1_cont_main, false, false);
-		lv_obj_set_size(menu_tab1_cont_main, 480, 200);
+		lv_obj_set_size(menu_tab1_cont_main, 480, 170);
 		lv_obj_set_style(menu_tab1_cont_main, &style_container_empty);
-		lv_cont_set_layout(menu_tab1_cont_main, LV_LAYOUT_ROW_M);
+		lv_cont_set_layout(menu_tab1_cont_main, LV_LAYOUT_ROW_T);
+		lv_obj_align(menu_tab1_cont_main, NULL, LV_ALIGN_IN_TOP_LEFT, 0, -5);
 
+		// Container on the Right
 		menu_tab1_cont1 = lv_cont_create(menu_tab1_cont_main, NULL);
 		lv_cont_set_fit(menu_tab1_cont1, false, false);
-		lv_obj_set_size(menu_tab1_cont1, 220, 180);
+		lv_obj_set_size(menu_tab1_cont1, 220, 165);
 		lv_obj_set_style(menu_tab1_cont1, &style_container_red);
 		lv_cont_set_layout(menu_tab1_cont1, LV_LAYOUT_COL_M);
 
+		// Container on the Left
 		menu_tab1_cont2 = lv_cont_create(menu_tab1_cont_main, NULL);
 		lv_cont_set_fit(menu_tab1_cont2, false, false);
-		lv_obj_set_size(menu_tab1_cont2, 220, 180);
+		lv_obj_set_size(menu_tab1_cont2, 220, 165);
 		lv_obj_set_style(menu_tab1_cont2, &style_container_red);
 		lv_cont_set_layout(menu_tab1_cont2, LV_LAYOUT_COL_M);
 
+		// Return home button 
 		menu_tab1_cont2_btn_main = lv_btn_create(menu_tab1_cont2, NULL);
+		lv_btn_set_action(menu_tab1_cont2_btn_main, LV_BTN_ACTION_PR, menu_btn_click);
+		lv_obj_set_size(menu_tab1_cont2_btn_main, 100, 60);
+		lv_btn_set_style(menu_tab1_cont2_btn_main, LV_BTN_STYLE_PR, &style_btn);
+		lv_btn_set_style(menu_tab1_cont2_btn_main, LV_BTN_STYLE_REL, &style_btn);
 
+		// Return home button label
 		menu_tab1_cont2_btn_main_label = lv_label_create(menu_tab1_cont2_btn_main, NULL);
-		lv_label_set_text(menu_tab1_cont2_btn_main_label, "Main");   
+		lv_label_set_text(menu_tab1_cont2_btn_main_label, "Main");
+		lv_obj_set_style(menu_tab1_cont2_btn_main_label, &style_text);
 
 		/* ------------------------------ Tab 2 - Auton ----------------------------- */
 		menu_tab2 = lv_tabview_add_tab(menu_tabview, "Auton");
-		menu_tab2_cont_main = lv_cont_create(menu_tab2, NULL);
-		lv_cont_set_fit(menu_tab2_cont_main, false, false);
-		lv_obj_set_style(menu_tab2_cont_main, &style_container_empty);
-		lv_cont_set_layout(menu_tab2_cont_main, LV_LAYOUT_ROW_M);
 
-		menu_tab2_cont1 = lv_cont_create(menu_tab2_cont_main, NULL);
-		lv_cont_set_fit(menu_tab2_cont1, false, false);
-		lv_obj_set_size(menu_tab2_cont1, 220, 180);
-		lv_obj_set_style(menu_tab2_cont1, &style_container_red);
-		menu_tab2_auton_drop = lv_ddlist_create(menu_tab2_cont1, NULL);
-		lv_ddlist_set_options(menu_tab2_auton_drop, "skills\n"
-		"one-side\n"
-		"two-side\n"
-		"three-side\n"
+		menu_tab2_cont_main = lv_cont_create(menu_tab2, menu_tab1_cont_main);
+		lv_obj_align(menu_tab2_cont_main, NULL, LV_ALIGN_IN_TOP_LEFT, 0, -5);
+
+		menu_tab2_cont1 = lv_cont_create(menu_tab2_cont_main, menu_tab1_cont1);
+		menu_tab2_cont2 = lv_cont_create(menu_tab2_cont_main, menu_tab1_cont2);
+
+		menu_tab2_auton_drop = lv_ddlist_create(menu_tab2_cont2, NULL);
+		lv_ddlist_set_options(menu_tab2_auton_drop, " skills\n"
+			" null\n"
+			" two-side\n"
+			" three-side"
 		);
-		lv_obj_align(menu_tab2_auton_drop,NULL,LV_ALIGN_IN_TOP_LEFT, 100, 100);
-		lv_obj_set_free_num(menu_tab2_auton_drop, 1);   
-		lv_obj_set_style(menu_tab2_auton_drop, &style_tabview_adm);
+		lv_ddlist_set_hor_fit(menu_tab2_auton_drop, false);
+		lv_obj_set_size(menu_tab2_auton_drop, 150, 40);
+		lv_obj_set_style(menu_tab2_auton_drop, &style_ddm);
+
+
 		/* ------------------------------ Tab 3 - Temp ------------------------------ */
 		menu_tab3 = lv_tabview_add_tab(menu_tabview, "Temp");
 
+		menu_tab3_cont_main = lv_cont_create(menu_tab3, menu_tab1_cont_main);
+		lv_obj_align(menu_tab3_cont_main, NULL, LV_ALIGN_IN_TOP_LEFT, 0, -5);
+
+		menu_tab3_cont1 = lv_cont_create(menu_tab3_cont_main, menu_tab1_cont1);
+		menu_tab3_cont2 = lv_cont_create(menu_tab3_cont_main, menu_tab1_cont2);
+
+		menu_tab3_cont1_labelTemp1 = lv_label_create(menu_tab3_cont1, NULL);
+		lv_obj_set_style(menu_tab3_cont1_labelTemp1, &style_text);
+
+		menu_tab3_cont2_labelTemp2 = lv_label_create(menu_tab3_cont2, NULL);
+		lv_obj_set_style(menu_tab3_cont2_labelTemp2, &style_text);
+
 		/* ------------------------------ Tab 4 - Ross ------------------------------ */
 		menu_tab4 = lv_tabview_add_tab(menu_tabview, "Ross");
+
+		menu_tab4_ross = lv_img_create(menu_tab4, NULL);
+		lv_obj_align(menu_tab4_ross, NULL, LV_ALIGN_CENTER, 0, 0);
+		lv_img_set_src(menu_tab4_ross, "S:/usd/ross_background.bin");
 	}
 
 
@@ -522,6 +597,12 @@ namespace ace::lvgl {
 	static lv_res_t main_btn_click(lv_obj_t* btn)
 	{
 		lv_scr_load(menu_screen);
+		return LV_RES_OK; /*Return OK if the button is not deleted*/
+	}
+
+	static lv_res_t menu_btn_click(lv_obj_t* btn)
+	{
+		lv_scr_load(main_screen);
 		return LV_RES_OK; /*Return OK if the button is not deleted*/
 	}
 

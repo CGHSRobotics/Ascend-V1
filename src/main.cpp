@@ -52,7 +52,6 @@ void autonomous() {}
 /* ========================================================================== */
 void opcontrol() {
 
-
 	while (true) {
 
 		/* ------------------------------ Chassis Drive ----------------------------- */
@@ -62,46 +61,83 @@ void opcontrol() {
 			((double)ace::master.get_analog(ANALOG_RIGHT_Y)) / 127.0
 		);
 
-		/* ------------------------------ User Control ------------------------------ */
+		/* -------------------------------- Get Input ------------------------------- */
 
-
-		if (ace::master.get_digital(DIGITAL_R1))
-			ace::launch(480, false);
-		else
-			ace::launch_standby(true, 300);
-
-
-		// Intake Toggle
-		if (ace::master.get_digital(DIGITAL_L1)) {
-			ace::intake_toggle();
+		// Intake Toggle 
+		if (ace::btn_intake_toggle.get_press_new()) {
+			ace::intake_enabled = !ace::intake_enabled;
 		}
 
 		// Intake Reverse
-		if (ace::master.get_digital(DIGITAL_L2)) {
-			ace::intake_reverse();
-		}
-
-
-		/*if (ace::btn_roller_forward.get_press_new()) {
-			ace::roller_forward(true);
+		if (ace::btn_intake_reverse.get_press()) {
+			ace::intake_enabled = false;
+			ace::intake_reverse_enabled = true;
 		}
 		else {
-			ace::roller_forward(false);
+			ace::intake_reverse_enabled = false;
 		}
 
-		if (ace::btn_roller_reverse.get_press_new()) {
-			ace::roller_reverse(true);
+		// Launcher Short
+		ace::launch_short_enabled = ace::btn_launch_short.get_press();
+
+		// Launcher Short
+		ace::launch_long_enabled = ace::btn_launch_long.get_press();
+
+		// Endgame Enabled
+		ace::endgame_enabled = ace::btn_endgame.get_press();
+
+		/* ------------------------------ User Control ------------------------------ */
+
+		for (int i = 0; i < 1; i++)
+		{
+
+			// Endgame
+			if (ace::endgame_enabled) {
+				ace::endgame_toggle(true);
+			}
+			else {
+				ace::endgame_toggle(false);
+			}
+
+			// Endgame
+			if (ace::launcher_standby_enabled) {
+				ace::launch_standby(true);
+			}
+			else {
+				ace::launch_standby(false, ace::);
+			}
+
+			// Launch Short
+			if (ace::launch_short_enabled)
+			{
+				ace::launch(ace::LAUNCH_SPEED_SHORT, false);
+				break;
+			}
+
+			// Launch Long
+			if (ace::launch_long_enabled)
+			{
+				ace::launch(ace::LAUNCH_SPEED_LONG, true);
+				break;
+			}
+
+			// Intake Toggle
+			if (ace::intake_enabled)
+			{
+				ace::intake_toggle();
+				break;
+			}
+
+			// Intake Reverse
+			if (ace::intake_reverse_enabled)
+			{
+				ace::intake_reverse();
+				break;
+			}
+
+
+
 		}
-		else {
-			ace::roller_reverse(false);
-		}
-		*/
-
-		/* --------------------------- Controller Drawing --------------------------- */
-
-		//ace::create_cntrlr_screen_txt((std::string)"auton", "Auton: " + std::to_string(666) + "   ", 1, 1, 2);
-		//ace::create_cntrlr_screen_txt("partner2", "Partner: " + ace::util::bool_to_str(ace::partner_connected) + "   ", 1, 1, 1);
-
 
 		/* ---------------------------------- Delay --------------------------------- */
 

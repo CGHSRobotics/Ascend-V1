@@ -1,7 +1,7 @@
 
 #include "../include/display/lvgl.h"
 
-#define USE_ACE_IBMPLEXMONO_40 1
+#define USE_ACE_IBMPLEXMONO_40 4
 
 #if USE_ACE_IBMPLEXMONO_40 != 0	/*Can be enabled in lv_conf.h*/
 

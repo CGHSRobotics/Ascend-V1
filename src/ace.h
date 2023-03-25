@@ -33,6 +33,30 @@ namespace ace::util {
 		else
 			return "false";
 	}
+
+	/* ------------------------------- Timer Class ------------------------------ */
+	class timer {
+		public:
+
+		float maxTime = 0;
+		float currTime = 0;
+
+		timer::timer(float maxTime) {
+			maxTime = maxTime;
+		}
+
+		void update(float updateTime) {
+			currTime += updateTime;
+		}
+
+		bool done() {
+			return currTime >= maxTime;
+		}
+
+		void reset() {
+			currTime = 0;
+		}
+	}
 }
 
 
@@ -74,6 +98,12 @@ namespace ace {
 
 	extern bool intake_reverse_enabled;
 
+	extern bool launch_short_enabled;
+
+	extern bool launch_long_enabled;
+
+	extern bool endgame_enabled;
+
 	const std::vector<std::string> auton_selection = { "One Side", "Two Side", "Three Side", "Skills" };
 
 	extern std::string selected_auton;
@@ -85,6 +115,12 @@ namespace ace {
 	const float roller_speed = 80.0;
 
 	const float intake_speed = 100.0;
+
+	const float LAUNCH_SPEED_SHORT = 80.0;
+
+	const float LAUNCH_SPEED_LONG = 100.0;
+
+	const float LAUNCH_SPEED_STANDBY = 50.0;
 
 	const float LAUNCHER_SPEED_CUTOFF = 10.0;
 
@@ -239,6 +275,7 @@ namespace ace {
 
 	extern Btn_Digi btn_intake_toggle;
 	extern Btn_Digi btn_intake_reverse;
+	extern Btn_Digi btn_endgame;
 
 	extern Btn_Digi btn_launch_short;
 	extern Btn_Digi btn_launch_long;
@@ -271,6 +308,7 @@ namespace ace {
 	extern void launch_standby(bool enabled, float speed);
 
 	/* --------------------------------- Endgame -------------------------------- */
+	static util::timer endgame_timer(200);
 	extern void endgame_toggle(bool enabled);
 
 	/* ------------------------------- Flap Toggle ------------------------------ */

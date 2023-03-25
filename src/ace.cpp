@@ -14,12 +14,16 @@ namespace ace {
 
 	bool partner_connected = false;
 
+	bool launch_short_enabled = false;
+	bool launch_long_enabled = false;
+	bool endgame_enabled = false;
+
 	// Controllers
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::Controller partner(pros::E_CONTROLLER_PARTNER);
 
 	// Motors
-	A_Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_06, false);
+	A_Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_18, false);
 	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
 
 	// Buttons
@@ -32,6 +36,7 @@ namespace ace {
 	Btn_Digi btn_roller_forward(pros::E_CONTROLLER_DIGITAL_A);
 	Btn_Digi btn_roller_reverse(pros::E_CONTROLLER_DIGITAL_B);
 
+	Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_DOWN);
 
 	// Array that holds past drawing operations for priority
 	std::vector<std::string> cntr_draw_priority_arr = {};
@@ -49,16 +54,12 @@ namespace ace {
 
 		if (launcherMotor.get_actual_velocity() < speed - (LAUNCHER_SPEED_CUTOFF / 100.0) * 600.0)
 		{
-
 			launcherMotor.move_velocity(600);
 			return;
-
 		}
 		else {
-
 			launcherMotor.move_velocity(speed);
 			intakeMotor.spin_percent(-100);
-
 		}
 
 	}
@@ -68,7 +69,7 @@ namespace ace {
 		intakeMotor.spin_percent(0);
 
 		if (enabled)
-			launcherMotor.move_velocity(speed);
+			launcherMotor.move_voltage(speed);
 		else
 			launcherMotor.move_voltage(0);
 	}
@@ -87,12 +88,19 @@ namespace ace {
 
 	void endgame_toggle(bool enabled) {
 		if (enabled) {
+			endgame_timer.reset();
 			endgamePneumatics.set_value(1);
-
+			return;
 		}
 		else {
-			endgamePneumatics.set_value(0);
+			if (endgame_timer.done())
+			{
+				endgamePneumatics.set_value(0);
+				return;
+			}
 
+			endgame_timer.update(20);
+			endgamePneumatics.set_value(1);
 		}
 	}
 
@@ -118,20 +126,9 @@ namespace ace {
 
 	void intake_toggle() {
 		intakeMotor.spin_percent(intake_speed);
-		/*if (intake_enabled) {
-			intake_enabled = false;
-			intakeMotor.spin_percent(intake_speed);
-		}
-		else {
-			intake_enabled = true;
-			intakeMotor.spin_percent(0);
-		}*/
 	}
 
 	void intake_reverse() {
-
-		intake_enabled = false;
-
 		intakeMotor.spin_percent(-intake_speed);
 	}
 
