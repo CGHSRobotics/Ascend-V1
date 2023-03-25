@@ -422,6 +422,7 @@ namespace ace::lvgl {
 
 		menu_tab1_cont_main = lv_cont_create(menu_tab1, NULL);
 		lv_cont_set_fit(menu_tab1_cont_main, false, false);
+		lv_obj_set_size(menu_tab1_cont_main, 480, 200);
 		lv_obj_set_style(menu_tab1_cont_main, &style_container_empty);
 		lv_cont_set_layout(menu_tab1_cont_main, LV_LAYOUT_ROW_M);
 
@@ -429,11 +430,13 @@ namespace ace::lvgl {
 		lv_cont_set_fit(menu_tab1_cont1, false, false);
 		lv_obj_set_size(menu_tab1_cont1, 220, 180);
 		lv_obj_set_style(menu_tab1_cont1, &style_container_red);
+		lv_cont_set_layout(menu_tab1_cont1, LV_LAYOUT_COL_M);
 
 		menu_tab1_cont2 = lv_cont_create(menu_tab1_cont_main, NULL);
 		lv_cont_set_fit(menu_tab1_cont2, false, false);
 		lv_obj_set_size(menu_tab1_cont2, 220, 180);
 		lv_obj_set_style(menu_tab1_cont2, &style_container_red);
+		lv_cont_set_layout(menu_tab1_cont2, LV_LAYOUT_COL_M);
 
 		menu_tab1_cont2_btn_main = lv_btn_create(menu_tab1_cont2, NULL);
 
