@@ -41,7 +41,7 @@ namespace ace::util {
 		float maxTime = 0;
 		float currTime = 0;
 
-		timer::timer(float maxTime) {
+		timer(float maxTime) {
 			maxTime = maxTime;
 		}
 
@@ -56,7 +56,7 @@ namespace ace::util {
 		void reset() {
 			currTime = 0;
 		}
-	}
+	};
 }
 
 
@@ -285,6 +285,8 @@ namespace ace {
 
 	extern Btn_Digi btn_auton_page_up;
 	extern Btn_Digi btn_auton_page_down;
+
+	extern Btn_Digi btn_standby;
 
 
 	/* ========================================================================== */

@@ -38,6 +38,7 @@ namespace ace {
 
 	Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_DOWN);
 
+	Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP);
 	// Array that holds past drawing operations for priority
 	std::vector<std::string> cntr_draw_priority_arr = {};
 
@@ -52,13 +53,13 @@ namespace ace {
 
 	void launch(float speed, bool isLong) {
 
-		if (launcherMotor.get_actual_velocity() < speed - (LAUNCHER_SPEED_CUTOFF / 100.0) * 600.0)
+		if (launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0)
 		{
 			launcherMotor.move_velocity(600);
 			return;
 		}
 		else {
-			launcherMotor.move_velocity(speed);
+			launcherMotor.move_velocity(speed * 600.0 / 100.0);
 			intakeMotor.spin_percent(-100);
 		}
 
@@ -69,7 +70,7 @@ namespace ace {
 		intakeMotor.spin_percent(0);
 
 		if (enabled)
-			launcherMotor.move_voltage(speed);
+			launcherMotor.move_voltage(12000 * (speed / 100.0));
 		else
 			launcherMotor.move_voltage(0);
 	}

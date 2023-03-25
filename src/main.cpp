@@ -86,6 +86,13 @@ void opcontrol() {
 		// Endgame Enabled
 		ace::endgame_enabled = ace::btn_endgame.get_press();
 
+		// Standby Enabled
+		if (ace::btn_standby.get_press_new())
+		{
+			ace::launcher_standby_enabled = ! ace::launcher_standby_enabled;
+		}
+
+
 		/* ------------------------------ User Control ------------------------------ */
 
 		for (int i = 0; i < 1; i++)
@@ -99,12 +106,12 @@ void opcontrol() {
 				ace::endgame_toggle(false);
 			}
 
-			// Endgame
+			// standby
 			if (ace::launcher_standby_enabled) {
-				ace::launch_standby(true);
+				ace::launch_standby(true, ace::LAUNCH_SPEED_STANDBY);
 			}
 			else {
-				ace::launch_standby(false, ace::);
+				ace::launch_standby(false, ace::LAUNCH_SPEED_STANDBY);
 			}
 
 			// Launch Short
