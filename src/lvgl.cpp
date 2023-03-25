@@ -35,7 +35,8 @@ namespace ace::lvgl {
 	static lv_style_t style_tabview_bg;
 	static lv_style_t style_tabview_indic;
 	static lv_style_t style_tabview_pr;
-	static lv_style_t style_tabview_rel;
+	static lv_style_t style_tabview_rel;	
+	static lv_style_t style_tabview_adm;
 
 	/* ----------------------------- Loading Screen ----------------------------- */
 	static lv_obj_t* load_screen;
@@ -79,6 +80,9 @@ namespace ace::lvgl {
 	static lv_obj_t* menu_tab1_cont2_btn_main_label;
 
 	static lv_obj_t* menu_tab2;
+	static lv_obj_t* menu_tab2_auton_drop;
+	static lv_obj_t* menu_tab2_cont_main;
+	static lv_obj_t* menu_tab2_cont1;
 
 	static lv_obj_t* menu_tab3;
 
@@ -264,6 +268,17 @@ namespace ace::lvgl {
 		style_tabview_rel.body.border.opa = 255;
 		style_tabview_rel.body.shadow.width = 0;
 		style_tabview_rel.text = style_text_title.text;
+		// Tab 2 Auton Dropdown Style
+		lv_style_copy(&style_tabview_adm, &lv_style_pretty);
+		style_tabview_adm.body.grad_color = LV_COLOR_BLACK;
+		style_tabview_adm.body.main_color = LV_COLOR_BLACK;
+		style_tabview_adm.body.border.color = LV_COLOR_RED;
+		style_tabview_adm.body.border.width = 2;
+		style_tabview_adm.body.radius = 0;
+		style_tabview_adm.body.padding.hor = 5;
+		style_tabview_adm.body.padding.ver = 15;
+		style_tabview_adm.body.border.opa = 255;
+		style_tabview_adm.body.shadow.width = 0;
 
 	}
 
@@ -441,11 +456,28 @@ namespace ace::lvgl {
 		menu_tab1_cont2_btn_main = lv_btn_create(menu_tab1_cont2, NULL);
 
 		menu_tab1_cont2_btn_main_label = lv_label_create(menu_tab1_cont2_btn_main, NULL);
-		lv_label_set_text(menu_tab1_cont2_btn_main_label, "Main");
+		lv_label_set_text(menu_tab1_cont2_btn_main_label, "Main");   
 
 		/* ------------------------------ Tab 2 - Auton ----------------------------- */
 		menu_tab2 = lv_tabview_add_tab(menu_tabview, "Auton");
+		menu_tab2_cont_main = lv_cont_create(menu_tab2, NULL);
+		lv_cont_set_fit(menu_tab2_cont_main, false, false);
+		lv_obj_set_style(menu_tab2_cont_main, &style_container_empty);
+		lv_cont_set_layout(menu_tab2_cont_main, LV_LAYOUT_ROW_M);
 
+		menu_tab2_cont1 = lv_cont_create(menu_tab2_cont_main, NULL);
+		lv_cont_set_fit(menu_tab2_cont1, false, false);
+		lv_obj_set_size(menu_tab2_cont1, 220, 180);
+		lv_obj_set_style(menu_tab2_cont1, &style_container_red);
+		menu_tab2_auton_drop = lv_ddlist_create(menu_tab2_cont1, NULL);
+		lv_ddlist_set_options(menu_tab2_auton_drop, "skills\n"
+		"one-side\n"
+		"two-side\n"
+		"three-side\n"
+		);
+		lv_obj_align(menu_tab2_auton_drop,NULL,LV_ALIGN_IN_TOP_LEFT, 100, 100);
+		lv_obj_set_free_num(menu_tab2_auton_drop, 1);   
+		lv_obj_set_style(menu_tab2_auton_drop, &style_tabview_adm);
 		/* ------------------------------ Tab 3 - Temp ------------------------------ */
 		menu_tab3 = lv_tabview_add_tab(menu_tabview, "Temp");
 
