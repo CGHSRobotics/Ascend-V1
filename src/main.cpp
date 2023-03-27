@@ -15,6 +15,10 @@
 /* ========================================================================== */
 void initialize() {
 
+	pros::ADILED led(2, 60);
+	led.set_all(0xff0000);
+	led.update();
+
 	// load lvgl loading screen
 	ace::lvgl::init_lvgl();
 
@@ -89,7 +93,7 @@ void opcontrol() {
 		// Standby Enabled
 		if (ace::btn_standby.get_press_new())
 		{
-			ace::launcher_standby_enabled = ! ace::launcher_standby_enabled;
+			ace::launcher_standby_enabled = !ace::launcher_standby_enabled;
 		}
 
 
