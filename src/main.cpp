@@ -15,9 +15,8 @@
 /* ========================================================================== */
 void initialize() {
 
-	pros::ADILED led(2, 60);
-	led.set_all(0xff0000);
-	led.update();
+	pros::ADILED led({ INTERNAL_ADI_PORT,'B' }, 60);
+	led.set_all(0xffffff);
 
 	// load lvgl loading screen
 	ace::lvgl::init_lvgl();
@@ -26,8 +25,6 @@ void initialize() {
 	lv_label_set_text(ace::lvgl::label_load_flap, "Init Flap       -  OK");
 
 	// clear screen on master controller
-	ace::master.clear();
-	pros::delay(110);
 	ace::master.set_text(0, 1, "Master");
 	lv_label_set_text(ace::lvgl::label_load_shenan, "Init Shenan     -  OK");
 
@@ -55,6 +52,8 @@ void autonomous() {}
 /*                                User Control                                */
 /* ========================================================================== */
 void opcontrol() {
+
+	int i = 0;
 
 	while (true) {
 
@@ -90,6 +89,12 @@ void opcontrol() {
 		// Endgame Enabled
 		ace::endgame_enabled = ace::btn_endgame.get_press();
 
+		// roller forward
+		ace::roller_forward_enabled = ace::btn_roller_forward.get_press();
+
+		// roller forward
+		ace::roller_reverse_enabled = ace::btn_roller_reverse.get_press();
+
 		// Standby Enabled
 		if (ace::btn_standby.get_press_new())
 		{
@@ -110,14 +115,6 @@ void opcontrol() {
 				ace::endgame_toggle(false);
 			}
 
-			// standby
-			if (ace::launcher_standby_enabled) {
-				ace::launch_standby(true, ace::LAUNCH_SPEED_STANDBY);
-			}
-			else {
-				ace::launch_standby(false, ace::LAUNCH_SPEED_STANDBY);
-			}
-
 			// Launch Short
 			if (ace::launch_short_enabled)
 			{
@@ -132,10 +129,17 @@ void opcontrol() {
 				break;
 			}
 
-			// Intake Toggle
-			if (ace::intake_enabled)
+			// roller forward
+			if (ace::roller_forward_enabled)
 			{
-				ace::intake_toggle();
+				ace::roller_forward();
+				break;
+			}
+
+			// roller reverse 
+			if (ace::roller_reverse_enabled)
+			{
+				ace::roller_reverse();
 				break;
 			}
 
@@ -146,9 +150,40 @@ void opcontrol() {
 				break;
 			}
 
+			// Intake Toggle
+			if (ace::intake_enabled)
+			{
+				ace::intake_toggle();
+				break;
+			}
+			else {
+				ace::intakeMotor.spin_percent(0);
+			}
 
+			// launcher standby
+			if (ace::launcher_standby_enabled) {
+				ace::launch_standby(true, ace::LAUNCH_SPEED_STANDBY);
+			}
+			else {
+				ace::launch_standby(false, ace::LAUNCH_SPEED_STANDBY);
+			}
 
 		}
+
+		/* ------------------------- Controller Screen Draw ------------------------- */
+
+		ace::update_cntr_text(ace::cntr_master, 0, "Master");
+		ace::update_cntr_text(ace::cntr_partner, 0, "Partner");
+
+		ace::update_cntr_text(ace::cntr_master, 1, "is partner? " + ace::util::bool_to_str(ace::partner.is_connected()));
+		//ace::update_cntr_text(ace::cntr_master, 1, std::to_string(i));
+
+
+		ace::update_cntr_text(ace::cntr_both, 2,
+			(std::string)"  " + "idle? " + ace::util::bool_to_str(ace::launcher_standby_enabled)
+			+ "    " + "flap? " + ace::util::bool_to_str(false)
+		);
+
 
 		/* ---------------------------------- Delay --------------------------------- */
 

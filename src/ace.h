@@ -29,9 +29,9 @@ namespace ace::util {
 	/* ----------------------------- Bool To String ----------------------------- */
 	static std::string bool_to_str(bool input) {
 		if (input)
-			return "true";
+			return "y";
 		else
-			return "false";
+			return "n";
 	}
 
 	/* ------------------------------- Timer Class ------------------------------ */
@@ -92,79 +92,75 @@ namespace ace {
 	/* ========================================================================== */
 
 	/* ------------------------------ Miscellaneous ----------------------------- */
-	extern bool launcher_standby_enabled;
 
-	extern bool intake_enabled;
+	// Controller type enum
+	enum cntr_t {
+		cntr_master = 1,
+		cntr_partner = 2,
+		cntr_both = 3
+	};
+	// bool whether
+	static bool partner_connected = false;
+	static std::vector<std::string> cntr_master_text_arr = { "", "", "", "" };
+	static std::vector<std::string> cntr_partner_text_arr = { "", "", "", "" };
 
-	extern bool intake_reverse_enabled;
+	static util::timer endgame_timer(200);
 
-	extern bool launch_short_enabled;
+	/* ----------------------- User Control Enabled Bools ----------------------- */
 
-	extern bool launch_long_enabled;
+	static bool launcher_standby_enabled = false;
+	static bool intake_enabled = false;
+	static bool intake_reverse_enabled = false;
+	static bool launch_short_enabled = false;
+	static bool launch_long_enabled = false;
+	static bool endgame_enabled = false;
+	static bool roller_forward_enabled = false;
+	static bool roller_reverse_enabled = false;
 
-	extern bool endgame_enabled;
+	/* ------------------------------- Autonomous ------------------------------- */
 
 	const std::vector<std::string> auton_selection = { "One Side", "Two Side", "Three Side", "Skills" };
-
 	extern std::string selected_auton;
-
 	extern float selected_auton_num;
-
 	extern float auton_selection_index;
+
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
-	const float roller_speed = 80.0;
 
-	const float intake_speed = 100.0;
+	const float ROLLER_SPEED = 100.0;
+	const float INTAKE_SPEED = 100.0;
 
-	const float LAUNCH_SPEED_SHORT = 80.0;
-
+	const float LAUNCH_SPEED_SHORT = 85.0;
 	const float LAUNCH_SPEED_LONG = 100.0;
-
-	const float LAUNCH_SPEED_STANDBY = 50.0;
-
+	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_SHORT;
 	const float LAUNCHER_SPEED_CUTOFF = 10.0;
 
 	/* --------------------------- Custom Motor Class --------------------------- */
 	class A_Motor: public pros::Motor {
 		public:
-
 		using Motor::Motor;
-
 		bool has_init = false;
 
-		void init() {
-			if (!has_init) {
-				has_init = true;
+		void init();
+		float get_temp();
+		void spin_percent(float percent);
+	};
 
-				set_encoder_units(MOTOR_ENCODER_DEGREES);
-			}
-		}
+	/* --------------------------- Custom Button Class -------------------------- */
+	class Btn_Digi {
+		public:
 
-		// get temp in farenheit
-		float get_temp() {
+		pros::controller_digital_e_t btn_master;
+		pros::controller_digital_e_t btn_partner;
+		cntr_t mode;
 
-			init();
-
-			return util::cel_to_faren(get_temperature());
-		}
-		void spin_percent(float percent) {
-
-			init();
-
-			if (get_gearing() == MOTOR_GEARSET_06) {
-				move_velocity(percent / 100.0f * 600.0f);
-			}
-			else if (get_gearing() == MOTOR_GEARSET_18) {
-				move_velocity(percent / 100.0f * 200.0f);
-			}
-			else if (get_gearing() == MOTOR_GEARSET_36) {
-				move_velocity(percent / 100.0f * 100.0f);
-			}
-			else {
-				printf("ERROR CARTRIDGE NOT FOUND");
-			}
-			move_velocity(percent / 100.0f * 600.0f);
-		}
+		// Constructor with one btn
+		Btn_Digi(pros::controller_digital_e_t btn_assign, bool is_master = true);
+		// Constructor with both keybinds
+		Btn_Digi(pros::controller_digital_e_t btn_master, pros::controller_digital_e_t btn_partner);
+		// get whether button pressed
+		bool get_press();
+		// get whether new button press
+		bool get_press_new();
 	};
 
 	/* ========================================================================== */
@@ -173,9 +169,7 @@ namespace ace {
 
 	/* --------------------------------- Chassis -------------------------------- */
 
-	// Wheel diameter
 	const okapi::QLength chassis_wheel_diameter = 3.25_in;
-
 	const okapi::QLength chassis_wheel_track = 11.5_in;
 
 	const std::shared_ptr<okapi::ChassisController> chassis =
@@ -190,24 +184,25 @@ namespace ace {
 
 	/* ------------------------- Other Motors / Devices ------------------------- */
 
-	// Controller
-	extern pros::Controller master;
+	// master controller
+	static pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-	extern pros::Controller partner;
+	// partner controller
+	static pros::Controller partner(pros::E_CONTROLLER_PARTNER);
 
 	// Launcher motor
-	extern A_Motor launcherMotor;
+	static A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
 
 	// Motor for intake, roller, and DTS
-	extern A_Motor intakeMotor;
-
+	static A_Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_18, false);
 
 	// Vision sensor
 	const pros::Vision visionSensor(PORT_VISION);
 
-	//
+	// IMU Sensor
 	const pros::IMU imuSensor(PORT_IMU);
 
+	// Endgame Pneumatics
 	const pros::ADIDigitalOut endgamePneumatics(1, false);
 
 
@@ -215,78 +210,29 @@ namespace ace {
 	/*                                   Buttons                                  */
 	/* ========================================================================== */
 
-	class Btn_Digi {
-		public:
-		// vars for btns
-		pros::controller_digital_e_t btn_master;
-		pros::controller_digital_e_t btn_partner;
-		// operating mode for btn. 0 == ur mum gay, 1 == master only, 2 == partner only, 3 == both but preferably partner
-		u_int8_t mode;
-		// Constructor with one btn
-		Btn_Digi(pros::controller_digital_e_t btn_assign, bool is_master = true) {
-			if (is_master) {
-				mode = 1;
-				btn_master = btn_assign;
-			}
-			else {
-				mode = 2;
-				btn_partner = btn_assign;
-			}
-		};
-		// Constructor with both keybinds
-		Btn_Digi(pros::controller_digital_e_t btn_master, pros::controller_digital_e_t btn_partner) {
-			btn_master = btn_master;
-			btn_partner = btn_partner;
-			mode = 3;
-		};
-		// get whether button pressed
-		bool get_press() {
-			if (mode == 3)
-				if (partner.is_connected())
-					return partner.get_digital(btn_partner);
-				else
-					return master.get_digital(btn_master);
-			else if (mode == 2)
-				if (partner.is_connected())
-					return partner.get_digital(btn_partner);
-				else
-					return false;
-			else if (mode == 1)
-				return master.get_digital(btn_master);
-			return false;
-		};
-		// get whether new button press
-		bool get_press_new() {
-			if (mode == 3)
-				if (partner.is_connected())
-					return partner.get_digital_new_press(btn_partner);
-				else
-					return master.get_digital_new_press(btn_master);
-			else if (mode == 2)
-				if (partner.is_connected())
-					return partner.get_digital_new_press(btn_partner);
-				else
-					return false;
-			else if (mode == 1)
-				return master.get_digital_new_press(btn_master);
-			return false;
-		};
-	};
+	// Custom Button for Intake Toggle
+	static Btn_Digi btn_intake_toggle(pros::E_CONTROLLER_DIGITAL_L1);
 
-	extern Btn_Digi btn_intake_toggle;
-	extern Btn_Digi btn_intake_reverse;
-	extern Btn_Digi btn_endgame;
+	// Custom Button for Intake Reverse
+	static Btn_Digi btn_intake_reverse(pros::E_CONTROLLER_DIGITAL_L2);
 
-	extern Btn_Digi btn_launch_short;
-	extern Btn_Digi btn_launch_long;
+	// Custom Button for Short Launch
+	static Btn_Digi btn_launch_short(pros::E_CONTROLLER_DIGITAL_R1);
 
-	extern Btn_Digi btn_roller_forward;
-	extern Btn_Digi btn_roller_reverse;
+	// Custom Button for Long Launch
+	static Btn_Digi btn_launch_long(pros::E_CONTROLLER_DIGITAL_R2);
 
-	extern Btn_Digi btn_auton_page_up;
-	extern Btn_Digi btn_auton_page_down;
+	// Custom Button for Roller Forward
+	static Btn_Digi btn_roller_forward(pros::E_CONTROLLER_DIGITAL_A);
 
-	extern Btn_Digi btn_standby;
+	// Custom Button for Roller Reverse
+	static Btn_Digi btn_roller_reverse(pros::E_CONTROLLER_DIGITAL_B);
+
+	// Custom Button for Endgame
+	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_DOWN);
+
+	// Custom Button for Standby
+	static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, pros::E_CONTROLLER_DIGITAL_UP);
 
 
 	/* ========================================================================== */
@@ -295,242 +241,93 @@ namespace ace {
 
 	/* --------------------------------- Standby -------------------------------- */
 
-	/* ------------------------- Intake Toggle Function ------------------------- */
+	/**
+	 * @brief 	runs intake forward
+	 *
+	 */
 	extern void intake_toggle();
 
-	/* ------------------------ Emergency Intake Reverse ------------------------ */
+	/**
+	 * @brief 	runs intake reverse
+	 *
+	 */
 	extern void intake_reverse();
 
-	/* --------------------------------- Roller --------------------------------- */
-	extern void roller_forward(bool enabled);
-	extern void roller_reverse(bool enabled);
+	extern void roller_forward();
+	extern void roller_reverse();
 
-	/* --------------------------------- Launch --------------------------------- */
+	/**
+	 * @brief	launch function, called once per frame
+	 *
+	 * @param speed		speed at which to launch disks
+	 * @param isLong	bool whether is long launch or not
+	 */
 	extern void launch(float speed, bool isLong);
+
+	/**
+	 * @brief	launch standby, sets speed / enabled once per frame
+	 *
+	 * @param enabled	bool whether enabled
+	 * @param speed		speed % on how fast standby is
+	 */
 	extern void launch_standby(bool enabled, float speed);
 
-	/* --------------------------------- Endgame -------------------------------- */
-	static util::timer endgame_timer(200);
+	/**
+	 * @brief	endgame toggle, minimum 200 msec timer on press
+	 *
+	 * @param enabled	bool whether enabled or not
+	 */
 	extern void endgame_toggle(bool enabled);
 
 	/* ------------------------------- Flap Toggle ------------------------------ */
 
-	/* --------------------------------- Motors --------------------------------- */
+	/**
+	 * @brief 	resets all motors to 0
+	 *
+	 */
 	extern void reset_motors();
-	/* ------------------------------- controller ------------------------------- */
+
+	/**
+	 * @brief 	pages up auton control int by one
+	 *
+	 */
 	extern void auton_page_up();
+
+	/**
+	 * @brief 	pages down auton control int by one
+	 *
+	 */
 	extern void auton_page_down();
 
 	/* ========================================================================== */
 	/*                           Controller Screen Task                           */
 	/* ========================================================================== */
 
-	extern bool partner_connected;
+	/**
+	 * @brief	updates controller text buffers at given row
+	 *
+	 * @param cntr	controller to display on, from cntr_t enum
+	 * @param row	row (0-2) at which to draw text
+	 * @param text	std::string text that wants to be drawn
+	 */
+	extern void update_cntr_text(cntr_t cntr, u_int8_t row, std::string text);
 
-	// Struct that holds info for drawing stuff to screen
-	// Default priority is 4; Max is 8
-	struct cntrlr_scr_txt {
-		u_int8_t priority;
+	/**
+	 * @brief	compiles controller string arrays into a single string separated by newline; mainly for internal use
+	 *
+	 * @param arr	array to compile
+	 * @return		string in stated format
+	 */
+	extern std::string cntr_compile_string(std::vector<std::string> arr);
 
-		u_int8_t mode;
+	/**
+	 * @brief	function that runs every 50ms and updates controller screen
+	 *
+	 */
+	extern void update_cntr_task();
 
-		std::string name;
-		std::string txt_to_display;
-
-		u_int8_t col;
-		u_int8_t row;
-	};
-
-	// Array that holds past drawing operations for priority
-	extern std::vector<std::string> cntr_draw_priority_arr;
-
-	// array of things to draw on controller scree
-	extern std::vector<cntrlr_scr_txt> cntr_to_draw_arr;
-
-	// adds controller txt to array
-	static void add_cntrlr_txt(cntrlr_scr_txt input) {
-
-		// add to priority arr if not already in it
-		bool has_name_already = false;
-		for (int i = 0; i < cntr_draw_priority_arr.size(); i++)
-		{
-			if (input.name == cntr_draw_priority_arr[i]) {
-				has_name_already = true;
-				//printf(cntr_draw_priority_arr[i].c_str());
-			}
-		}
-		if (!has_name_already) {
-			printf((input.name).c_str());
-			cntr_draw_priority_arr.insert(cntr_draw_priority_arr.begin(), input.name);
-		}
-
-		// clear array of old txt if they havent been drawn by the time the newest one comes around
-		for (int i = 0; i < cntr_to_draw_arr.size(); i++) {
-			cntrlr_scr_txt element = cntr_to_draw_arr[i];
-			if (element.name == input.name) {
-				cntr_to_draw_arr[i] = input;
-				return;
-			}
-		}
-
-		cntr_to_draw_arr.push_back(input);
-	};
-
-	// Function that creates struct from parameters
-	static void create_cntrlr_screen_txt(std::string name, std::string txt_to_display, u_int8_t mode, u_int8_t col, u_int8_t row, u_int8_t priority = 4) {
-
-		cntrlr_scr_txt output;
-
-		output.name = name;
-		output.txt_to_display = txt_to_display;
-		output.mode = mode;
-		output.col = col;
-		output.row = row;
-		output.priority = priority;
-
-		add_cntrlr_txt(output);
-	}
-
-	extern std::vector<cntrlr_scr_txt> cntrlr_next_to_draw;
-
-	// draw controller screen
-	static void pick_next_screen() {
-
-
-		if (partner.is_connected())
-		{
-			if (!partner_connected)
-			{
-				partner_connected = true;
-
-				cntrlr_scr_txt blank;
-				blank.txt_to_display = "";
-				blank.mode = 0;
-				blank.col = 1;
-				blank.row = 1;
-				blank.name = "name";
-
-				for (int i = 0; i <= 1000; i += 50)
-				{
-					cntrlr_next_to_draw.push_back(blank);
-				}
-
-				cntrlr_scr_txt clear;
-				clear.mode = 4;
-				cntrlr_next_to_draw.push_back(clear);
-
-				for (int i = 0; i <= 150; i += 50)
-				{
-					cntrlr_next_to_draw.push_back(blank);
-				}
-
-				cntrlr_scr_txt partner_txt;
-				partner_txt.txt_to_display = "Partner";
-				partner_txt.mode = 2;
-				partner_txt.col = 1;
-				partner_txt.row = 0;
-				partner_txt.name = "partner";
-
-				cntrlr_next_to_draw.push_back(partner_txt);
-
-				return;
-			}
-		}
-		else
-		{
-			if (partner_connected)
-			{
-				partner_connected = false;
-			}
-		}
-
-		// For priority starting at 8, decreasing
-		for (int p = 8; p >= 0; p--)
-		{
-			// Get last thing to be drawn
-			for (int i = 0; i < cntr_draw_priority_arr.size(); i++)
-			{
-				const std::string cur_priority = std::string(cntr_draw_priority_arr[i]);
-
-				for (int j = 0; j < cntr_to_draw_arr.size(); j++)
-				{
-					cntrlr_scr_txt element = cntrlr_scr_txt(cntr_to_draw_arr[j]);
-					if (element.priority == p)
-					{
-						if (element.name == cur_priority)
-						{
-							if (element.mode == 1)
-							{
-								cntrlr_next_to_draw.push_back(cntrlr_scr_txt(element));
-							}
-							else if (element.mode == 2)
-							{
-								cntrlr_next_to_draw.push_back(cntrlr_scr_txt(element));
-							}
-							else if (element.mode == 3)
-							{
-								element.mode = 1;
-								cntrlr_next_to_draw.push_back(cntrlr_scr_txt(element));
-								element.mode = 2;
-								cntrlr_next_to_draw.push_back(cntrlr_scr_txt(element));
-							}
-
-							// delete draw request from array
-							cntr_to_draw_arr.erase(std::next(cntr_to_draw_arr.begin(), j));
-
-							// move name to back of priority list
-							cntr_draw_priority_arr.erase(std::next(cntr_draw_priority_arr.begin(), i));
-							cntr_draw_priority_arr.push_back(cur_priority);
-
-							return;
-						}
-					}
-				}
-			}
-		}
-	};
-
-	static void draw_controller_screen() {
-
-		while (1)
-		{
-			if (cntrlr_next_to_draw.size() < 1) {
-				pick_next_screen();
-			}
-
-			if (cntrlr_next_to_draw.size() > 0) {
-
-				cntrlr_scr_txt element = cntrlr_next_to_draw[0];
-
-				if (element.mode == 1)
-				{
-					master.set_text(element.row, element.col, element.txt_to_display);
-					cntrlr_next_to_draw.erase(std::next(cntrlr_next_to_draw.begin(), 0));
-				}
-				else if (element.mode == 2)
-				{
-					partner.set_text(element.row, element.col, element.txt_to_display);
-					cntrlr_next_to_draw.erase(std::next(cntrlr_next_to_draw.begin(), 0));
-				}
-				else if (element.mode == 4)
-				{
-					partner.clear();
-					cntrlr_next_to_draw.erase(std::next(cntrlr_next_to_draw.begin(), 0));
-				}
-				else if (element.mode == 0)
-				{
-					cntrlr_next_to_draw.erase(std::next(cntrlr_next_to_draw.begin(), 0));
-				}
-			}
-
-			pros::delay(50);
-		}
-	}
-
-	// pros task for function
-	const pros::Task cntr_screen_task(draw_controller_screen, "draw_cntr_screen");
-
-
+	// Actual pros::Task for controller update screen function
+	static pros::Task __task_update_cntr_task(update_cntr_task, "cntr_update");
 }
 
 

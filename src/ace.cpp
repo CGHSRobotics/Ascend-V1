@@ -4,48 +4,124 @@
 namespace ace {
 
 	/* ========================================================================== */
-	/*                        Global Variables Definitions                        */
+	/*                              Class Definitions                             */
 	/* ========================================================================== */
 
-	// Variables
-	bool launcher_standby_enabled = false;
-	bool intake_enabled = false;
-	bool intake_reverse_enabled = false;
+	/* --------------------------- Custom Motor Class --------------------------- */
+	void A_Motor::init() {
+		if (!has_init) {
+			has_init = true;
 
-	bool partner_connected = false;
+			set_encoder_units(MOTOR_ENCODER_DEGREES);
+		}
+	}
+	float A_Motor::get_temp() {
 
-	bool launch_short_enabled = false;
-	bool launch_long_enabled = false;
-	bool endgame_enabled = false;
+		init();
 
-	// Controllers
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Controller partner(pros::E_CONTROLLER_PARTNER);
+		return util::cel_to_faren(get_temperature());
+	}
+	void A_Motor::spin_percent(float percent) {
 
-	// Motors
-	A_Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_18, false);
-	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
+		init();
 
-	// Buttons
-	Btn_Digi btn_intake_toggle(pros::E_CONTROLLER_DIGITAL_L1);
-	Btn_Digi btn_intake_reverse(pros::E_CONTROLLER_DIGITAL_L2);
+		if (get_gearing() == MOTOR_GEARSET_06) {
+			move_velocity(percent / 100.0f * 600.0f);
+		}
+		else if (get_gearing() == MOTOR_GEARSET_18) {
+			move_velocity(percent / 100.0f * 200.0f);
+		}
+		else if (get_gearing() == MOTOR_GEARSET_36) {
+			move_velocity(percent / 100.0f * 100.0f);
+		}
+		else {
+			printf("ERROR CARTRIDGE NOT FOUND");
+		}
+		move_velocity(percent / 100.0f * 600.0f);
+	}
 
-	Btn_Digi btn_launch_short(pros::E_CONTROLLER_DIGITAL_R1);
-	Btn_Digi btn_launch_long(pros::E_CONTROLLER_DIGITAL_R2);
+	/* --------------------------- Custom Button Class -------------------------- */
 
-	Btn_Digi btn_roller_forward(pros::E_CONTROLLER_DIGITAL_A);
-	Btn_Digi btn_roller_reverse(pros::E_CONTROLLER_DIGITAL_B);
+	// Constructor with one btn
+	Btn_Digi::Btn_Digi(pros::controller_digital_e_t btn_assign, bool is_master) {
+		if (is_master) {
+			mode = cntr_master;
+			btn_master = btn_assign;
+		}
+		else {
+			mode = cntr_partner;
+			btn_partner = btn_assign;
+		}
+	};
+	// Constructor with both keybinds
+	Btn_Digi::Btn_Digi(pros::controller_digital_e_t btn_master, pros::controller_digital_e_t btn_partner) {
+		btn_master = btn_master;
+		btn_partner = btn_partner;
+		mode = cntr_both;
+	};
+	// get whether button pressed
+	bool Btn_Digi::get_press() {
 
-	Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_DOWN);
+		if (mode == cntr_both) {
 
-	Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP);
-	// Array that holds past drawing operations for priority
-	std::vector<std::string> cntr_draw_priority_arr = {};
+			if (partner_connected)
+			{
+				return partner.get_digital(btn_partner);
+			}
+			else
+			{
+				return master.get_digital(btn_master);
+			}
+		}
+		else if (mode == cntr_partner)
+		{
+			if (partner_connected)
+			{
+				return partner.get_digital(btn_partner);
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else if (mode == cntr_master)
+		{
+			return master.get_digital(btn_master);
+		}
+		return false;
+	};
+	// get whether new button press
+	bool Btn_Digi::get_press_new() {
 
-	// array of things to draw on controller scree
-	std::vector<cntrlr_scr_txt> cntr_to_draw_arr = {};
+		if (mode == cntr_both)
+		{
+			if (partner.is_connected() == 1)
+			{
+				return partner.get_digital_new_press(btn_partner);
+			}
+			else
+			{
+				return master.get_digital_new_press(btn_master);
+			}
+		}
+		else if (mode == cntr_partner)
+		{
+			if (partner_connected)
+			{
+				return partner.get_digital_new_press(btn_partner);
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else if (mode == cntr_master)
+		{
+			return master.get_digital_new_press(btn_master);
+		}
+		return false;
+	};
 
-	std::vector<cntrlr_scr_txt> cntrlr_next_to_draw = {};
 
 	/* -------------------------------------------------------------------------- */
 	/*                             User Control Stuffs                            */
@@ -67,15 +143,11 @@ namespace ace {
 
 	void launch_standby(bool enabled, float speed) {
 
-		intakeMotor.spin_percent(0);
-
 		if (enabled)
 			launcherMotor.move_voltage(12000 * (speed / 100.0));
 		else
 			launcherMotor.move_voltage(0);
 	}
-
-
 
 	void reset_motors() {
 		launcherMotor.move_voltage(0);
@@ -85,7 +157,6 @@ namespace ace {
 
 		endgamePneumatics.set_value(false);
 	}
-
 
 	void endgame_toggle(bool enabled) {
 		if (enabled) {
@@ -105,37 +176,98 @@ namespace ace {
 		}
 	}
 
-	void roller_forward(bool enabled) {
-		if (enabled) {
-			intakeMotor.spin_percent(roller_speed);
-		}
-		else {
-			intakeMotor.spin_percent(0);
-		}
+	void roller_forward() {
+		intakeMotor.spin_percent(ROLLER_SPEED);
 	}
 
-	void roller_reverse(bool enabled) {
-		if (enabled) {
-			intakeMotor.spin_percent(-roller_speed);
-		}
-		else {
-			intakeMotor.spin_percent(0);
-
-
-		}
+	void roller_reverse() {
+		intakeMotor.spin_percent(-ROLLER_SPEED);
 	}
 
 	void intake_toggle() {
-		intakeMotor.spin_percent(intake_speed);
+		intakeMotor.spin_percent(INTAKE_SPEED);
 	}
 
 	void intake_reverse() {
-		intakeMotor.spin_percent(-intake_speed);
+		intakeMotor.spin_percent(-INTAKE_SPEED);
 	}
 
 	/* -------------------------------------------------------------------------- */
 	/*                              Controller Stuffs                             */
 	/* -------------------------------------------------------------------------- */
+
+	void update_cntr_task() {
+
+		bool draw_master = false;
+		int curr_line = 0;
+		int new_connection_counter = 0;
+
+		//master.clear();
+
+		while (1)
+		{
+
+			/* ------------------------------ Update Screen ----------------------------- */
+			if (!draw_master)
+			{
+				partner.set_text(curr_line, 0, cntr_partner_text_arr[curr_line]);
+			}
+			else {
+				master.set_text(curr_line, 0, cntr_master_text_arr[curr_line]);
+			}
+
+			curr_line++;
+			if (curr_line >= 3)
+			{
+				curr_line = 0;
+				draw_master = !draw_master;
+			}
+
+
+			pros::delay(50);
+		}
+	}
+
+
+	std::string cntr_compile_string(std::vector<std::string> arr) {
+
+		std::string result = "";
+		for (int i = 0; i <= 3; i++)
+		{
+			result += arr[i];
+			if (i < 3)
+			{
+				result += "\n";
+			}
+		}
+		return result;
+	}
+
+
+	void update_cntr_text(cntr_t cntr, u_int8_t row, std::string text) {
+
+		text = text + "      ";
+
+		// both controllers
+		if (cntr == cntr_both)
+		{
+			cntr_partner_text_arr[row] = text;
+			cntr_master_text_arr[row] = text;
+		}
+
+		//  master controller
+		else if (cntr == cntr_master)
+		{
+			cntr_master_text_arr[row] = text;
+		}
+
+		//  partner controller
+		else if (cntr == cntr_partner)
+		{
+			cntr_partner_text_arr[row] = text;
+		}
+	}
+
 
 	void auton_page_up() {
 
