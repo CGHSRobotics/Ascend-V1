@@ -139,10 +139,13 @@ namespace ace {
 		public:
 		using Motor::Motor;
 		bool has_init = false;
+		std::vector<float> rpm_history;
 
 		void init();
 		float get_temp();
 		void spin_percent(float percent);
+		void append_history();
+		void clear_history();
 	};
 
 	/* --------------------------- Custom Button Class -------------------------- */
@@ -154,9 +157,7 @@ namespace ace {
 		cntr_t mode;
 
 		// Constructor with one btn
-		Btn_Digi(pros::controller_digital_e_t btn_assign, bool is_master = true);
-		// Constructor with both keybinds
-		Btn_Digi(pros::controller_digital_e_t btn_master, pros::controller_digital_e_t btn_partner);
+		Btn_Digi(pros::controller_digital_e_t btn_assign, cntr_t is_master);
 		// get whether button pressed
 		bool get_press();
 		// get whether new button press
@@ -211,28 +212,28 @@ namespace ace {
 	/* ========================================================================== */
 
 	// Custom Button for Intake Toggle
-	static Btn_Digi btn_intake_toggle(pros::E_CONTROLLER_DIGITAL_L1);
+	static Btn_Digi btn_intake_toggle(pros::E_CONTROLLER_DIGITAL_L1, cntr_master);
 
 	// Custom Button for Intake Reverse
-	static Btn_Digi btn_intake_reverse(pros::E_CONTROLLER_DIGITAL_L2);
+	static Btn_Digi btn_intake_reverse(pros::E_CONTROLLER_DIGITAL_L2, cntr_master);
 
 	// Custom Button for Short Launch
-	static Btn_Digi btn_launch_short(pros::E_CONTROLLER_DIGITAL_R1);
+	static Btn_Digi btn_launch_short(pros::E_CONTROLLER_DIGITAL_R1, cntr_master);
 
 	// Custom Button for Long Launch
-	static Btn_Digi btn_launch_long(pros::E_CONTROLLER_DIGITAL_R2);
+	static Btn_Digi btn_launch_long(pros::E_CONTROLLER_DIGITAL_R2, cntr_master);
 
 	// Custom Button for Roller Forward
-	static Btn_Digi btn_roller_forward(pros::E_CONTROLLER_DIGITAL_A);
+	static Btn_Digi btn_roller_forward(pros::E_CONTROLLER_DIGITAL_A, cntr_master);
 
 	// Custom Button for Roller Reverse
-	static Btn_Digi btn_roller_reverse(pros::E_CONTROLLER_DIGITAL_B);
+	static Btn_Digi btn_roller_reverse(pros::E_CONTROLLER_DIGITAL_B, cntr_master);
 
 	// Custom Button for Endgame
-	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_DOWN);
+	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_master);
 
 	// Custom Button for Standby
-	static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, pros::E_CONTROLLER_DIGITAL_UP);
+	static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, cntr_both);
 
 
 	/* ========================================================================== */

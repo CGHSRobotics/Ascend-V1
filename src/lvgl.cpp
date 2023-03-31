@@ -95,6 +95,8 @@ namespace ace::lvgl {
 
 	static lv_obj_t* menu_tab4;
 	static lv_obj_t* menu_tab4_ross;
+	static lv_obj_t* menu_tab4_ddlist;
+	static lv_obj_t* menu_tab4_chart;
 
 	/* -------------------------- Function Declarations ------------------------- */
 	static void brain_screen_update();
@@ -175,6 +177,17 @@ namespace ace::lvgl {
 					((std::string)"Intake: " + std::to_string(ace::intakeMotor.get_temp())).c_str()
 
 				);
+
+				// Check launcher History
+				if (lv_tabview_get_tab_act(menu_tabview) == 3)
+				{
+					if (/* condition */)
+					{
+						/* code */
+					}
+
+				}
+
 			}
 			pros::delay(100);
 		}
@@ -482,6 +495,7 @@ namespace ace::lvgl {
 
 		/* ------------------------------ Tab 1 - Home ------------------------------ */
 		menu_tab1 = lv_tabview_add_tab(menu_tabview, "Home");
+		lv_page_set_sb_mode(menu_tab1, LV_SB_MODE_OFF);
 
 		// Main Container
 		menu_tab1_cont_main = lv_cont_create(menu_tab1, NULL);
@@ -519,6 +533,7 @@ namespace ace::lvgl {
 
 		/* ------------------------------ Tab 2 - Auton ----------------------------- */
 		menu_tab2 = lv_tabview_add_tab(menu_tabview, "Auton");
+		lv_page_set_sb_mode(menu_tab2, LV_SB_MODE_OFF);
 
 		menu_tab2_cont_main = lv_cont_create(menu_tab2, menu_tab1_cont_main);
 		lv_obj_align(menu_tab2_cont_main, NULL, LV_ALIGN_IN_TOP_LEFT, 0, -5);
@@ -539,6 +554,7 @@ namespace ace::lvgl {
 
 		/* ------------------------------ Tab 3 - Temp ------------------------------ */
 		menu_tab3 = lv_tabview_add_tab(menu_tabview, "Temp");
+		lv_page_set_sb_mode(menu_tab3, LV_SB_MODE_OFF);
 
 		menu_tab3_cont_main = lv_cont_create(menu_tab3, menu_tab1_cont_main);
 		lv_obj_align(menu_tab3_cont_main, NULL, LV_ALIGN_IN_TOP_LEFT, 0, -5);
@@ -554,10 +570,20 @@ namespace ace::lvgl {
 
 		/* ------------------------------ Tab 4 - Ross ------------------------------ */
 		menu_tab4 = lv_tabview_add_tab(menu_tabview, "Ross");
+		lv_page_set_sb_mode(menu_tab4, LV_SB_MODE_OFF);
 
 		menu_tab4_ross = lv_img_create(menu_tab4, NULL);
 		lv_obj_align(menu_tab4_ross, NULL, LV_ALIGN_CENTER, 0, 0);
 		lv_img_set_src(menu_tab4_ross, "S:/usd/ross_background.bin");
+
+		menu_tab4_ddlist = lv_ddlist_create(menu_tab4, menu_tab2_auton_drop);
+		lv_ddlist_set_options(menu_tab4_ddlist, "ROSS\nLauncher\nIntake");
+		lv_obj_align(menu_tab4_ddlist, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 10);
+
+		menu_tab4_chart = lv_chart_create(menu_tab4, NULL);
+		lv_obj_set_hidden(menu_tab4_chart, true);
+
+
 	}
 
 

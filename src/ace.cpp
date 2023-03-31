@@ -39,25 +39,22 @@ namespace ace {
 		}
 		move_velocity(percent / 100.0f * 600.0f);
 	}
+	void A_Motor::append_history() {
+		rpm_history.push_back(get_actual_velocity());
+	}
+	void A_Motor::clear_history() {
+		rpm_history = {};
+	}
 
 	/* --------------------------- Custom Button Class -------------------------- */
 
 	// Constructor with one btn
-	Btn_Digi::Btn_Digi(pros::controller_digital_e_t btn_assign, bool is_master) {
-		if (is_master) {
-			mode = cntr_master;
-			btn_master = btn_assign;
-		}
-		else {
-			mode = cntr_partner;
-			btn_partner = btn_assign;
-		}
-	};
-	// Constructor with both keybinds
-	Btn_Digi::Btn_Digi(pros::controller_digital_e_t btn_master, pros::controller_digital_e_t btn_partner) {
-		btn_master = btn_master;
-		btn_partner = btn_partner;
-		mode = cntr_both;
+	Btn_Digi::Btn_Digi(pros::controller_digital_e_t btn_assign, cntr_t is_master) {
+
+		mode = is_master;
+		btn_master = btn_assign;
+		btn_partner = btn_assign;
+
 	};
 	// get whether button pressed
 	bool Btn_Digi::get_press() {
@@ -95,7 +92,7 @@ namespace ace {
 
 		if (mode == cntr_both)
 		{
-			if (partner.is_connected() == 1)
+			if (partner_connected)
 			{
 				return partner.get_digital_new_press(btn_partner);
 			}
