@@ -623,7 +623,14 @@ namespace ace::lvgl {
 		lv_obj_set_style(menu_tab2_auton_drop, &style_ddm);
 		lv_ddlist_set_anim_time(menu_tab2_auton_drop, 0);
 
-
+		std:string ddlist_auton_str = "";
+		for (int i = 0; i < auton_selection.size(); i++) {
+			ddlist_auton_str += auton_selection[i];
+			if (i < auton_selection.size() -1) {
+				ddlist_auton_str += "\n";
+			}
+		}
+		lv_ddlist_set_options(menu_tab2_auton_drop, ddlist_auton_str.c_str());
 		/* ------------------------------ Tab 3 - Temp ------------------------------ */
 		menu_tab3 = lv_tabview_add_tab(menu_tabview, "Temp");
 		lv_page_set_sb_mode(menu_tab3, LV_SB_MODE_OFF);

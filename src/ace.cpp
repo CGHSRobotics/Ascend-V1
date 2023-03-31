@@ -297,11 +297,18 @@ namespace ace {
 
 
 	void auton_page_up() {
-
+		auton_selection_index += 1;
+		if (auton_selection_index > auton_selection.size()-1) {
+			auton_selection_index = 0;
+		}
 
 
 	}
 	void auton_page_down() {
+		auton_selection_index -= 1;
+		if (auton_selection_index < 0) {}
+			auton_selection_index = auton_selection.size()-1;
+		}
 
 
 	}
@@ -331,7 +338,7 @@ namespace ace {
 
 
 
-}
+
 
 
 

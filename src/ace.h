@@ -122,7 +122,7 @@ namespace ace {
 	const std::vector<std::string> auton_selection = { "One Side", "Two Side", "Three Side", "Skills" };
 	extern std::string selected_auton;
 	extern float selected_auton_num;
-	extern float auton_selection_index;
+	extern int auton_selection_index;
 
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
 

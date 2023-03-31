@@ -46,7 +46,18 @@ void competition_initialize() {}
 /* ========================================================================== */
 /*                                 Autonomous                                 */
 /* ========================================================================== */
-void autonomous() {}
+void autonomous() {
+
+	std::string curr_auton = ace::auton_selection[ace::auton_selection_index];
+
+	if (curr_auton = "two_side") {
+		// ace::auton:two_side();
+	}
+	else if (curr_auton == "three_side") {
+		// Ace::auton::three-side();
+
+
+}
 
 /* ========================================================================== */
 /*                                User Control                                */
