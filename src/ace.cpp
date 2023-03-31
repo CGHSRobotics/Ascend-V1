@@ -122,14 +122,7 @@ namespace ace {
 
 		if (mode == cntr_both)
 		{
-			if (partner_connected)
-			{
-				return partner.get_digital_new_press(btn_partner);
-			}
-			else
-			{
-				return master.get_digital_new_press(btn_master);
-			}
+			return master.get_digital_new_press(btn_master) || partner.get_digital_new_press(btn_partner);
 		}
 		else if (mode == cntr_partner)
 		{
@@ -244,7 +237,7 @@ namespace ace {
 			}
 
 			curr_line++;
-			if (curr_line >= 3)
+			if (curr_line > 2)
 			{
 				curr_line = 0;
 				draw_master = !draw_master;
@@ -294,24 +287,7 @@ namespace ace {
 			cntr_partner_text_arr[row] = text;
 		}
 	}
-
-
-	void auton_page_up() {
-		auton_selection_index += 1;
-		if (auton_selection_index > auton_selection.size()-1) {
-			auton_selection_index = 0;
-		}
-
-
-	}
-	void auton_page_down() {
-		auton_selection_index -= 1;
-		if (auton_selection_index < 0) {}
-			auton_selection_index = auton_selection.size()-1;
-		}
-
-
-	}
+}
 
 
 

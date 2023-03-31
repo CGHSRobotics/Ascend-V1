@@ -48,13 +48,14 @@ void competition_initialize() {}
 /* ========================================================================== */
 void autonomous() {
 
-	std::string curr_auton = ace::auton_selection[ace::auton_selection_index];
+	std::string curr_auton = ace::auton::auton_selection[ace::auton::auton_selection_index];
 
-	if (curr_auton = "two_side") {
-		// ace::auton:two_side();
+	if (curr_auton == "two_side") {
+		ace::auton::two_side();
 	}
 	else if (curr_auton == "three_side") {
-		// Ace::auton::three-side();
+		ace::auton::three_side();
+	}
 
 
 }
@@ -112,6 +113,11 @@ void opcontrol() {
 			ace::launcher_standby_enabled = !ace::launcher_standby_enabled;
 		}
 
+		//Auton Page Up
+		if (ace::btn_auton.get_press_new())
+		{
+			ace::auton::auton_page_up();
+		}
 
 		/* ------------------------------ User Control ------------------------------ */
 
@@ -119,7 +125,8 @@ void opcontrol() {
 		{
 
 			// Endgame
-			if (ace::endgame_enabled) {
+			if (ace::endgame_enabled)
+			{
 				ace::endgame_toggle(true);
 			}
 			else {
@@ -186,14 +193,12 @@ void opcontrol() {
 		ace::update_cntr_text(ace::cntr_master, 0, "Master");
 		ace::update_cntr_text(ace::cntr_partner, 0, "Partner");
 
-		ace::update_cntr_text(ace::cntr_master, 1, "is partner? " + ace::util::bool_to_str(ace::partner.is_connected()));
-		//ace::update_cntr_text(ace::cntr_master, 1, std::to_string(i));
-
-
+		ace::update_cntr_text(ace::cntr_both, 1, " " + ace::auton::auton_selection[ace::auton::auton_selection_index]);
 		ace::update_cntr_text(ace::cntr_both, 2,
 			(std::string)"  " + "idle? " + ace::util::bool_to_str(ace::launcher_standby_enabled)
 			+ "    " + "flap? " + ace::util::bool_to_str(false)
 		);
+		printf((ace::auton::auton_selection[ace::auton::auton_selection_index] + "\n").c_str());
 
 
 		/* ---------------------------------- Delay --------------------------------- */

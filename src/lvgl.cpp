@@ -166,6 +166,9 @@ namespace ace::lvgl {
 		{
 			if (has_init) {
 
+				// Update ddlist with auton stuff
+				lv_ddlist_set_selected(menu_tab2_auton_drop, ace::auton::auton_selection_index);
+
 				//Launcher Slider
 				int launch_rpm = ace::launcherMotor.get_actual_velocity() * 6;
 				lv_bar_set_value(main_bar, launch_rpm);
@@ -174,14 +177,22 @@ namespace ace::lvgl {
 
 				// Set temp Text
 				lv_label_set_text(menu_tab3_cont1_labelTemp1,
-
-					((std::string)"Launcher: " + std::to_string(ace::launcherMotor.get_temp())).c_str()
-
+					(
+						(std::string)"Launcher: " + std::to_string(ace::launcherMotor.get_temp()) + "\n\n" +
+						//"Chassis L F: " + std::to_string(ace::chassis_motor_l_f.get_temp()) + "\n" +
+						//"Chassis L C: " + std::to_string(ace::chassis_motor_l_c.get_temp()) + "\n" +
+						//"Chassis L B: " + std::to_string(ace::chassis_motor_l_b.get_temp()) +
+						" "
+						).c_str()
 				);
 				lv_label_set_text(menu_tab3_cont2_labelTemp2,
-
-					((std::string)"Intake: " + std::to_string(ace::intakeMotor.get_temp())).c_str()
-
+					(
+						(std::string)"Intake: " + std::to_string(ace::intakeMotor.get_temp()) + "\n\n" +
+						//"Chassis L F: " + std::to_string(ace::chassis_motor_l_f.get_temp()) + "\n" +
+						//"Chassis L C: " + std::to_string(ace::chassis_motor_l_c.get_temp()) + "\n" +
+						//"Chassis L B: " + std::to_string(ace::chassis_motor_l_b.get_temp()) +
+						" "
+						).c_str()
 				);
 
 				// Check launcher History
@@ -623,10 +634,10 @@ namespace ace::lvgl {
 		lv_obj_set_style(menu_tab2_auton_drop, &style_ddm);
 		lv_ddlist_set_anim_time(menu_tab2_auton_drop, 0);
 
-		std:string ddlist_auton_str = "";
-		for (int i = 0; i < auton_selection.size(); i++) {
-			ddlist_auton_str += auton_selection[i];
-			if (i < auton_selection.size() -1) {
+	std:string ddlist_auton_str = "";
+		for (int i = 0; i < ace::auton::auton_selection.size(); i++) {
+			ddlist_auton_str += ace::auton::auton_selection[i];
+			if (i < ace::auton::auton_selection.size() - 1) {
 				ddlist_auton_str += "\n";
 			}
 		}
@@ -718,6 +729,20 @@ namespace ace::lvgl {
 	{
 		lv_scr_load(main_screen);
 		return LV_RES_OK; /*Return OK if the button is not deleted*/
+	}
+
+	static lv_res_t menu_auton_ddlist_action(lv_obj_t* ddlist)
+	{
+		char sel_str[32];
+		lv_ddlist_get_selected_str(ddlist, sel_str);
+
+		for (int i = 0; i < ace::auton::auton_selection.size(); i++) {
+			if (sel_str == ace::auton::auton_selection[i]) {
+				ace::auton::auton_selection_index = i;
+			}
+		}
+
+		return LV_RES_OK; /*Return OK if the drop down list is not deleted*/
 	}
 
 	/* ========================================================================== */

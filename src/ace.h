@@ -117,12 +117,8 @@ namespace ace {
 	static bool roller_forward_enabled = false;
 	static bool roller_reverse_enabled = false;
 
-	/* ------------------------------- Autonomous ------------------------------- */
 
-	const std::vector<std::string> auton_selection = { "One Side", "Two Side", "Three Side", "Skills" };
-	extern std::string selected_auton;
-	extern float selected_auton_num;
-	extern int auton_selection_index;
+
 
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
 
@@ -172,19 +168,22 @@ namespace ace {
 	const okapi::QLength chassis_wheel_diameter = 3.25_in;
 	const okapi::QLength chassis_wheel_track = 11.5_in;
 
-	static okapi::MotorGroup leftMotorGroup();
-	static okapi::MotorGroup rightMotorGroup();
-
 	const std::shared_ptr<okapi::ChassisController> chassis =
 		okapi::ChassisControllerBuilder()
-		/*.withMotors(
+		.withMotors(
 			{ PORT_CHASSIS_L_F, PORT_CHASSIS_L_C, PORT_CHASSIS_L_B },
 			{ PORT_CHASSIS_R_F, PORT_CHASSIS_R_C, PORT_CHASSIS_R_B }
-		)*/
-		.withMotors()
+		)
 		.withDimensions(okapi::AbstractMotor::gearset::blue, { {chassis_wheel_diameter, 	chassis_wheel_track}, okapi::imev5BlueTPR })
 		.build();
 
+	// read only pros motors
+	//static A_Motor chassis_motor_l_f(PORT_CHASSIS_L_F);
+	//static A_Motor chassis_motor_l_c(PORT_CHASSIS_L_C);
+	//static A_Motor chassis_motor_l_b(PORT_CHASSIS_L_B);
+	//static A_Motor chassis_motor_r_f(PORT_CHASSIS_R_F);
+	//static A_Motor chassis_motor_r_c(PORT_CHASSIS_R_C);
+	//static A_Motor chassis_motor_r_b(PORT_CHASSIS_R_B);
 
 	/* ------------------------- Other Motors / Devices ------------------------- */
 
@@ -237,6 +236,9 @@ namespace ace {
 
 	// Custom Button for Standby
 	static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, cntr_both);
+
+	// Custom Button to Cycle Auton	
+	static Btn_Digi btn_auton(pros::E_CONTROLLER_DIGITAL_RIGHT, cntr_both);
 
 
 	/* ========================================================================== */
@@ -291,17 +293,8 @@ namespace ace {
 	 */
 	extern void reset_motors();
 
-	/**
-	 * @brief 	pages up auton control int by one
-	 *
-	 */
-	extern void auton_page_up();
-
-	/**
-	 * @brief 	pages down auton control int by one
-	 *
-	 */
-	extern void auton_page_down();
+	/* ------------------------------ Vision Sensor ----------------------------- */
+	extern void bool is_auto_targeting();
 
 	/* ========================================================================== */
 	/*                           Controller Screen Task                           */
@@ -340,10 +333,27 @@ namespace ace {
 /* ========================================================================== */
 namespace ace::auton {
 
+	/* ------------------------------- Autonomous ------------------------------- */
 
+	static std::vector<std::string> auton_selection = {
+		  "Two Side", "Three Side", "Skills"
+	};
+	extern int auton_selection_index;
 
+	extern void three_side();
+	extern void two_side();
 
+	/**
+		 * @brief 	pages up auton control int by one
+		 *
+		 */
+	extern void auton_page_up();
 
+	/**
+	 * @brief 	pages down auton control int by one
+	 *
+	 */
+	extern void auton_page_down();
 
 
 }
