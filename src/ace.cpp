@@ -39,11 +39,41 @@ namespace ace {
 		}
 		move_velocity(percent / 100.0f * 600.0f);
 	}
-	void A_Motor::append_history() {
-		rpm_history.push_back(get_actual_velocity());
+	float A_Motor::get_percent_velocity() {
+
+		init();
+
+		if (get_gearing() == MOTOR_GEARSET_06) {
+			return get_actual_velocity() / 6.0f;
+		}
+		else if (get_gearing() == MOTOR_GEARSET_18) {
+			return get_actual_velocity() / 2.0f;
+		}
+		else if (get_gearing() == MOTOR_GEARSET_36) {
+			return get_actual_velocity() / 1.0f;
+		}
+		else {
+			printf("ERROR CARTRIDGE NOT FOUND");
+			return 0.0f;
+		}
 	}
-	void A_Motor::clear_history() {
-		rpm_history = {};
+	float A_Motor::get_percent_torque() {
+
+		init();
+
+		if (get_gearing() == MOTOR_GEARSET_06) {
+			return get_torque() * 6.0f / 2.1f * 100.0f;
+		}
+		else if (get_gearing() == MOTOR_GEARSET_18) {
+			return get_torque() * 2.0f / 2.1f * 100.0f;
+		}
+		else if (get_gearing() == MOTOR_GEARSET_36) {
+			return get_torque() * 1.0f / 2.1f * 100.0f;
+		}
+		else {
+			printf("ERROR CARTRIDGE NOT FOUND");
+			return 0.0f;
+		}
 	}
 
 	/* --------------------------- Custom Button Class -------------------------- */

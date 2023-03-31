@@ -139,13 +139,12 @@ namespace ace {
 		public:
 		using Motor::Motor;
 		bool has_init = false;
-		std::vector<float> rpm_history;
 
 		void init();
 		float get_temp();
 		void spin_percent(float percent);
-		void append_history();
-		void clear_history();
+		float get_percent_velocity();
+		float get_percent_torque();
 	};
 
 	/* --------------------------- Custom Button Class -------------------------- */
@@ -173,13 +172,17 @@ namespace ace {
 	const okapi::QLength chassis_wheel_diameter = 3.25_in;
 	const okapi::QLength chassis_wheel_track = 11.5_in;
 
+	static okapi::MotorGroup leftMotorGroup();
+	static okapi::MotorGroup rightMotorGroup();
+
 	const std::shared_ptr<okapi::ChassisController> chassis =
 		okapi::ChassisControllerBuilder()
-		.withMotors(
+		/*.withMotors(
 			{ PORT_CHASSIS_L_F, PORT_CHASSIS_L_C, PORT_CHASSIS_L_B },
 			{ PORT_CHASSIS_R_F, PORT_CHASSIS_R_C, PORT_CHASSIS_R_B }
-		)
-		.withDimensions(okapi::AbstractMotor::gearset::blue, { {chassis_wheel_diameter, chassis_wheel_track}, okapi::imev5BlueTPR })
+		)*/
+		.withMotors()
+		.withDimensions(okapi::AbstractMotor::gearset::blue, { {chassis_wheel_diameter, 	chassis_wheel_track}, okapi::imev5BlueTPR })
 		.build();
 
 

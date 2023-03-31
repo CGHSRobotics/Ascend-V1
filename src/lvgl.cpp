@@ -37,6 +37,7 @@ namespace ace::lvgl {
 	static lv_style_t style_tabview_pr;
 	static lv_style_t style_tabview_rel;
 	static lv_style_t style_ddm;
+	static lv_style_t style_chart;
 
 	/* ----------------------------- Loading Screen ----------------------------- */
 	static lv_obj_t* load_screen;
@@ -97,6 +98,9 @@ namespace ace::lvgl {
 	static lv_obj_t* menu_tab4_ross;
 	static lv_obj_t* menu_tab4_ddlist;
 	static lv_obj_t* menu_tab4_chart;
+	static lv_chart_series_t* menu_tab4_chart_ser_rpm;
+	static lv_chart_series_t* menu_tab4_chart_ser_setrpm;
+	static lv_chart_series_t* menu_tab4_chart_ser_torque;
 
 	/* -------------------------- Function Declarations ------------------------- */
 	static void brain_screen_update();
@@ -156,6 +160,8 @@ namespace ace::lvgl {
 	/* ========================================================================== */
 	static void brain_screen_update() {
 
+		int selected = 0;
+
 		while (1)
 		{
 			if (has_init) {
@@ -181,38 +187,59 @@ namespace ace::lvgl {
 				// Check launcher History
 				if (lv_tabview_get_tab_act(menu_tabview) == 3)
 				{
-					char buff[16];
-					lv_ddlist_get_selected_str(menu_tab4_ddlist, buff);
-					if (buff == "ROSS")
+
+					int curr_selected = lv_ddlist_get_selected(menu_tab4_ddlist);
+
+					// if ddlist selected has changed
+					if (selected != curr_selected)
+					{
+						lv_chart_clear_serie(menu_tab4_chart, menu_tab4_chart_ser_rpm);
+						lv_chart_clear_serie(menu_tab4_chart, menu_tab4_chart_ser_setrpm);
+						lv_chart_clear_serie(menu_tab4_chart, menu_tab4_chart_ser_torque);
+						// if changed to launcher
+						if (curr_selected == 1)
+						{
+							lv_chart_set_range(menu_tab4_chart, -5, 105);
+						}
+						// if changed to intake
+						if (curr_selected == 2)
+						{
+							lv_chart_set_range(menu_tab4_chart, -105, 105);
+						}
+					}
+
+					// if ross's beautiful face
+					if (curr_selected == 0)
 					{
 						lv_obj_set_hidden(menu_tab4_chart, true);
 						lv_obj_set_hidden(menu_tab4_ross, false);
-
-						ace::intakeMotor.clear_history();
-						ace::launcherMotor.clear_history();
 					}
-					else if (buff == "Launcher")
+					// if launcher
+					else if (curr_selected == 1)
 					{
 						lv_obj_set_hidden(menu_tab4_ross, true);
 						lv_obj_set_hidden(menu_tab4_chart, false);
 
-						ace::intakeMotor.clear_history();
-						ace::launcherMotor.append_history();
+						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_rpm, ace::launcherMotor.get_percent_velocity());
+						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_setrpm, ace::launcherMotor.get_voltage() / 120.0f);
+						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_torque, ace::launcherMotor.get_percent_torque());
 					}
-					else if (buff == "Intake")
+					// if intake
+					else if (curr_selected == 2)
 					{
 						lv_obj_set_hidden(menu_tab4_ross, true);
 						lv_obj_set_hidden(menu_tab4_chart, false);
 
-						ace::intakeMotor.append_history();
-						ace::launcherMotor.clear_history();
+						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_rpm, ace::intakeMotor.get_percent_velocity());
+						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_setrpm, ace::intakeMotor.get_voltage() / 120.0f);
+						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_torque, ace::intakeMotor.get_percent_torque());
 
 					}
 					else {
 						printf("options in tab4 ddlist no worky :(");
 					}
 
-
+					selected = curr_selected;
 				}
 
 			}
@@ -299,8 +326,8 @@ namespace ace::lvgl {
 		style_btn.body.grad_color = LV_COLOR_BLACK;
 		style_btn.body.main_color = LV_COLOR_BLACK;
 		style_btn.body.border.color = LV_COLOR_RED;
-		style_btn.body.border.width = 3;
-		style_btn.body.radius = 0;
+		style_btn.body.border.width = 2;
+		style_btn.body.radius = 10;
 		style_btn.body.padding.hor = 5;
 		style_btn.body.padding.ver = 5;
 		style_btn.body.border.opa = 255;
@@ -350,7 +377,7 @@ namespace ace::lvgl {
 		style_tabview_rel.body.border.width = 2;
 		style_tabview_rel.body.radius = 0;
 		style_tabview_rel.body.padding.hor = 0;
-		style_tabview_rel.body.padding.ver = 15;
+		style_tabview_rel.body.padding.ver = 12;
 		style_tabview_rel.body.border.opa = 255;
 		style_tabview_rel.body.shadow.width = 0;
 		style_tabview_rel.text = style_text_title.text;
@@ -361,12 +388,27 @@ namespace ace::lvgl {
 		style_ddm.body.main_color = LV_COLOR_BLACK;
 		style_ddm.body.border.color = LV_COLOR_RED;
 		style_ddm.body.border.width = 2;
-		style_ddm.body.radius = 0;
+		style_ddm.body.radius = 4;
 		style_ddm.body.padding.hor = 5;
-		style_ddm.body.padding.ver = 5;
+		style_ddm.body.padding.ver = 10;
+		style_ddm.body.padding.inner = 5;
 		style_ddm.body.border.opa = 255;
 		style_ddm.body.shadow.width = 0;
-		style_ddm.text = style_text.text;
+		style_ddm.text = style_text_title.text;
+
+		// Chart Style
+		lv_style_copy(&style_chart, &lv_style_pretty);
+		style_chart.body.grad_color = LV_COLOR_MAKE(0x22, 0x22, 0x11);
+		style_chart.body.main_color = LV_COLOR_MAKE(0x22, 0x22, 0x11);
+		style_chart.body.border.color = LV_COLOR_RED;
+		style_chart.body.border.width = 2;
+		style_chart.body.radius = 5;
+		style_chart.body.padding.hor = 0;
+		style_chart.body.padding.ver = 0;
+		style_chart.body.border.opa = 255;
+		style_chart.body.shadow.width = 0;
+		style_chart.line.color = LV_COLOR_RED;
+		style_chart.line.width = 1;
 
 	}
 
@@ -492,7 +534,7 @@ namespace ace::lvgl {
 		/* ------------------------------- Menu Button ------------------------------ */
 		main_btn = lv_btn_create(main_cont, NULL);
 		lv_btn_set_fit(main_btn, false, false);
-		lv_obj_set_size(main_btn, 90, 50);
+		lv_obj_set_size(main_btn, 80, 40);
 		lv_obj_align(main_btn, NULL, LV_ALIGN_IN_TOP_LEFT, 370, 170);
 		lv_btn_set_style(main_btn, LV_BTN_STYLE_REL, &style_btn);
 		lv_btn_set_action(main_btn, LV_BTN_ACTION_PR, main_btn_click);
@@ -519,6 +561,8 @@ namespace ace::lvgl {
 		lv_tabview_set_style(menu_tabview, LV_TABVIEW_STYLE_BTN_TGL_PR, &style_tabview_pr);
 		lv_tabview_set_style(menu_tabview, LV_TABVIEW_STYLE_BTN_REL, &style_tabview_rel);
 		lv_tabview_set_style(menu_tabview, LV_TABVIEW_STYLE_BTN_TGL_REL, &style_tabview_rel);
+		lv_tabview_set_anim_time(menu_tabview, 0);
+		lv_tabview_set_sliding(menu_tabview, false);
 
 		/* ------------------------------ Tab 1 - Home ------------------------------ */
 		menu_tab1 = lv_tabview_add_tab(menu_tabview, "Home");
@@ -527,7 +571,7 @@ namespace ace::lvgl {
 		// Main Container
 		menu_tab1_cont_main = lv_cont_create(menu_tab1, NULL);
 		lv_cont_set_fit(menu_tab1_cont_main, false, false);
-		lv_obj_set_size(menu_tab1_cont_main, 480, 170);
+		lv_obj_set_size(menu_tab1_cont_main, 480, 180);
 		lv_obj_set_style(menu_tab1_cont_main, &style_container_empty);
 		lv_cont_set_layout(menu_tab1_cont_main, LV_LAYOUT_ROW_T);
 		lv_obj_align(menu_tab1_cont_main, NULL, LV_ALIGN_IN_TOP_LEFT, 0, -5);
@@ -535,28 +579,28 @@ namespace ace::lvgl {
 		// Container on the Right
 		menu_tab1_cont1 = lv_cont_create(menu_tab1_cont_main, NULL);
 		lv_cont_set_fit(menu_tab1_cont1, false, false);
-		lv_obj_set_size(menu_tab1_cont1, 220, 165);
+		lv_obj_set_size(menu_tab1_cont1, 225, 170);
 		lv_obj_set_style(menu_tab1_cont1, &style_container_red);
 		lv_cont_set_layout(menu_tab1_cont1, LV_LAYOUT_COL_M);
 
 		// Container on the Left
 		menu_tab1_cont2 = lv_cont_create(menu_tab1_cont_main, NULL);
 		lv_cont_set_fit(menu_tab1_cont2, false, false);
-		lv_obj_set_size(menu_tab1_cont2, 220, 165);
+		lv_obj_set_size(menu_tab1_cont2, 225, 170);
 		lv_obj_set_style(menu_tab1_cont2, &style_container_red);
 		lv_cont_set_layout(menu_tab1_cont2, LV_LAYOUT_COL_M);
 
 		// Return home button 
 		menu_tab1_cont2_btn_main = lv_btn_create(menu_tab1_cont2, NULL);
 		lv_btn_set_action(menu_tab1_cont2_btn_main, LV_BTN_ACTION_PR, menu_btn_click);
-		lv_obj_set_size(menu_tab1_cont2_btn_main, 100, 60);
+		lv_obj_set_size(menu_tab1_cont2_btn_main, 80, 40);
 		lv_btn_set_style(menu_tab1_cont2_btn_main, LV_BTN_STYLE_PR, &style_btn);
 		lv_btn_set_style(menu_tab1_cont2_btn_main, LV_BTN_STYLE_REL, &style_btn);
 
 		// Return home button label
 		menu_tab1_cont2_btn_main_label = lv_label_create(menu_tab1_cont2_btn_main, NULL);
 		lv_label_set_text(menu_tab1_cont2_btn_main_label, "Main");
-		lv_obj_set_style(menu_tab1_cont2_btn_main_label, &style_text);
+		lv_obj_set_style(menu_tab1_cont2_btn_main_label, &style_text_title);
 
 		/* ------------------------------ Tab 2 - Auton ----------------------------- */
 		menu_tab2 = lv_tabview_add_tab(menu_tabview, "Auton");
@@ -575,8 +619,9 @@ namespace ace::lvgl {
 			" three-side"
 		);
 		lv_ddlist_set_hor_fit(menu_tab2_auton_drop, false);
-		lv_obj_set_size(menu_tab2_auton_drop, 150, 40);
+		lv_obj_set_size(menu_tab2_auton_drop, 150, 60);
 		lv_obj_set_style(menu_tab2_auton_drop, &style_ddm);
+		lv_ddlist_set_anim_time(menu_tab2_auton_drop, 0);
 
 
 		/* ------------------------------ Tab 3 - Temp ------------------------------ */
@@ -600,18 +645,25 @@ namespace ace::lvgl {
 		lv_page_set_sb_mode(menu_tab4, LV_SB_MODE_OFF);
 
 		menu_tab4_ross = lv_img_create(menu_tab4, NULL);
-		lv_obj_align(menu_tab4_ross, NULL, LV_ALIGN_CENTER, 0, 0);
+		lv_obj_align(menu_tab4_ross, NULL, LV_ALIGN_IN_TOP_LEFT, 300, 120);
 		lv_img_set_src(menu_tab4_ross, "S:/usd/ross_background.bin");
 
 		menu_tab4_ddlist = lv_ddlist_create(menu_tab4, menu_tab2_auton_drop);
+		lv_obj_set_size(menu_tab4_ddlist, 100, 60);
 		lv_ddlist_set_options(menu_tab4_ddlist, "ROSS\nLauncher\nIntake");
 		lv_obj_align(menu_tab4_ddlist, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 10);
+		lv_ddlist_set_anim_time(menu_tab4_ddlist, 0);
 
 		menu_tab4_chart = lv_chart_create(menu_tab4, NULL);
 		lv_obj_set_hidden(menu_tab4_chart, true);
-		lv_obj_set_size(menu_tab4_chart, 240, 165);
-		lv_obj_align(menu_tab4_chart, NULL, LV_ALIGN_IN_TOP_LEFT, 200, 0);
+		lv_obj_set_size(menu_tab4_chart, 340, 170);
+		lv_obj_align(menu_tab4_chart, NULL, LV_ALIGN_IN_TOP_LEFT, 120, -5);
+		lv_chart_set_style(menu_tab4_chart, &style_chart);
+		lv_chart_set_point_count(menu_tab4_chart, 100);
 
+		menu_tab4_chart_ser_rpm = lv_chart_add_series(menu_tab4_chart, LV_COLOR_MAKE(0xff, 0x00, 0x00));
+		menu_tab4_chart_ser_setrpm = lv_chart_add_series(menu_tab4_chart, LV_COLOR_MAKE(0xff, 0xaa, 0xaa));
+		menu_tab4_chart_ser_torque = lv_chart_add_series(menu_tab4_chart, LV_COLOR_MAKE(0x00, 0xff, 0x00));
 
 	}
 
