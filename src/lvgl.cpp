@@ -181,10 +181,37 @@ namespace ace::lvgl {
 				// Check launcher History
 				if (lv_tabview_get_tab_act(menu_tabview) == 3)
 				{
-					if (/* condition */)
+					char buff[16];
+					lv_ddlist_get_selected_str(menu_tab4_ddlist, buff);
+					if (buff == "ROSS")
 					{
-						/* code */
+						lv_obj_set_hidden(menu_tab4_chart, true);
+						lv_obj_set_hidden(menu_tab4_ross, false);
+
+						ace::intakeMotor.clear_history();
+						ace::launcherMotor.clear_history();
 					}
+					else if (buff == "Launcher")
+					{
+						lv_obj_set_hidden(menu_tab4_ross, true);
+						lv_obj_set_hidden(menu_tab4_chart, false);
+
+						ace::intakeMotor.clear_history();
+						ace::launcherMotor.append_history();
+					}
+					else if (buff == "Intake")
+					{
+						lv_obj_set_hidden(menu_tab4_ross, true);
+						lv_obj_set_hidden(menu_tab4_chart, false);
+
+						ace::intakeMotor.append_history();
+						ace::launcherMotor.clear_history();
+
+					}
+					else {
+						printf("options in tab4 ddlist no worky :(");
+					}
+
 
 				}
 
@@ -582,6 +609,8 @@ namespace ace::lvgl {
 
 		menu_tab4_chart = lv_chart_create(menu_tab4, NULL);
 		lv_obj_set_hidden(menu_tab4_chart, true);
+		lv_obj_set_size(menu_tab4_chart, 240, 165);
+		lv_obj_align(menu_tab4_chart, NULL, LV_ALIGN_IN_TOP_LEFT, 200, 0);
 
 
 	}
