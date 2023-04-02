@@ -79,6 +79,8 @@ namespace ace::lvgl {
 	static lv_obj_t* menu_tab1_cont2;
 	static lv_obj_t* menu_tab1_cont2_btn_main;
 	static lv_obj_t* menu_tab1_cont2_btn_main_label;
+	static lv_obj_t* menu_tab1_cont1_battery_label;
+
 
 	static lv_obj_t* menu_tab2;
 	static lv_obj_t* menu_tab2_auton_drop;
@@ -613,6 +615,13 @@ namespace ace::lvgl {
 		lv_label_set_text(menu_tab1_cont2_btn_main_label, "Main");
 		lv_obj_set_style(menu_tab1_cont2_btn_main_label, &style_text_title);
 
+		// Battery percent label
+		menu_tab1_cont1_battery_label = lv_label_create(menu_tab1_cont1_battery_label, NULL);
+		lv_label_set_text(menu_tab1_cont2_btn_main_label, ("Battery Remaining: " + std::to_string(pros::battery::get_capacity()) + "/n" + "Master Battery Remaining: " 
+		+ std::to_string(master.get_battery_capacity()) + "/n" + "Partner Battery Remaining: " + std::to_string(partner.get_battery_capacity())).c_str());
+		lv_obj_set_style(menu_tab1_cont2_btn_main_label, &style_text_title);
+
+	
 		/* ------------------------------ Tab 2 - Auton ----------------------------- */
 		menu_tab2 = lv_tabview_add_tab(menu_tabview, "Auton");
 		lv_page_set_sb_mode(menu_tab2, LV_SB_MODE_OFF);
