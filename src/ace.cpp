@@ -1,6 +1,32 @@
 
 #include "ace.h"
 
+Drive chassis(
+	// Left Chassis Ports (negative port will reverse it!)
+	{ PORT_CHASSIS_L_F, PORT_CHASSIS_L_C, PORT_CHASSIS_L_B }
+
+	// Right Chassis Ports (negative port will reverse it!)
+	, { PORT_CHASSIS_R_F, PORT_CHASSIS_R_C, PORT_CHASSIS_R_B }
+
+	// IMU Port
+	, PORT_IMU
+
+	// Wheel Diameter (Remember, 4" wheels are actually 4.125!)
+	, 4.125
+
+	// Cartridge RPM
+	, 200
+
+	// External Gear Ratio (MUST BE DECIMAL)
+	, 1
+);
+
+// master controller
+pros::Controller master(pros::E_CONTROLLER_MASTER);
+
+// partner controller
+pros::Controller partner(pros::E_CONTROLLER_PARTNER);
+
 namespace ace {
 
 	/* ========================================================================== */

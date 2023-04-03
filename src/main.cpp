@@ -15,8 +15,18 @@
 /* ========================================================================== */
 void initialize() {
 
+	pros::delay(500); // Stop the user from doing anything while legacy ports configure.
+
 	pros::ADILED led({ INTERNAL_ADI_PORT,'B' }, 60);
 	led.set_all(0xffffff);
+
+
+	// Configure your chassis controls
+	chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
+	chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
+	chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
+	default_constants(); // Set the drive to your own constants from autons.cpp!
+	exit_condition_defaults(); // Set the exit conditions to your own constants from autons.cpp!
 
 	// load lvgl loading screen
 	ace::lvgl::init_lvgl();
@@ -25,7 +35,7 @@ void initialize() {
 	lv_label_set_text(ace::lvgl::label_load_flap, "Init Flap       -  OK");
 
 	// clear screen on master controller
-	ace::master.set_text(0, 1, "Master");
+	master.set_text(0, 1, "Master");
 	lv_label_set_text(ace::lvgl::label_load_shenan, "Init Shenan     -  OK");
 
 	//imu
@@ -35,6 +45,8 @@ void initialize() {
 	ace::lvgl::start_preloader_anim();
 
 	//lv_scr_load(ace::lvgl::img_screen);
+
+	chassis.initialize();
 }
 
 /* -------------------------------- Disabled -------------------------------- */
@@ -47,6 +59,12 @@ void competition_initialize() {}
 /*                                 Autonomous                                 */
 /* ========================================================================== */
 void autonomous() {
+
+	chassis.reset_pid_targets(); // Resets PID targets to 0
+	chassis.reset_gyro(); // Reset gyro position to 0
+	chassis.reset_drive_sensor(); // Reset drive sensors to 0
+	chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
+
 
 	std::string curr_auton = ace::auton::auton_selection[ace::auton::auton_selection_index];
 
@@ -67,14 +85,13 @@ void opcontrol() {
 
 	int i = 0;
 
+	chassis.set_drive_brake(MOTOR_BRAKE_COAST);
+
 	while (true) {
 
 		/* ------------------------------ Chassis Drive ----------------------------- */
 
-		ace::chassis->getModel()->tank(
-			((double)ace::master.get_analog(ANALOG_LEFT_Y)) / 127.0,
-			((double)ace::master.get_analog(ANALOG_RIGHT_Y)) / 127.0
-		);
+		chassis.tank();
 
 		/* -------------------------------- Get Input ------------------------------- */
 

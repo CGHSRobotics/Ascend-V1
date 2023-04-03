@@ -117,9 +117,6 @@ namespace ace {
 	static bool roller_forward_enabled = false;
 	static bool roller_reverse_enabled = false;
 
-
-
-
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
 
 	const float ROLLER_SPEED = 100.0;
@@ -163,35 +160,8 @@ namespace ace {
 	/*                      Device Declaration / Definitions                      */
 	/* ========================================================================== */
 
-	/* --------------------------------- Chassis -------------------------------- */
-
-	const okapi::QLength chassis_wheel_diameter = 3.25_in;
-	const okapi::QLength chassis_wheel_track = 11.5_in;
-
-	const std::shared_ptr<okapi::ChassisController> chassis =
-		okapi::ChassisControllerBuilder()
-		.withMotors(
-			{ PORT_CHASSIS_L_F, PORT_CHASSIS_L_C, PORT_CHASSIS_L_B },
-			{ PORT_CHASSIS_R_F, PORT_CHASSIS_R_C, PORT_CHASSIS_R_B }
-		)
-		.withDimensions(okapi::AbstractMotor::gearset::blue, { {chassis_wheel_diameter, 	chassis_wheel_track}, okapi::imev5BlueTPR })
-		.build();
-
-	// read only pros motors
-	//static A_Motor chassis_motor_l_f(PORT_CHASSIS_L_F);
-	//static A_Motor chassis_motor_l_c(PORT_CHASSIS_L_C);
-	//static A_Motor chassis_motor_l_b(PORT_CHASSIS_L_B);
-	//static A_Motor chassis_motor_r_f(PORT_CHASSIS_R_F);
-	//static A_Motor chassis_motor_r_c(PORT_CHASSIS_R_C);
-	//static A_Motor chassis_motor_r_b(PORT_CHASSIS_R_B);
 
 	/* ------------------------- Other Motors / Devices ------------------------- */
-
-	// master controller
-	static pros::Controller master(pros::E_CONTROLLER_MASTER);
-
-	// partner controller
-	static pros::Controller partner(pros::E_CONTROLLER_PARTNER);
 
 	// Launcher motor
 	static A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
@@ -294,7 +264,7 @@ namespace ace {
 	extern void reset_motors();
 
 	/* ------------------------------ Vision Sensor ----------------------------- */
-	extern void bool is_auto_targeting();
+	extern bool is_auto_targeting();
 
 	/* ========================================================================== */
 	/*                           Controller Screen Task                           */
