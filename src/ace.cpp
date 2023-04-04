@@ -238,6 +238,19 @@ namespace ace {
 		intakeMotor.spin_percent(-INTAKE_SPEED);
 	}
 
+	/* ------------------------------ Vision Sensor ----------------------------- */
+	double theta = 0;
+	void auto_target() {
+		pros::vision_object_s_t goal = visionSensor.get_by_sig(0, 1);
+
+		theta = ((double)goal.x_middle_coord / ((double)VISION_FOV_WIDTH / 2.0)) * 30.0;
+
+		chassis.set_turn_pid(theta, 0.5 * 127.0);
+	}
+
+
+
+
 	/* -------------------------------------------------------------------------- */
 	/*                              Controller Stuffs                             */
 	/* -------------------------------------------------------------------------- */

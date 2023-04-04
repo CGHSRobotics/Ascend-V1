@@ -106,6 +106,8 @@ namespace ace {
 
 	static util::timer endgame_timer(200);
 
+	extern double theta;
+
 	/* ----------------------- User Control Enabled Bools ----------------------- */
 
 	static bool launcher_standby_enabled = false;
@@ -116,6 +118,7 @@ namespace ace {
 	static bool endgame_enabled = false;
 	static bool roller_forward_enabled = false;
 	static bool roller_reverse_enabled = false;
+	static bool auto_targeting_enabled = false;
 
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
 
@@ -170,7 +173,7 @@ namespace ace {
 	static A_Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_18, false);
 
 	// Vision sensor
-	const pros::Vision visionSensor(PORT_VISION);
+	const pros::Vision visionSensor(PORT_VISION, pros::E_VISION_ZERO_CENTER);
 
 	// IMU Sensor
 	const pros::IMU imuSensor(PORT_IMU);
@@ -209,6 +212,9 @@ namespace ace {
 
 	// Custom Button to Cycle Auton	
 	static Btn_Digi btn_auton(pros::E_CONTROLLER_DIGITAL_RIGHT, cntr_both);
+
+	// Custom Button to engage Auto Targetting
+	static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_both); //Ross wants it B on partner, fix later
 
 
 	/* ========================================================================== */
@@ -264,7 +270,14 @@ namespace ace {
 	extern void reset_motors();
 
 	/* ------------------------------ Vision Sensor ----------------------------- */
-	extern bool is_auto_targeting();
+
+	/**
+	 * @brief
+	 *
+	 * @return true
+	 * @return false
+	 */
+	extern void auto_target();
 
 	/* ========================================================================== */
 	/*                           Controller Screen Task                           */

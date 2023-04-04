@@ -15,21 +15,20 @@
 /* ========================================================================== */
 void initialize() {
 
-	pros::delay(500); // Stop the user from doing anything while legacy ports configure.
-
-	pros::ADILED led({ INTERNAL_ADI_PORT,'B' }, 60);
-	led.set_all(0xffffff);
-
-
-	// Configure your chassis controls
-	chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
-	chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
-	chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
-	default_constants(); // Set the drive to your own constants from autons.cpp!
-	exit_condition_defaults(); // Set the exit conditions to your own constants from autons.cpp!
-
 	// load lvgl loading screen
 	ace::lvgl::init_lvgl();
+
+	pros::delay(500); // Stop the user from doing anything while legacy ports configure.
+
+	//pros::ADILED led({ INTERNAL_ADI_PORT,'B' }, 60);
+	//led.set_all(0xffffff);
+
+	// Configure your chassis controls
+	chassis.toggle_modify_curve_with_controller(false); // Enables modifying the controller curve with buttons on the joysticks
+	chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
+	chassis.set_curve_default(10, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
+	default_constants(); // Set the drive to your own constants from autons.cpp!
+	exit_condition_defaults(); // Set the exit conditions to your own constants from autons.cpp!
 
 	// init flap
 	lv_label_set_text(ace::lvgl::label_load_flap, "Init Flap       -  OK");
@@ -38,15 +37,13 @@ void initialize() {
 	master.set_text(0, 1, "Master");
 	lv_label_set_text(ace::lvgl::label_load_shenan, "Init Shenan     -  OK");
 
-	//imu
-	pros::delay(2000);
+	// init chassis
+	chassis.initialize();
+	pros::lcd::shutdown();
 
+	// Go to main screen
 	lv_label_set_text(ace::lvgl::label_load_imu, "IMU Calibrate -  OK");
 	ace::lvgl::start_preloader_anim();
-
-	//lv_scr_load(ace::lvgl::img_screen);
-
-	chassis.initialize();
 }
 
 /* -------------------------------- Disabled -------------------------------- */
@@ -91,7 +88,7 @@ void opcontrol() {
 
 		/* ------------------------------ Chassis Drive ----------------------------- */
 
-		chassis.tank();
+		//chassis.tank();
 
 		/* -------------------------------- Get Input ------------------------------- */
 
@@ -130,11 +127,26 @@ void opcontrol() {
 			ace::launcher_standby_enabled = !ace::launcher_standby_enabled;
 		}
 
+		// auto targeting toggle
+		if (ace::btn_auto_targeting.get_press_new())
+		{
+			ace::auto_targeting_enabled = !ace::auto_targeting_enabled;
+		}
+
 		//Auton Page Up
 		if (ace::btn_auton.get_press_new())
 		{
 			ace::auton::auton_page_up();
 		}
+
+		if (ace::auto_targeting_enabled)
+		{
+			ace::auto_target();
+		}
+		else {
+			chassis.tank();
+		}
+
 
 		/* ------------------------------ User Control ------------------------------ */
 
@@ -215,8 +227,6 @@ void opcontrol() {
 			(std::string)"  " + "idle? " + ace::util::bool_to_str(ace::launcher_standby_enabled)
 			+ "    " + "flap? " + ace::util::bool_to_str(false)
 		);
-		printf((ace::auton::auton_selection[ace::auton::auton_selection_index] + "\n").c_str());
-
 
 		/* ---------------------------------- Delay --------------------------------- */
 
