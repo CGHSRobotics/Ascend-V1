@@ -71,20 +71,27 @@ namespace ace {
 	/* ========================================================================== */
 
 	/* --------------------------------- Chassis -------------------------------- */
-	#define PORT_CHASSIS_L_F -13
-	#define PORT_CHASSIS_L_C -12
-	#define PORT_CHASSIS_L_B -14
+	#define PORT_CHASSIS_L_F -14
+	#define PORT_CHASSIS_L_C -16
+	#define PORT_CHASSIS_L_B -13
 
-	#define PORT_CHASSIS_R_F 17
-	#define PORT_CHASSIS_R_C 18
-	#define PORT_CHASSIS_R_B 16
+	#define PORT_CHASSIS_R_F 18
+	#define PORT_CHASSIS_R_C 19
+	#define PORT_CHASSIS_R_B 17
 
 	/* ------------------------- Other Motors / Devices ------------------------- */
-	#define PORT_INTAKE 19
+	#define PORT_INTAKE 20
 	#define PORT_LAUNCHER 11
 
-	#define PORT_VISION 9
+	#define PORT_VISION 10
 	#define PORT_IMU 15
+
+	/* ------------------------------- ADI Devices ------------------------------ */
+	// defined as numbers but really are the letters; a=1, b=2 etc...
+	#define PORT_PNEU_ENDGAME 1
+	#define PORT_PNEU_FLAP 2
+
+	#define PORT_SENSOR_LIGHT 3
 
 
 	/* ========================================================================== */
@@ -104,9 +111,14 @@ namespace ace {
 	static std::vector<std::string> cntr_master_text_arr = { "", "", "", "" };
 	static std::vector<std::string> cntr_partner_text_arr = { "", "", "", "" };
 
+	extern std::string cntr_haptic_text;
+	extern bool new_haptic_request;
+
 	static util::timer endgame_timer(200);
 
 	extern double theta;
+	const float auto_target_angle_adjustment = 10;
+
 
 	/* ----------------------- User Control Enabled Bools ----------------------- */
 
@@ -119,16 +131,17 @@ namespace ace {
 	static bool roller_forward_enabled = false;
 	static bool roller_reverse_enabled = false;
 	static bool auto_targeting_enabled = false;
+	static bool flap_enabled = false;
 
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
 
 	const float ROLLER_SPEED = 100.0;
 	const float INTAKE_SPEED = 100.0;
 
-	const float LAUNCH_SPEED_SHORT = 85.0;
+	const float LAUNCH_SPEED_SHORT = 70.0;
 	const float LAUNCH_SPEED_LONG = 100.0;
 	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_SHORT;
-	const float LAUNCHER_SPEED_CUTOFF = 10.0;
+	const float LAUNCHER_SPEED_CUTOFF = 5.0;
 
 	/* --------------------------- Custom Motor Class --------------------------- */
 	class A_Motor: public pros::Motor {
@@ -179,8 +192,13 @@ namespace ace {
 	const pros::IMU imuSensor(PORT_IMU);
 
 	// Endgame Pneumatics
-	const pros::ADIDigitalOut endgamePneumatics(1, false);
+	const pros::ADIDigitalOut endgamePneumatics(PORT_PNEU_ENDGAME, false);
 
+	// Endgame Pneumatics
+	const pros::ADIDigitalOut flapPneumatics(PORT_PNEU_FLAP, false);
+
+	// Light Sensor for disk launching
+	const pros::ADILightSensor lightSensor(PORT_SENSOR_LIGHT);
 
 	/* ========================================================================== */
 	/*                                   Buttons                                  */
@@ -215,6 +233,9 @@ namespace ace {
 
 	// Custom Button to engage Auto Targetting
 	static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_both); //Ross wants it B on partner, fix later
+
+	// Custom Button to engage Auto Targetting
+	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_Y, cntr_both); //Ross wants it B on partner, fix later
 
 
 	/* ========================================================================== */
@@ -264,6 +285,13 @@ namespace ace {
 	/* ------------------------------- Flap Toggle ------------------------------ */
 
 	/**
+	 * @brief	flap toggle
+	 *
+	 * @param enabled	bool whether enabled or not
+	 */
+	extern void flap_toggle(bool enabled);
+
+	/**
 	 * @brief 	resets all motors to 0
 	 *
 	 */
@@ -274,10 +302,15 @@ namespace ace {
 	/**
 	 * @brief
 	 *
+	 * @param enabled 	bool whether to actually move robot or not; in either case will still do theta calculations
 	 * @return true
 	 * @return false
 	 */
-	extern void auto_target();
+	extern void auto_target(bool enabled);
+
+	/* ------------------------------ Light Sensor ------------------------------ */
+
+	extern void launch_sensor_detection();
 
 	/* ========================================================================== */
 	/*                           Controller Screen Task                           */
@@ -291,6 +324,13 @@ namespace ace {
 	 * @param text	std::string text that wants to be drawn
 	 */
 	extern void update_cntr_text(cntr_t cntr, u_int8_t row, std::string text);
+
+	/**
+	 * @brief takes in new haptic text to be rumbled on next frame
+	 *
+	 * @param new_haptic the haptic text ("-", ".") to rumble. see controller.rumble()
+	 */
+	extern void update_cntr_haptic(std::string new_haptic);
 
 	/**
 	 * @brief	compiles controller string arrays into a single string separated by newline; mainly for internal use
@@ -319,7 +359,7 @@ namespace ace::auton {
 	/* ------------------------------- Autonomous ------------------------------- */
 
 	static std::vector<std::string> auton_selection = {
-		  "Two Side", "Three Side", "Skills"
+		  "two", "three", "skill"
 	};
 	extern int auton_selection_index;
 

@@ -51,6 +51,12 @@ namespace ace {
 
 		init();
 
+		if (std::abs(percent) <= 5)
+		{
+			move_voltage(0);
+			return;
+		}
+
 		if (get_gearing() == MOTOR_GEARSET_06) {
 			move_velocity(percent / 100.0f * 600.0f);
 		}
@@ -173,6 +179,7 @@ namespace ace {
 	/*                             User Control Stuffs                            */
 	/* -------------------------------------------------------------------------- */
 
+	// Launch disks
 	void launch(float speed, bool isLong) {
 
 		if (launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0)
@@ -187,6 +194,7 @@ namespace ace {
 
 	}
 
+	// launch standby
 	void launch_standby(bool enabled, float speed) {
 
 		if (enabled)
@@ -195,6 +203,7 @@ namespace ace {
 			launcherMotor.move_voltage(0);
 	}
 
+	// reset motors to 0 voltage
 	void reset_motors() {
 		launcherMotor.move_voltage(0);
 		intakeMotor.move_voltage(0);
@@ -202,8 +211,10 @@ namespace ace {
 		launcher_standby_enabled = false;
 
 		endgamePneumatics.set_value(false);
+		flapPneumatics.set_value(false);
 	}
 
+	// toggles endgame
 	void endgame_toggle(bool enabled) {
 		if (enabled) {
 			endgame_timer.reset();
@@ -219,6 +230,17 @@ namespace ace {
 
 			endgame_timer.update(20);
 			endgamePneumatics.set_value(1);
+		}
+	}
+
+	// toggles flap
+	void flap_toggle(bool enabled) {
+		if (enabled)
+		{
+			flapPneumatics.set_value(1);
+		}
+		else {
+			flapPneumatics.set_value(0);
 		}
 	}
 
@@ -240,14 +262,28 @@ namespace ace {
 
 	/* ------------------------------ Vision Sensor ----------------------------- */
 	double theta = 0;
-	void auto_target() {
+	void auto_target(bool enabled) {
 		pros::vision_object_s_t goal = visionSensor.get_by_sig(0, 1);
 
-		theta = ((double)goal.x_middle_coord / ((double)VISION_FOV_WIDTH / 2.0)) * 30.0;
+		theta = (((double)(goal.x_middle_coord) / ((double)VISION_FOV_WIDTH / 2.0)) * 30.0) + auto_target_angle_adjustment;
 
-		chassis.set_turn_pid(theta, 0.5 * 127.0);
+		if (enabled && std::abs(theta) > 1 && std::abs(theta) <= 30)
+		{
+			chassis.reset_gyro();
+			chassis.set_turn_pid(theta, 0.5 * 127.0);
+		}
 	}
 
+	/* ------------------------------ Light Sensor ------------------------------ */
+	std::vector<float> light_detection_arr = {};
+	void launch_sensor_detection() {
+
+		for (size_t i = 0; i < light_detection_arr.size(); i++)
+		{
+			//light_detection_arr.push_back 
+		}
+
+	}
 
 
 
@@ -255,19 +291,23 @@ namespace ace {
 	/*                              Controller Stuffs                             */
 	/* -------------------------------------------------------------------------- */
 
+	bool new_haptic_request = false;
+	std::string cntr_haptic_text = "";
+
 	void update_cntr_task() {
 
 		bool draw_master = false;
 		int curr_line = 0;
-		int new_connection_counter = 0;
-
-		//master.clear();
 
 		while (1)
 		{
+			if (new_haptic_request) {
+
+				master.rumble(cntr_haptic_text.c_str());
+			}
 
 			/* ------------------------------ Update Screen ----------------------------- */
-			if (!draw_master)
+			else if (!draw_master)
 			{
 				partner.set_text(curr_line, 0, cntr_partner_text_arr[curr_line]);
 			}
@@ -281,7 +321,6 @@ namespace ace {
 				curr_line = 0;
 				draw_master = !draw_master;
 			}
-
 
 			pros::delay(50);
 		}
@@ -325,6 +364,12 @@ namespace ace {
 		{
 			cntr_partner_text_arr[row] = text;
 		}
+	}
+
+
+	void update_cntr_haptic(std::string new_haptic) {
+		new_haptic_request = true;
+		cntr_haptic_text = new_haptic;
 	}
 }
 

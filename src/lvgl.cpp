@@ -37,6 +37,7 @@ namespace ace::lvgl {
 	static lv_style_t style_tabview_pr;
 	static lv_style_t style_tabview_rel;
 	static lv_style_t style_ddm;
+	static lv_style_t style_btnm;
 	static lv_style_t style_chart;
 
 	/* ----------------------------- Loading Screen ----------------------------- */
@@ -87,6 +88,9 @@ namespace ace::lvgl {
 	static lv_obj_t* menu_tab2_cont_main;
 	static lv_obj_t* menu_tab2_cont1;
 	static lv_obj_t* menu_tab2_cont2;
+	static lv_obj_t* menu_tab2_btnm_auton;
+	static lv_obj_t* menu_tab2_btnm_alliance;
+	static lv_obj_t* menu_tab2_cont1_labelCurrAuton;
 
 
 	static lv_obj_t* menu_tab3;
@@ -120,6 +124,8 @@ namespace ace::lvgl {
 
 	static lv_res_t main_btn_click(lv_obj_t* btn);
 	static lv_res_t menu_btn_click(lv_obj_t* btn);
+	static lv_res_t menu_btnm_auton(lv_obj_t* btnm, const char* text);
+	static lv_res_t menu_btnm_alliance(lv_obj_t* btnm, const char* text);
 
 	/* ========================================================================== */
 	/*                             Init Lvgl Function                             */
@@ -168,9 +174,6 @@ namespace ace::lvgl {
 		{
 			if (has_init) {
 
-				// Update ddlist with auton stuff
-				lv_ddlist_set_selected(menu_tab2_auton_drop, ace::auton::auton_selection_index);
-
 				//Launcher Slider
 				int launch_rpm = ace::launcherMotor.get_actual_velocity() * 6;
 				lv_bar_set_value(main_bar, launch_rpm);
@@ -184,26 +187,27 @@ namespace ace::lvgl {
 						"Master Battery: " + std::to_string(master.get_battery_capacity()) + "\n" +
 						"Partner Battery: " + std::to_string(partner.get_battery_capacity()) + "\n" +
 						"Theta: " + std::to_string(ace::theta) + "\n" +
-						"ERRNO: " + std::to_string(errno)
+						"ERRNO: " + std::to_string(errno) + "\n" +
+						"Light Sensor: " + std::to_string(ace::lightSensor.get_value())
 						).c_str()
 				);
 
 				// Set temp Text
 				lv_label_set_text(menu_tab3_cont1_labelTemp1,
 					(
-						(std::string)"Launcher: " + std::to_string(ace::launcherMotor.get_temp()) + "\n\n" +
-						//"Chassis L F: " + std::to_string(ace::chassis_motor_l_f.get_temp()) + "\n" +
-						//"Chassis L C: " + std::to_string(ace::chassis_motor_l_c.get_temp()) + "\n" +
-						//"Chassis L B: " + std::to_string(ace::chassis_motor_l_b.get_temp()) +
+						(std::string)"Launcher: " + std::to_string((int)ace::launcherMotor.get_temp()) + "\n\n" +
+						"Chassis L F: " + std::to_string((int)ace::util::cel_to_faren(chassis.left_motors[0].get_temperature())) + "\n" +
+						"Chassis L M: " + std::to_string((int)ace::util::cel_to_faren(chassis.left_motors[1].get_temperature())) + "\n" +
+						"Chassis L B: " + std::to_string((int)ace::util::cel_to_faren(chassis.left_motors[2].get_temperature())) + "\n" +
 						" "
 						).c_str()
 				);
 				lv_label_set_text(menu_tab3_cont2_labelTemp2,
 					(
-						(std::string)"Intake: " + std::to_string(ace::intakeMotor.get_temp()) + "\n\n" +
-						//"Chassis L F: " + std::to_string(ace::chassis_motor_l_f.get_temp()) + "\n" +
-						//"Chassis L C: " + std::to_string(ace::chassis_motor_l_c.get_temp()) + "\n" +
-						//"Chassis L B: " + std::to_string(ace::chassis_motor_l_b.get_temp()) +
+						(std::string)"Intake: " + std::to_string((int)ace::intakeMotor.get_temp()) + "\n\n" +
+						"Chassis R F: " + std::to_string((int)ace::util::cel_to_faren(chassis.right_motors[0].get_temperature())) + "\n" +
+						"Chassis R M: " + std::to_string((int)ace::util::cel_to_faren(chassis.right_motors[1].get_temperature())) + "\n" +
+						"Chassis R B: " + std::to_string((int)ace::util::cel_to_faren(chassis.right_motors[2].get_temperature())) + "\n" +
 						" "
 						).c_str()
 				);
@@ -419,6 +423,20 @@ namespace ace::lvgl {
 		style_ddm.body.border.opa = 255;
 		style_ddm.body.shadow.width = 0;
 		style_ddm.text = style_text_title.text;
+
+		//Button Matrix Style
+		lv_style_copy(&style_btnm, &lv_style_pretty);
+		style_btnm.body.grad_color = LV_COLOR_BLACK;
+		style_btnm.body.main_color = LV_COLOR_BLACK;
+		style_btnm.body.border.color = LV_COLOR_RED;
+		style_btnm.body.border.width = 2;
+		style_btnm.body.radius = 4;
+		style_btnm.body.padding.hor = 5;
+		style_btnm.body.padding.ver = 10;
+		style_btnm.body.padding.inner = 5;
+		style_btnm.body.border.opa = 255;
+		style_btnm.body.shadow.width = 0;
+		style_btnm.text = style_text.text;
 
 		// Chart Style
 		lv_style_copy(&style_chart, &lv_style_pretty);
@@ -639,27 +657,34 @@ namespace ace::lvgl {
 		lv_obj_align(menu_tab2_cont_main, NULL, LV_ALIGN_IN_TOP_LEFT, 0, -5);
 
 		menu_tab2_cont1 = lv_cont_create(menu_tab2_cont_main, menu_tab1_cont1);
+
 		menu_tab2_cont2 = lv_cont_create(menu_tab2_cont_main, menu_tab1_cont2);
+		lv_obj_set_style(menu_tab2_cont2, &style_container_empty);
 
-		menu_tab2_auton_drop = lv_ddlist_create(menu_tab2_cont2, NULL);
-		lv_ddlist_set_options(menu_tab2_auton_drop, " skills\n"
-			" null\n"
-			" two-side\n"
-			" three-side"
-		);
-		lv_ddlist_set_hor_fit(menu_tab2_auton_drop, false);
-		lv_obj_set_size(menu_tab2_auton_drop, 150, 60);
-		lv_obj_set_style(menu_tab2_auton_drop, &style_ddm);
-		lv_ddlist_set_anim_time(menu_tab2_auton_drop, 0);
-
-	std:string ddlist_auton_str = "";
+		static const char* btnm_auton_map[32];
+		int num_lines = 0;
 		for (int i = 0; i < ace::auton::auton_selection.size(); i++) {
-			ddlist_auton_str += ace::auton::auton_selection[i];
-			if (i < ace::auton::auton_selection.size() - 1) {
-				ddlist_auton_str += "\n";
-			}
+			btnm_auton_map[i] = ace::auton::auton_selection[i].c_str();
 		}
-		lv_ddlist_set_options(menu_tab2_auton_drop, ddlist_auton_str.c_str());
+		btnm_auton_map[ace::auton::auton_selection.size()] = "";
+
+		lv_obj_t* menu_tab2_btnm_auton = lv_btnm_create(menu_tab2_cont2, NULL);
+		lv_btnm_set_map(menu_tab2_btnm_auton, btnm_auton_map);
+		lv_btnm_set_action(menu_tab2_btnm_auton, menu_btnm_auton);
+		lv_obj_set_size(menu_tab2_btnm_auton, 225, 80);
+		lv_btnm_set_style(menu_tab2_btnm_auton, LV_BTNM_STYLE_BTN_REL, &style_btnm);
+
+		static const char* btnm_alliance_map[] = { "Red", "Blue", "" };
+		lv_obj_t* menu_tab2_btnm_alliance = lv_btnm_create(menu_tab2_cont2, NULL);
+		lv_btnm_set_map(menu_tab2_btnm_alliance, btnm_alliance_map);
+		lv_btnm_set_action(menu_tab2_btnm_alliance, menu_btnm_alliance);
+		lv_obj_set_size(menu_tab2_btnm_alliance, 225, 80);
+		lv_btnm_set_style(menu_tab2_btnm_alliance, LV_BTNM_STYLE_BTN_REL, &style_btnm);
+
+		/*menu_tab2_cont1_labelCurrAuton = lv_label_create(menu_tab2_cont1, NULL);
+		lv_obj_align(menu_tab2_cont_main, NULL, LV_LABEL_ALIGN_LEFT, 0, 0);
+		lv_label_set_text("Curr Auton: " + ace::auton::auton_selection + "/n" + "Curr Ally " + ace::auton::alliance_selection).c_str();*/
+
 		/* ------------------------------ Tab 3 - Temp ------------------------------ */
 		menu_tab3 = lv_tabview_add_tab(menu_tabview, "Temp");
 		lv_page_set_sb_mode(menu_tab3, LV_SB_MODE_OFF);
@@ -749,20 +774,27 @@ namespace ace::lvgl {
 		return LV_RES_OK; /*Return OK if the button is not deleted*/
 	}
 
-	static lv_res_t menu_auton_ddlist_action(lv_obj_t* ddlist)
+	// set the auton index based off of selected text
+	static lv_res_t menu_btnm_auton(lv_obj_t* btnm, const char* text)
 	{
-		char sel_str[32];
-		lv_ddlist_get_selected_str(ddlist, sel_str);
-
 		for (int i = 0; i < ace::auton::auton_selection.size(); i++) {
-			if (sel_str == ace::auton::auton_selection[i]) {
+			if (text == ace::auton::auton_selection[i].c_str()) {
 				ace::auton::auton_selection_index = i;
 			}
 		}
-
 		return LV_RES_OK; /*Return OK if the drop down list is not deleted*/
 	}
 
+	// set the alliance based off of selected text
+	static lv_res_t menu_btnm_alliance(lv_obj_t* btnm, const char* text)
+	{
+		for (int i = 0; i < ace::auton::auton_selection.size(); i++) {
+			if (text == ace::auton::auton_selection[i].c_str()) {
+				ace::auton::auton_selection_index = i;
+			}
+		}
+		return LV_RES_OK; /*Return OK if the drop down list is not deleted*/
+	}
 	/* ========================================================================== */
 	/*                                File Drivers                                */
 	/* ========================================================================== */

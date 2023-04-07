@@ -3,11 +3,12 @@
 
 /*
 	arm-none-eabi-addr2line -faps -e ./bin/hot.package.elf
+	arm-none-eabi-addr2line -faps -e ./bin/cold.package.elf
 */
 
 /*
-		0x381f590
-		0x78022d0
+0x380662e
+		0x3832e0c
 */
 
 /* ========================================================================== */
@@ -72,7 +73,7 @@ void autonomous() {
 		ace::auton::three_side();
 	}
 
-
+	ace::update_cntr_haptic("...");
 }
 
 /* ========================================================================== */
@@ -85,10 +86,6 @@ void opcontrol() {
 	chassis.set_drive_brake(MOTOR_BRAKE_COAST);
 
 	while (true) {
-
-		/* ------------------------------ Chassis Drive ----------------------------- */
-
-		//chassis.tank();
 
 		/* -------------------------------- Get Input ------------------------------- */
 
@@ -133,17 +130,34 @@ void opcontrol() {
 			ace::auto_targeting_enabled = !ace::auto_targeting_enabled;
 		}
 
+		// auto targeting toggle
+		if (ace::btn_flap.get_press_new())
+		{
+			ace::flap_enabled = !ace::flap_enabled;
+		}
+
 		//Auton Page Up
 		if (ace::btn_auton.get_press_new())
 		{
 			ace::auton::auton_page_up();
 		}
 
+		//ace::launch_sensor_detection();
+
+
+		/* --------------------------- Chassis Tank Drive --------------------------- */
 		if (ace::auto_targeting_enabled)
 		{
-			ace::auto_target();
+			ace::auto_target(true);
 		}
+		/*else if (std::abs(master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_LEFT_Y)) < 32 && std::abs(master.get_analog(ANALOG_LEFT_Y)) > 95) {
+
+			float avg = (master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_LEFT_Y)) / 2.0;
+
+			//chassis.set(avg, avg);
+		}*/
 		else {
+			ace::auto_target(false);
 			chassis.tank();
 		}
 
@@ -154,13 +168,11 @@ void opcontrol() {
 		{
 
 			// Endgame
-			if (ace::endgame_enabled)
-			{
-				ace::endgame_toggle(true);
-			}
-			else {
-				ace::endgame_toggle(false);
-			}
+			ace::endgame_toggle(ace::endgame_enabled);
+
+			// flap
+			ace::flap_toggle(ace::flap_enabled);
+
 
 			// Launch Short
 			if (ace::launch_short_enabled)
@@ -175,6 +187,9 @@ void opcontrol() {
 				ace::launch(ace::LAUNCH_SPEED_LONG, true);
 				break;
 			}
+
+			// launcher standby
+			ace::launch_standby(ace::launcher_standby_enabled, ace::LAUNCH_SPEED_STANDBY);
 
 			// roller forward
 			if (ace::roller_forward_enabled)
@@ -206,31 +221,34 @@ void opcontrol() {
 			else {
 				ace::intakeMotor.spin_percent(0);
 			}
-
-			// launcher standby
-			if (ace::launcher_standby_enabled) {
-				ace::launch_standby(true, ace::LAUNCH_SPEED_STANDBY);
-			}
-			else {
-				ace::launch_standby(false, ace::LAUNCH_SPEED_STANDBY);
-			}
-
 		}
 
 		/* ------------------------- Controller Screen Draw ------------------------- */
 
-		ace::update_cntr_text(ace::cntr_master, 0, "Master");
-		ace::update_cntr_text(ace::cntr_partner, 0, "Partner");
+		ace::update_cntr_text(ace::cntr_master, 0,
+			(std::string)"Master" +
+			"  " + std::to_string((int)ace::intakeMotor.get_temp()) + "F" +
+			"  " + std::to_string((int)pros::battery::get_capacity()) + "%"
+		);
+		ace::update_cntr_text(ace::cntr_partner, 0,
+			(std::string)"Partner" +
+			"  " + std::to_string((int)ace::intakeMotor.get_temp()) + "F" +
+			"  " + std::to_string((int)pros::battery::get_capacity()) + "%"
+		);
 
-		ace::update_cntr_text(ace::cntr_both, 1, " " + ace::auton::auton_selection[ace::auton::auton_selection_index]);
+		ace::update_cntr_text(ace::cntr_both, 1,
+			"auto? " + ace::util::bool_to_str(ace::auto_targeting_enabled) +
+			"  " + ace::auton::auton_selection[ace::auton::auton_selection_index]
+		);
+
 		ace::update_cntr_text(ace::cntr_both, 2,
-			(std::string)"  " + "idle? " + ace::util::bool_to_str(ace::launcher_standby_enabled)
-			+ "    " + "flap? " + ace::util::bool_to_str(false)
+			(std::string)"idle? " + ace::util::bool_to_str(ace::launcher_standby_enabled) +
+			"  flap? " + ace::util::bool_to_str(ace::flap_enabled)
 		);
 
 		/* ---------------------------------- Delay --------------------------------- */
 
-		pros::delay(20);
+		pros::delay(ez::util::DELAY_TIME);
 	}
 
 }
