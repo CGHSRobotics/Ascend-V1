@@ -40,11 +40,20 @@ void initialize() {
 
 	// init chassis
 	chassis.initialize();
+	ace::intakeMotor.init();
+	ace::launcherMotor.init();
 	pros::lcd::shutdown();
+
+	ace::endgame_timer.currTime = ace::endgame_timer.maxTime + 100;
+
+	// get ambient light sample
+	ace::ambient_light = ace::lightSensor.get_value();
 
 	// Go to main screen
 	lv_label_set_text(ace::lvgl::label_load_imu, "IMU Calibrate -  OK");
 	ace::lvgl::start_preloader_anim();
+
+	ace::update_cntr_haptic(".");
 }
 
 /* -------------------------------- Disabled -------------------------------- */
@@ -63,17 +72,16 @@ void autonomous() {
 	chassis.reset_drive_sensor(); // Reset drive sensors to 0
 	chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
 
-
 	std::string curr_auton = ace::auton::auton_selection[ace::auton::auton_selection_index];
 
-	if (curr_auton == "two_side") {
+	if (curr_auton == "two") {
 		ace::auton::two_side();
 	}
-	else if (curr_auton == "three_side") {
+	else if (curr_auton == "three") {
 		ace::auton::three_side();
 	}
 
-	ace::update_cntr_haptic("...");
+	//ace::update_cntr_haptic("...");
 }
 
 /* ========================================================================== */
@@ -142,7 +150,15 @@ void opcontrol() {
 			ace::auton::auton_page_up();
 		}
 
-		//ace::launch_sensor_detection();
+		//Alliance Toggle
+		if (ace::btn_alliance.get_press_new())
+		{
+			ace::is_red_alliance = !ace::is_red_alliance;
+		}
+
+		if (ace::light_sensor_detect()) {
+			//ace::update_cntr_haptic("..");
+		}
 
 
 		/* --------------------------- Chassis Tank Drive --------------------------- */
@@ -215,7 +231,7 @@ void opcontrol() {
 			// Intake Toggle
 			if (ace::intake_enabled)
 			{
-				ace::intake_toggle();
+				ace::intake_toggle(true);
 				break;
 			}
 			else {
@@ -236,9 +252,18 @@ void opcontrol() {
 			"  " + std::to_string((int)pros::battery::get_capacity()) + "%"
 		);
 
+
+		std::string ally_str = "";
+		if (ace::is_red_alliance) {
+			ally_str = "red";
+		}
+		else {
+			ally_str = "blue";
+		}
 		ace::update_cntr_text(ace::cntr_both, 1,
 			"auto? " + ace::util::bool_to_str(ace::auto_targeting_enabled) +
-			"  " + ace::auton::auton_selection[ace::auton::auton_selection_index]
+			"  " + ace::auton::auton_selection[ace::auton::auton_selection_index] +
+			" " + ally_str
 		);
 
 		ace::update_cntr_text(ace::cntr_both, 2,

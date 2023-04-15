@@ -5,6 +5,8 @@ import subprocess
 import keyboard
 import time
 
+import winsound
+
 # cmd_str = "arm-none-eabi-addr2line -faps -e ./bin/hot.package.elf
 
 
@@ -69,6 +71,12 @@ def cmd_menu():
 
     print("\x1B[31m")
     print("\n Finished")
+    
+    winsound.Beep(369, 200)
+    time.sleep(0.2)
+    winsound.Beep(369, 200)
+    time.sleep(0.2)
+    winsound.Beep(493, 500)
 
 
 def main():

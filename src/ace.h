@@ -41,8 +41,9 @@ namespace ace::util {
 		float maxTime = 0;
 		float currTime = 0;
 
-		timer(float maxTime) {
-			maxTime = maxTime;
+		timer(float max_time) {
+			maxTime = max_time;
+			currTime = 0;
 		}
 
 		void update(float updateTime) {
@@ -107,17 +108,21 @@ namespace ace {
 		cntr_both = 3
 	};
 	// bool whether
-	static bool partner_connected = false;
+	extern bool partner_connected;
 	static std::vector<std::string> cntr_master_text_arr = { "", "", "", "" };
 	static std::vector<std::string> cntr_partner_text_arr = { "", "", "", "" };
 
 	extern std::string cntr_haptic_text;
 	extern bool new_haptic_request;
 
-	static util::timer endgame_timer(200);
+	extern util::timer endgame_timer;
 
 	extern double theta;
 	const float auto_target_angle_adjustment = 10;
+
+	const double rad2 = 1.4142;
+
+	extern int ambient_light;
 
 
 	/* ----------------------- User Control Enabled Bools ----------------------- */
@@ -132,16 +137,26 @@ namespace ace {
 	static bool roller_reverse_enabled = false;
 	static bool auto_targeting_enabled = false;
 	static bool flap_enabled = false;
+	extern bool is_red_alliance;
 
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
 
+	// Misc Speeds
 	const float ROLLER_SPEED = 100.0;
 	const float INTAKE_SPEED = 100.0;
 
+	// Launcher Speeds
 	const float LAUNCH_SPEED_SHORT = 70.0;
-	const float LAUNCH_SPEED_LONG = 100.0;
-	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_SHORT;
+	const float LAUNCH_SPEED_LONG = 92.0;
+	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_LONG;
 	const float LAUNCHER_SPEED_CUTOFF = 5.0;
+
+	// Chasssis Speeds ( * 1.27 to fit in range of [-127, 127])
+	const float DRIVE_SPEED = 87.0 * 1.27;
+	const float DRIVE_SPEED_INTAKE = 20.0 * 1.27;
+
+	const float TURN_SPEED = 71.0 * 1.27;
+	const float TURN_SPEED_SLOW = 45.0 * 1.27;
 
 	/* --------------------------- Custom Motor Class --------------------------- */
 	class A_Motor: public pros::Motor {
@@ -229,13 +244,17 @@ namespace ace {
 	static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, cntr_both);
 
 	// Custom Button to Cycle Auton	
-	static Btn_Digi btn_auton(pros::E_CONTROLLER_DIGITAL_RIGHT, cntr_both);
+	static Btn_Digi btn_auton(pros::E_CONTROLLER_DIGITAL_X, cntr_partner);
 
 	// Custom Button to engage Auto Targetting
 	static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_both); //Ross wants it B on partner, fix later
 
 	// Custom Button to engage Auto Targetting
 	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_Y, cntr_both); //Ross wants it B on partner, fix later
+
+	// Custom Button to switch alliance 
+	static Btn_Digi btn_alliance(pros::E_CONTROLLER_DIGITAL_A, cntr_partner);
+
 
 
 	/* ========================================================================== */
@@ -248,7 +267,7 @@ namespace ace {
 	 * @brief 	runs intake forward
 	 *
 	 */
-	extern void intake_toggle();
+	extern void intake_toggle(bool enabled);
 
 	/**
 	 * @brief 	runs intake reverse
@@ -310,7 +329,7 @@ namespace ace {
 
 	/* ------------------------------ Light Sensor ------------------------------ */
 
-	extern void launch_sensor_detection();
+	extern bool light_sensor_detect();
 
 	/* ========================================================================== */
 	/*                           Controller Screen Task                           */
@@ -378,6 +397,18 @@ namespace ace::auton {
 	 */
 	extern void auton_page_down();
 
+	/**
+	 * @brief 	spins roller by x relative degrees; autonomously
+	 *
+	 * @param rollerDegrees degrees to spin by
+	 */
+	extern void roller_auton(float rollerDegrees);
+
+	extern void launch_auton(float time, float speed, bool early_exit = true);
+
+	extern void drive_chassis(float distance, float speed, bool wait = true);
+
+	extern void turn_chassis(float distance, float speed, bool wait = true);
 
 }
 

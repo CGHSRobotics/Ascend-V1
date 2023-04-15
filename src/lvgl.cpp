@@ -234,6 +234,11 @@ namespace ace::lvgl {
 						{
 							lv_chart_set_range(menu_tab4_chart, -105, 105);
 						}
+						// if changed to light
+						if (curr_selected == 3)
+						{
+							lv_chart_set_range(menu_tab4_chart, 0, 2048);
+						}
 					}
 
 					// if ross's beautiful face
@@ -262,6 +267,14 @@ namespace ace::lvgl {
 						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_setrpm, ace::intakeMotor.get_voltage() / 120.0f);
 						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_torque, ace::intakeMotor.get_percent_torque());
 
+					}
+					// if light
+					else if (curr_selected == 3)
+					{
+						lv_obj_set_hidden(menu_tab4_ross, true);
+						lv_obj_set_hidden(menu_tab4_chart, false);
+
+						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_rpm, ace::lightSensor.get_value());
 					}
 					else {
 						//printf("options in tab4 ddlist no worky :(");
@@ -711,7 +724,7 @@ namespace ace::lvgl {
 
 		menu_tab4_ddlist = lv_ddlist_create(menu_tab4, menu_tab2_auton_drop);
 		lv_obj_set_size(menu_tab4_ddlist, 100, 60);
-		lv_ddlist_set_options(menu_tab4_ddlist, "ROSS\nLauncher\nIntake");
+		lv_ddlist_set_options(menu_tab4_ddlist, "ROSS\nLauncher\nIntake\nLight");
 		lv_obj_align(menu_tab4_ddlist, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 10);
 		lv_ddlist_set_anim_time(menu_tab4_ddlist, 0);
 
@@ -725,7 +738,6 @@ namespace ace::lvgl {
 		menu_tab4_chart_ser_rpm = lv_chart_add_series(menu_tab4_chart, LV_COLOR_MAKE(0xff, 0x00, 0x00));
 		menu_tab4_chart_ser_setrpm = lv_chart_add_series(menu_tab4_chart, LV_COLOR_MAKE(0xff, 0xaa, 0xaa));
 		menu_tab4_chart_ser_torque = lv_chart_add_series(menu_tab4_chart, LV_COLOR_MAKE(0x00, 0xff, 0x00));
-
 	}
 
 
@@ -788,10 +800,16 @@ namespace ace::lvgl {
 	// set the alliance based off of selected text
 	static lv_res_t menu_btnm_alliance(lv_obj_t* btnm, const char* text)
 	{
-		for (int i = 0; i < ace::auton::auton_selection.size(); i++) {
-			if (text == ace::auton::auton_selection[i].c_str()) {
-				ace::auton::auton_selection_index = i;
-			}
+		if (text == "Red") {
+			is_red_alliance = true;
+		}
+
+		else if (text == "Blue") {
+			is_red_alliance = false;
+		}
+
+		else {
+			ace::update_cntr_haptic("---");
 		}
 		return LV_RES_OK; /*Return OK if the drop down list is not deleted*/
 	}

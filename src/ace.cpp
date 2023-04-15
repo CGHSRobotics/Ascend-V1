@@ -12,13 +12,13 @@ Drive chassis(
 	, PORT_IMU
 
 	// Wheel Diameter (Remember, 4" wheels are actually 4.125!)
-	, 4.125
+	, 3.25
 
 	// Cartridge RPM
-	, 200
+	, 600
 
 	// External Gear Ratio (MUST BE DECIMAL)
-	, 1
+	, 1.25
 );
 
 // master controller
@@ -33,6 +33,11 @@ namespace ace {
 	/*                              Class Definitions                             */
 	/* ========================================================================== */
 
+	bool partner_connected = false;
+	bool is_red_alliance = true;
+
+	util::timer endgame_timer(200);
+
 	/* --------------------------- Custom Motor Class --------------------------- */
 	void A_Motor::init() {
 		if (!has_init) {
@@ -43,13 +48,9 @@ namespace ace {
 	}
 	float A_Motor::get_temp() {
 
-		init();
-
 		return util::cel_to_faren(get_temperature());
 	}
 	void A_Motor::spin_percent(float percent) {
-
-		init();
 
 		if (std::abs(percent) <= 5)
 		{
@@ -73,8 +74,6 @@ namespace ace {
 	}
 	float A_Motor::get_percent_velocity() {
 
-		init();
-
 		if (get_gearing() == MOTOR_GEARSET_06) {
 			return get_actual_velocity() / 6.0f;
 		}
@@ -90,8 +89,6 @@ namespace ace {
 		}
 	}
 	float A_Motor::get_percent_torque() {
-
-		init();
 
 		if (get_gearing() == MOTOR_GEARSET_06) {
 			return get_torque() * 6.0f / 2.1f * 100.0f;
@@ -184,11 +181,12 @@ namespace ace {
 
 		if (launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0)
 		{
-			launcherMotor.move_velocity(600);
+			launcherMotor.spin_percent(100);
+			intakeMotor.spin_percent(100);
 			return;
 		}
 		else {
-			launcherMotor.move_velocity(speed * 600.0 / 100.0);
+			launcherMotor.spin_percent(speed);
 			intakeMotor.spin_percent(-100);
 		}
 
@@ -198,9 +196,9 @@ namespace ace {
 	void launch_standby(bool enabled, float speed) {
 
 		if (enabled)
-			launcherMotor.move_voltage(12000 * (speed / 100.0));
+			launcherMotor.spin_percent(speed);
 		else
-			launcherMotor.move_voltage(0);
+			launcherMotor.spin_percent(0);
 	}
 
 	// reset motors to 0 voltage
@@ -252,8 +250,16 @@ namespace ace {
 		intakeMotor.spin_percent(-ROLLER_SPEED);
 	}
 
-	void intake_toggle() {
-		intakeMotor.spin_percent(INTAKE_SPEED);
+	void intake_toggle(bool enabled) {
+
+		if (enabled)
+		{
+			intakeMotor.spin_percent(INTAKE_SPEED);
+		}
+		else
+		{
+			intakeMotor.spin_percent(0);
+		}
 	}
 
 	void intake_reverse() {
@@ -275,14 +281,11 @@ namespace ace {
 	}
 
 	/* ------------------------------ Light Sensor ------------------------------ */
-	std::vector<float> light_detection_arr = {};
-	void launch_sensor_detection() {
+	int ambient_light = 0;
+	float light_diff_factor = 1.2;
 
-		for (size_t i = 0; i < light_detection_arr.size(); i++)
-		{
-			//light_detection_arr.push_back 
-		}
-
+	bool light_sensor_detect() {
+		return lightSensor.get_value() >= ambient_light * light_diff_factor;
 	}
 
 
@@ -301,9 +304,12 @@ namespace ace {
 
 		while (1)
 		{
-			if (new_haptic_request) {
 
+			partner_connected = partner.is_connected();
+
+			if (new_haptic_request) {
 				master.rumble(cntr_haptic_text.c_str());
+				new_haptic_request = false;
 			}
 
 			/* ------------------------------ Update Screen ----------------------------- */
