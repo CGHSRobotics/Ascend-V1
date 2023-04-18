@@ -21,9 +21,6 @@ void initialize() {
 
 	pros::delay(500); // Stop the user from doing anything while legacy ports configure.
 
-	//pros::ADILED led({ INTERNAL_ADI_PORT,'B' }, 60);
-	//led.set_all(0xffffff);
-
 	// Configure your chassis controls
 	chassis.toggle_modify_curve_with_controller(false); // Enables modifying the controller curve with buttons on the joysticks
 	chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
@@ -35,7 +32,12 @@ void initialize() {
 	lv_label_set_text(ace::lvgl::label_load_flap, "Init Flap       -  OK");
 
 	// clear screen on master controller
-	master.set_text(0, 1, "Master");
+	ace::__task_update_leds_task.set_priority(TASK_PRIORITY_DEFAULT - 2);
+	ace::led_task_init = true;
+
+	ace::__task_update_cntr_task.set_priority(TASK_PRIORITY_DEFAULT - 1);
+	ace::cntr_task_init = true;
+
 	lv_label_set_text(ace::lvgl::label_load_shenan, "Init Shenan     -  OK");
 
 	// init chassis

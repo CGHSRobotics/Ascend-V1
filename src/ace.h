@@ -88,11 +88,15 @@ namespace ace {
 	#define PORT_IMU 15
 
 	/* ------------------------------- ADI Devices ------------------------------ */
-	// defined as numbers but really are the letters; a=1, b=2 etc...
-	#define PORT_PNEU_ENDGAME 1
-	#define PORT_PNEU_FLAP 2
 
-	#define PORT_SENSOR_LIGHT 3
+	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'A' }
+
+	#define PORT_PNEU_FLAP { INTERNAL_ADI_PORT, 'B' }
+
+	#define PORT_SENSOR_LIGHT { INTERNAL_ADI_PORT, 'C' }
+
+	#define PORT_LED { INTERNAL_ADI_PORT, 'D' }
+
 
 
 	/* ========================================================================== */
@@ -123,6 +127,26 @@ namespace ace {
 	const double rad2 = 1.4142;
 
 	extern int ambient_light;
+
+	/* ------------------------------ LED Variables ----------------------------- */
+
+	// enum of possible states
+	enum led_state_t {
+		led_idle = 1,
+		led_intake = 2,
+		led_launch = 3
+	};
+
+	// current led state
+	extern led_state_t curr_led_state;
+
+	// color for red alliance
+	const int led_color_red = 0xaa0000;
+	const int led_color_red_bright = 0xaa0000;
+	// color for blue alliance
+	const int led_color_blue = 0x0000aa;
+	const int led_color_blue_bright = 0x0000ff;
+
 
 
 	/* ----------------------- User Control Enabled Bools ----------------------- */
@@ -214,6 +238,8 @@ namespace ace {
 
 	// Light Sensor for disk launching
 	const pros::ADILightSensor lightSensor(PORT_SENSOR_LIGHT);
+
+	extern pros::ADILed led;
 
 	/* ========================================================================== */
 	/*                                   Buttons                                  */
@@ -365,8 +391,29 @@ namespace ace {
 	 */
 	extern void update_cntr_task();
 
+	// init bool
+	extern bool cntr_task_init;
+
+
 	// Actual pros::Task for controller update screen function
 	static pros::Task __task_update_cntr_task(update_cntr_task, "cntr_update");
+
+
+	/* ========================================================================== */
+	/*                                Update LED's                                */
+	/* ========================================================================== */
+
+	/**
+	 * @brief	function that runs every 10ms and updates leds screen
+	 *
+	 */
+	extern void update_leds_task();
+
+	// init bool
+	extern bool led_task_init;
+
+	// Actual pros::Task for controller update screen function
+	static pros::Task __task_update_leds_task(update_leds_task, "leds_update");
 }
 
 
