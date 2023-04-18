@@ -27,16 +27,26 @@ pros::Controller master(pros::E_CONTROLLER_MASTER);
 // partner controller
 pros::Controller partner(pros::E_CONTROLLER_PARTNER);
 
+
 namespace ace {
 
 	/* ========================================================================== */
-	/*                              Class Definitions                             */
+	/*                         Global Variable Definitions                        */
 	/* ========================================================================== */
 
 	bool partner_connected = false;
 	bool is_red_alliance = true;
 
 	util::timer endgame_timer(200);
+
+	// leds 
+	pros::ADILed led(PORT_LED, 60);
+
+
+	/* ========================================================================== */
+	/*                              Class Definitions                             */
+	/* ========================================================================== */
+
 
 	/* --------------------------- Custom Motor Class --------------------------- */
 	void A_Motor::init() {
@@ -254,15 +264,18 @@ namespace ace {
 
 		if (enabled)
 		{
+			curr_led_state = led_intake;
 			intakeMotor.spin_percent(INTAKE_SPEED);
 		}
 		else
 		{
+			curr_led_state = led_idle;
 			intakeMotor.spin_percent(0);
 		}
 	}
 
 	void intake_reverse() {
+		curr_led_state = led_idle;
 		intakeMotor.spin_percent(-INTAKE_SPEED);
 	}
 
@@ -297,6 +310,8 @@ namespace ace {
 	bool new_haptic_request = false;
 	std::string cntr_haptic_text = "";
 
+	bool cntr_task_init = false;
+
 	void update_cntr_task() {
 
 		bool draw_master = false;
@@ -304,34 +319,35 @@ namespace ace {
 
 		while (1)
 		{
-
-			partner_connected = partner.is_connected();
-
-			if (new_haptic_request) {
-				master.rumble(cntr_haptic_text.c_str());
-				new_haptic_request = false;
-			}
-
-			/* ------------------------------ Update Screen ----------------------------- */
-			else if (!draw_master)
+			if (cntr_task_init)
 			{
-				partner.set_text(curr_line, 0, cntr_partner_text_arr[curr_line]);
-			}
-			else {
-				master.set_text(curr_line, 0, cntr_master_text_arr[curr_line]);
-			}
+				partner_connected = partner.is_connected();
 
-			curr_line++;
-			if (curr_line > 2)
-			{
-				curr_line = 0;
-				draw_master = !draw_master;
-			}
+				if (new_haptic_request) {
+					master.rumble(cntr_haptic_text.c_str());
+					new_haptic_request = false;
+				}
 
-			pros::delay(50);
+				/* ------------------------------ Update Screen ----------------------------- */
+				else if (!draw_master)
+				{
+					partner.set_text(curr_line, 0, cntr_partner_text_arr[curr_line]);
+				}
+				else {
+					master.set_text(curr_line, 0, cntr_master_text_arr[curr_line]);
+				}
+
+				curr_line++;
+				if (curr_line > 2)
+				{
+					curr_line = 0;
+					draw_master = !draw_master;
+				}
+
+				pros::delay(50);
+			}
 		}
 	}
-
 
 	std::string cntr_compile_string(std::vector<std::string> arr) {
 
@@ -376,6 +392,68 @@ namespace ace {
 	void update_cntr_haptic(std::string new_haptic) {
 		new_haptic_request = true;
 		cntr_haptic_text = new_haptic;
+	}
+
+
+	/* ========================================================================== */
+	/*                                Update LED's                                */
+	/* ========================================================================== */
+
+	led_state_t curr_led_state = led_idle;
+
+	bool led_task_init = false;
+
+
+	void update_leds_task() {
+
+		led_state_t curr_state = led_idle;
+
+		util::timer led_intake_timer(2000);
+
+		while (1)
+		{
+
+			if (led_task_init)
+			{
+				int color = (ace::is_red_alliance) ? ace::led_color_red : ace::led_color_blue;
+				int color_bright = (ace::is_red_alliance) ? ace::led_color_red_bright : ace::led_color_blue_bright;
+
+				// check if state changed
+				if (curr_led_state != curr_state)
+				{
+					curr_state = curr_led_state;
+
+					if (curr_state == led_idle)
+					{
+						led.set_all(color);
+					}
+				}
+
+				// check if either intake or launch state
+				if (curr_led_state == led_intake)
+				{
+					int arr[led.length()] = {};
+
+					int index = (int)((float)led.length()) * (led_intake_timer.currTime / led_intake_timer.maxTime);
+
+					for (int i = 0; i < led.length(); i++) {
+
+						if (i == index)
+						{
+							arr[i] = color_bright;
+						}
+						else
+						{
+							arr[i] = color;
+						}
+					}
+
+					led_intake_timer.update(10);
+				}
+			}
+
+			pros::delay(10);
+		}
 	}
 }
 
