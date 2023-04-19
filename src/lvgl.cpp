@@ -687,7 +687,7 @@ namespace ace::lvgl {
 		lv_obj_set_size(menu_tab2_btnm_auton, 225, 80);
 		lv_btnm_set_style(menu_tab2_btnm_auton, LV_BTNM_STYLE_BTN_REL, &style_btnm);
 
-		static const char* btnm_alliance_map[] = { "Red", "Blue", "" };
+		static const char* btnm_alliance_map[] = { "Red", "Blue", ""};
 		lv_obj_t* menu_tab2_btnm_alliance = lv_btnm_create(menu_tab2_cont2, NULL);
 		lv_btnm_set_map(menu_tab2_btnm_alliance, btnm_alliance_map);
 		lv_btnm_set_action(menu_tab2_btnm_alliance, menu_btnm_alliance);

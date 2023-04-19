@@ -4,11 +4,16 @@
 /*
 	arm-none-eabi-addr2line -faps -e ./bin/hot.package.elf
 	arm-none-eabi-addr2line -faps -e ./bin/cold.package.elf
+	arm-none-eabi-addr2line -faps -e ./bin/cold.package.elf
 */
 
 /*
-	0x380662e
-		0x3832e0c
+	0x38332ec
+        0x383333c
+        0x78035f0
+        0x3854e10
+        0x38532fc
+        0x384d78c
 */
 
 /* ========================================================================== */
@@ -33,8 +38,8 @@ void initialize()
 	lv_label_set_text(ace::lvgl::label_load_flap, "Init Flap       -  OK");
 
 	// clear screen on master controller
-	ace::__task_update_leds_task.set_priority(TASK_PRIORITY_DEFAULT - 2);
-	ace::led.set_all(ace::led_color_blue_bright);
+	//ace::__task_update_leds_task.set_priority(TASK_PRIORITY_DEFAULT - 2);
+	//ace::led.set_all(ace::led_color_red_bright);
 
 	ace::__task_update_cntr_task.set_priority(TASK_PRIORITY_DEFAULT - 1);
 
@@ -164,6 +169,10 @@ void opcontrol()
 		if (ace::btn_alliance.get_press_new())
 		{
 			ace::is_red_alliance = !ace::is_red_alliance;
+
+			(ace::is_red_alliance) ?
+				ace::led.set_all(ace::led_color_red_bright) :
+				ace::led.set_all(ace::led_color_blue_bright);
 		}
 
 		if (ace::light_sensor_detect())
@@ -172,16 +181,10 @@ void opcontrol()
 		}
 
 		/* --------------------------- Chassis Tank Drive --------------------------- */
-		if (ace::auto_targeting_enabled)
+		if (ace::auto_targeting_enabled && ace::launch_short_enabled)
 		{
 			ace::auto_target(true);
 		}
-		/*else if (std::abs(master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_LEFT_Y)) < 32 && std::abs(master.get_analog(ANALOG_LEFT_Y)) > 95) {
-
-			float avg = (master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_LEFT_Y)) / 2.0;
-
-			//chassis.set(avg, avg);
-		}*/
 		else
 		{
 			ace::auto_target(false);

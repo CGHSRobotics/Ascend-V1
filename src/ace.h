@@ -89,13 +89,13 @@ namespace ace {
 
 	/* ------------------------------- ADI Devices ------------------------------ */
 
-	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'D' }
+	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'A' }
 
 	#define PORT_PNEU_FLAP { INTERNAL_ADI_PORT, 'B' }
 
 	#define PORT_SENSOR_LIGHT { INTERNAL_ADI_PORT, 'C' }
 
-	#define PORT_LED 8
+	#define PORT_LED { INTERNAL_ADI_PORT, 'D' }
 
 
 
@@ -138,7 +138,7 @@ namespace ace {
 	};
 
 	// current led state
-	extern led_state_t curr_led_state;
+	//extern led_state_t curr_led_state;
 
 	// color for red alliance
 	const int led_color_red = 0xaa0000;
@@ -173,7 +173,7 @@ namespace ace {
 	const float LAUNCH_SPEED_SHORT = 70.0;
 	const float LAUNCH_SPEED_LONG = 92.0;
 	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_SHORT;
-	const float LAUNCHER_SPEED_CUTOFF = 5.0;
+	const float LAUNCHER_SPEED_CUTOFF = 10.0;
 
 	// Chasssis Speeds ( * 1.27 to fit in range of [-127, 127])
 	const float DRIVE_SPEED = 87.0 * 1.27;
@@ -407,13 +407,13 @@ namespace ace {
 	 * @brief	function that runs every 10ms and updates leds screen
 	 *
 	 */
-	extern void update_leds_task();
+	 //extern void update_leds_task();
 
-	// init bool
-	extern bool led_task_init;
+	 // init bool
+	 //extern bool led_task_init;
 
-	// Actual pros::Task for controller update screen function
-	static pros::Task __task_update_leds_task(update_leds_task, "leds_update");
+	 // Actual pros::Task for controller update screen function
+	 //static pros::Task __task_update_leds_task(update_leds_task, "leds_update");
 }
 
 
@@ -425,7 +425,7 @@ namespace ace::auton {
 	/* ------------------------------- Autonomous ------------------------------- */
 
 	static std::vector<std::string> auton_selection = {
-		  "two", "three", "skill"
+		"skill", "two", "three"
 	};
 	extern int auton_selection_index;
 
