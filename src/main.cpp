@@ -34,7 +34,7 @@ void initialize()
 
 	// clear screen on master controller
 	ace::__task_update_leds_task.set_priority(TASK_PRIORITY_DEFAULT - 2);
-	ace::led.set_all(ace::led_color_red_bright);
+	ace::led.set_all(ace::led_color_blue_bright);
 
 	ace::__task_update_cntr_task.set_priority(TASK_PRIORITY_DEFAULT - 1);
 

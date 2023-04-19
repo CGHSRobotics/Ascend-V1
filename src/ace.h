@@ -142,7 +142,7 @@ namespace ace {
 
 	// color for red alliance
 	const int led_color_red = 0xaa0000;
-	const int led_color_red_bright = 0xaa0000;
+	const int led_color_red_bright = 0xff0000;
 	// color for blue alliance
 	const int led_color_blue = 0x0000aa;
 	const int led_color_blue_bright = 0x0000ff;
