@@ -89,13 +89,13 @@ namespace ace {
 
 	/* ------------------------------- ADI Devices ------------------------------ */
 
-	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'A' }
+	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'D' }
 
 	#define PORT_PNEU_FLAP { INTERNAL_ADI_PORT, 'B' }
 
 	#define PORT_SENSOR_LIGHT { INTERNAL_ADI_PORT, 'C' }
 
-	#define PORT_LED { INTERNAL_ADI_PORT, 'D' }
+	#define PORT_LED 8
 
 
 
@@ -172,7 +172,7 @@ namespace ace {
 	// Launcher Speeds
 	const float LAUNCH_SPEED_SHORT = 70.0;
 	const float LAUNCH_SPEED_LONG = 92.0;
-	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_LONG;
+	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_SHORT;
 	const float LAUNCHER_SPEED_CUTOFF = 5.0;
 
 	// Chasssis Speeds ( * 1.27 to fit in range of [-127, 127])

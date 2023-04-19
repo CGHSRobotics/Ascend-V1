@@ -1,4 +1,3 @@
-
 import sys
 
 import subprocess
@@ -11,10 +10,10 @@ import winsound
 
 
 def cmd_menu():
-
     print("\x1B[31m")
     cmd_str = input(
-        "(1) for Build, (2) for MU, (3) for Brain Terminal, \n (4) for Stack Trace or (e) for exit \n \x1B[33m")
+        "(1) for Build, (2) for MU, (3) for Brain Terminal, \n (4) for Stack Trace or (e) for exit \n \x1B[33m"
+    )
     print("\x1B[34m")
 
     if cmd_str == "e":
@@ -30,12 +29,11 @@ def cmd_menu():
     elif cmd_str == "3":
         print("\n Entering Terminal... (e) to escape ")
         p = subprocess.Popen("pros terminal", shell=True)
-        while (not keyboard.is_pressed("e")):
+        while not keyboard.is_pressed("e"):
             time.sleep(0.1)
         p.kill()
 
     elif cmd_str == "4":
-
         print("Enter Addresses to Translate. \n")
         str = ""
         while True:
@@ -48,7 +46,8 @@ def cmd_menu():
         str = str.split(" ")
 
         p = subprocess.run(
-            "arm-none-eabi-addr2line -faps -e ./bin/hot.package.elf", shell=True)
+            "arm-none-eabi-addr2line -faps -e ./bin/hot.package.elf", shell=True
+        )
 
         arr = []
         for line in str:
@@ -56,12 +55,12 @@ def cmd_menu():
 
         p.terminate()
         p = subprocess.run(
-            "arm-none-eabi-addr2line -faps -e ./bin/cold.package.elf", shell=True)
+            "arm-none-eabi-addr2line -faps -e ./bin/cold.package.elf", shell=True
+        )
 
         for line in str:
             if "??" in arr[str.index(line)]:
-                arr[str.index(line)] = subprocess.run(
-                    line, shell=True).stdout
+                arr[str.index(line)] = subprocess.run(line, shell=True).stdout
 
         print(arr)
 
@@ -71,12 +70,12 @@ def cmd_menu():
 
     print("\x1B[31m")
     print("\n Finished")
-    
-    winsound.Beep(369, 200)
-    time.sleep(0.2)
-    winsound.Beep(369, 200)
-    time.sleep(0.2)
-    winsound.Beep(493, 500)
+
+    winsound.Beep(369, 300)
+    # time.sleep(0.2)
+    winsound.Beep(369, 100)
+    # time.sleep(0.2)
+    winsound.Beep(493, 600)
 
 
 def main():
