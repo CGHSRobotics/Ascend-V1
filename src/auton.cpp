@@ -4,6 +4,12 @@
 namespace ace::auton {
 
 	/* ========================================================================== */
+	/*                        Global Variables Definitions                        */
+	/* ========================================================================== */
+
+	int auton_selection_index = 0;
+
+	/* ========================================================================== */
 	/*                              Three Side Auton                              */
 	/* ========================================================================== */
 	void three_side() {
@@ -51,6 +57,9 @@ namespace ace::auton {
 		intake_toggle(false);
 	}
 
+	/* ========================================================================== */
+	/*                               Two Side Auton                               */
+	/* ========================================================================== */
 	void two_side() {
 
 
@@ -105,8 +114,156 @@ namespace ace::auton {
 
 	}
 
-	int auton_selection_index = 0;
+	/* ========================================================================== */
+	/*                                   Skills                                   */
+	/* ========================================================================== */
+	void skills() {
 
+		turn_chassis(0, TURN_SPEED);
+
+		launch_standby(true, LAUNCH_SPEED_STANDBY);
+		flap_toggle(true);
+		drive_chassis(-3, DRIVE_SPEED_INTAKE);
+
+		/* ------------------------------ Get Roller 1 ------------------------------ */
+
+		roller_auton(135);
+
+		/* ------------------- Intake 1 Disk / Move To 2nd Roller ------------------- */
+		drive_chassis(5, DRIVE_SPEED);
+		intake_toggle(true);
+		turn_chassis(-45, TURN_SPEED);
+		drive_chassis(12 * rad2, DRIVE_SPEED);
+
+		turn_chassis(90, TURN_SPEED);
+		drive_chassis(-14, DRIVE_SPEED_INTAKE);
+
+		/* ------------------------------ Get Roller 2 ------------------------------ */
+
+		roller_auton(135);
+		drive_chassis(5.5, DRIVE_SPEED);
+
+		/* -------------------------- Move To Red High Goal ------------------------- */
+		turn_chassis(0, TURN_SPEED);
+		drive_chassis(60, DRIVE_SPEED);
+
+		/* ------------------------------ Shoot 3 Disks ----------------------------- */
+		intake_toggle(false);
+		//turn_chassis(-5, TURN_SPEED);
+		auto_targeting_enabled = true;
+		launch_auton(4000, LAUNCH_SPEED_SHORT);
+
+		/* ------------------ Intake 3 Disks Along Edge Of Low Goal ----------------- */
+
+		turn_chassis(0, TURN_SPEED);
+		drive_chassis(0, DRIVE_SPEED);
+		intake_toggle(true);
+
+		turn_chassis(88, TURN_SPEED);
+		drive_chassis(36, DRIVE_SPEED_INTAKE);
+		turn_chassis(90, TURN_SPEED);
+		drive_chassis(-35, DRIVE_SPEED);
+		turn_chassis(0, TURN_SPEED);
+
+		drive_chassis(0, DRIVE_SPEED);
+		turn_chassis(0, TURN_SPEED);
+
+		/* ------------------------ Shoot 2nd Set Of 3 Disks ------------------------ */
+		intake_toggle(false);
+		//turn_chassis(-5, TURN_SPEED);
+		auto_targeting_enabled = true;
+		launch_auton(4000, LAUNCH_SPEED_SHORT);
+
+		/* -------------------------- Intake Diagonal Disks ------------------------- */
+		turn_chassis(0, TURN_SPEED);
+		drive_chassis(-26, DRIVE_SPEED);
+
+		turn_chassis(90, TURN_SPEED);
+		intake_toggle(true);
+
+		drive_chassis(24, DRIVE_SPEED);
+		turn_chassis(45, TURN_SPEED);
+
+		drive_chassis(24 * rad2, DRIVE_SPEED);
+
+
+		/* --------------------- Shoot 3rd Set Of 3 Without Flap -------------------- */
+		turn_chassis(-45, TURN_SPEED);
+		drive_chassis(2.5 * rad2, DRIVE_SPEED);
+
+		flap_toggle(false);
+
+		turn_chassis(-60, TURN_SPEED);
+		intake_toggle(false);
+		launch_auton(4000, LAUNCH_SPEED_SHORT);
+		auto_targeting_enabled = true;
+		// turn_chassis(-45, TURN_SPEED);
+
+		/* --------------- Intake Other 3 Disks Along Edge Of Low Goal -------------- */
+		intake_toggle(true);
+
+		turn_chassis(-2, TURN_SPEED);
+
+		drive_chassis(54, DRIVE_SPEED_INTAKE);
+
+		drive_chassis(-6, DRIVE_SPEED);
+		turn_chassis(-90, TURN_SPEED);
+
+		/* ---------------------- Shoot 4th Set Of 3 Without Flap ---------------------- */
+		flap_toggle(false);
+		turn_chassis(-110, TURN_SPEED);
+		pros::delay(1000);
+		intake_toggle(false);
+		launch_auton(4000, LAUNCH_SPEED_SHORT);
+		//turn_chassis(-90, TURN_SPEED);
+		auto_targeting_enabled = true;
+
+		/* ---------------------------- Move To Roller 3 ---------------------------- */
+
+		drive_chassis(-50, DRIVE_SPEED);
+
+		turn_chassis(-180, TURN_SPEED);
+
+		drive_chassis(-6, DRIVE_SPEED);
+
+		/* ------------------------------ Get Roller 3 ------------------------------ */
+
+		roller_auton(135);
+		drive_chassis(4, DRIVE_SPEED);
+
+		/* ---------------------------- Move To Roller 4 ---------------------------- */
+		intake_toggle(true);
+
+		turn_chassis(-225, TURN_SPEED);
+
+		drive_chassis(16 * rad2, DRIVE_SPEED);
+
+		turn_chassis(-90, TURN_SPEED);
+
+		drive_chassis(-12, DRIVE_SPEED);
+
+		/* ------------------------------ Get Roller 4 ------------------------------ */
+
+		roller_auton(135);
+
+		drive_chassis(20, DRIVE_SPEED);
+
+		turn_chassis(-135, TURN_SPEED);
+
+		drive_chassis(-12, DRIVE_SPEED);
+
+		/* --------------------------------- Endgame -------------------------------- */
+		endgame_auton();
+
+		reset_motors();
+
+	}
+
+	/* ========================================================================== */
+	/*                         Auton Function Definitions                         */
+	/* ========================================================================== */
+
+	/* ------------------------------ Auton Page Up ----------------------------- */
 	void auton_page_up() {
 		auton_selection_index += 1;
 		if (auton_selection_index > auton_selection.size() - 1) {
@@ -114,12 +271,14 @@ namespace ace::auton {
 		}
 	}
 
+	/* ----------------------------- Auton Page Down ---------------------------- */
 	void auton_page_down() {
 		auton_selection_index -= 1;
 		if (auton_selection_index < 0) {}
 		auton_selection_index = auton_selection.size() - 1;
 	}
 
+	/* ------------------------------ Roller Auton ------------------------------ */
 	void roller_auton(float rollerDegrees) {
 
 		float actual_degrees = rollerDegrees * 3.0;
@@ -132,6 +291,7 @@ namespace ace::auton {
 		}
 	}
 
+	/* --------------------------- Drive Chassis Auton -------------------------- */
 	void drive_chassis(float distance, float speed, bool wait) {
 
 		bool slew_enabled = distance >= 14;
@@ -142,6 +302,7 @@ namespace ace::auton {
 		}
 	}
 
+	/* --------------------------- Turn Chassis Auton --------------------------- */
 	void turn_chassis(float angle, float speed, bool wait) {
 		chassis.set_turn_pid(angle, speed);
 		if (wait)
@@ -150,13 +311,29 @@ namespace ace::auton {
 		}
 	}
 
+	/* ------------------------------ Launch Auton ------------------------------ */
 	void launch_auton(float time, float speed, bool early_exit) {
 
 		ace::util::timer launch_timer(time);
+
+		int launchedCounter = 0;
 		while (1)
 		{
 			launch(speed, false);
 
+			// detect if disk launched
+			if (light_sensor_detect())
+			{
+				launchedCounter++;
+			}
+
+			// if 3, exit
+			if (launchedCounter >= 3 && early_exit)
+			{
+				break;
+			}
+
+			// Timer
 			launch_timer.update(ez::util::DELAY_TIME);
 			if (launch_timer.done())
 			{
@@ -166,5 +343,17 @@ namespace ace::auton {
 			pros::delay(ez::util::DELAY_TIME);
 		}
 		launcherMotor.spin_percent(0);
+	}
+
+	/* ------------------------------ Endgame Auton ----------------------------- */
+	void endgame_auton() {
+
+		endgame_toggle(true);
+		while (!endgame_timer.done())
+		{
+			pros::delay(ez::util::DELAY_TIME);
+			endgame_toggle(false);
+		}
+		endgame_toggle(false);
 	}
 }

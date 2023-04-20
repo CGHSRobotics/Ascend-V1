@@ -207,19 +207,44 @@ namespace ace
 	/*                             User Control Stuffs                            */
 	/* -------------------------------------------------------------------------- */
 
+	bool curr_launching = false;
+
 	// Launch disks
 	void launch(float speed, bool isLong)
 	{
-
-		if (/*(launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0)*/ launcherMotor.get_actual_velocity() < (speed * 6.0) - LAUNCHER_SPEED_CUTOFF || (auto_targeting_enabled && std::abs(theta) >= 5.0))
+		// if lower than speed
+		if (!curr_launching && launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0)
 		{
-			launcherMotor.move_voltage(speed * 120.0);
-			intakeMotor.spin_percent(100);
+			launcherMotor.move_voltage(100 * 120.0);
+			intakeMotor.spin_percent(25);
 			return;
 		}
-		else
+		// wait for angle auto target
+		else if (!curr_launching && auto_targeting_enabled && std::abs(theta) >= 2.0)
 		{
 			launcherMotor.move_voltage(speed * 120.0);
+			intakeMotor.spin_percent(25);
+			return;
+		}
+		// FIRE ZE WEAPON
+		else
+		{
+			// fire rapidly no matter what if target speed is under 80 while button is held
+			if (speed < 80.0)
+			{
+				curr_launching = true;
+			}
+
+			// if speed drops while rapid firing, boost voltage to 100% to supplement speed loss
+			if (curr_launching && launcherMotor.get_actual_velocity() < (speed - 5.0) * 6.0)
+			{
+				launcherMotor.move_voltage(12000.0);
+			}
+			else
+			{
+				launcherMotor.move_voltage(speed * 120.0);
+			}
+
 			intakeMotor.spin_percent(-100);
 		}
 	}
@@ -227,6 +252,7 @@ namespace ace
 	// launch standby
 	void launch_standby(bool enabled, float speed)
 	{
+		curr_launching = false;
 		if (enabled)
 			launcherMotor.move_voltage(speed * 120.0);
 		else
@@ -328,9 +354,24 @@ namespace ace
 	int ambient_light = 0;
 	float light_diff_factor = 1.2;
 
+	bool current_detecting = false;
+
 	bool light_sensor_detect()
 	{
-		return lightSensor.get_value() >= ambient_light * light_diff_factor;
+		// if is detecting disk
+		if ((lightSensor.get_value() >= ambient_light * light_diff_factor)) {
+			current_detecting = true;
+		}
+		// no disk
+		else {
+			if (current_detecting)
+			{
+				current_detecting = false;
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/* -------------------------------------------------------------------------- */

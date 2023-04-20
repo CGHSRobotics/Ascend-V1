@@ -170,12 +170,12 @@ namespace ace {
 	const float INTAKE_SPEED = 100.0;
 
 	// Launcher Speeds
-	const float LAUNCH_SPEED_SHORT = 70.0;
+	const float LAUNCH_SPEED_SHORT = 75.0;
 	const float LAUNCH_SPEED_LONG = 92.0;
 	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_SHORT;
 	const float LAUNCHER_SPEED_CUTOFF = 10.0;
 
-	// Chasssis Speeds ( * 1.27 to fit in range of [-127, 127])
+	// Chassis Speeds ( * 1.27 to fit in range of [-127, 127])
 	const float DRIVE_SPEED = 87.0 * 1.27;
 	const float DRIVE_SPEED_INTAKE = 20.0 * 1.27;
 
@@ -326,6 +326,12 @@ namespace ace {
 	 * @param enabled	bool whether enabled or not
 	 */
 	extern void endgame_toggle(bool enabled);
+
+	/**
+	 * @brief 	calls endgame toggle in skills for auton
+	 *
+	 */
+	extern void endgame_auton();
 
 	/* ------------------------------- Flap Toggle ------------------------------ */
 

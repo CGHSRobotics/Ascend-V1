@@ -9,11 +9,11 @@
 
 /*
 	0x38332ec
-        0x383333c
-        0x78035f0
-        0x3854e10
-        0x38532fc
-        0x384d78c
+		0x383333c
+		0x78035f0
+		0x3854e10
+		0x38532fc
+		0x384d78c
 */
 
 /* ========================================================================== */
@@ -110,10 +110,12 @@ void opcontrol()
 		/* -------------------------------- Get Input ------------------------------- */
 
 		// Intake Toggle
-		if (ace::btn_intake_toggle.get_press_new())
+		/*if (ace::btn_intake_toggle.get_press_new())
 		{
 			ace::intake_enabled = !ace::intake_enabled;
-		}
+		}*/
+
+		ace::intake_enabled = ace::btn_intake_toggle.get_press();
 
 		// Intake Reverse
 		if (ace::btn_intake_reverse.get_press())
