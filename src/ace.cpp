@@ -215,7 +215,7 @@ namespace ace
 		// if lower than speed
 		if (!curr_launching && launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0)
 		{
-			launcherMotor.move_voltage(100 * 120.0);
+			launcherMotor.move_voltage(12000.0);
 			intakeMotor.spin_percent(25);
 			return;
 		}
@@ -230,7 +230,7 @@ namespace ace
 		else
 		{
 			// fire rapidly no matter what if target speed is under 80 while button is held
-			if (speed < 80.0)
+			if (isLong)
 			{
 				curr_launching = true;
 			}
