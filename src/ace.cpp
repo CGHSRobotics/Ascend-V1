@@ -25,9 +25,6 @@ Drive chassis(
 	,
 	1.25);
 
-// master controller
-pros::Controller master(pros::E_CONTROLLER_MASTER);
-
 // partner controller
 pros::Controller partner(pros::E_CONTROLLER_PARTNER);
 

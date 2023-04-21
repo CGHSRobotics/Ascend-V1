@@ -6,6 +6,7 @@
 
 using std::string;
 
+extern pros::Controller partner;
 
 /* ========================================================================== */
 /*                             Ace Util Namespace                             */
