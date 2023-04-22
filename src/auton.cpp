@@ -33,7 +33,7 @@ namespace ace::auton {
 		drive_chassis(2.0, DRIVE_SPEED);
 		turn_chassis(-7.5, TURN_SPEED);
 
-		launch_auton(4000.0, 94.0, false);
+		launch_auton(4000.0, 94.0, true);
 		launch_standby(true, 88);
 		intake_toggle(true);
 
@@ -52,7 +52,7 @@ namespace ace::auton {
 
 		pros::delay(1000);
 
-		launch_auton(4000.0, 88.0);
+		launch_auton(4000.0, 88.0, true);
 		launch_standby(false, 90);
 		intake_toggle(false);
 	}
@@ -81,28 +81,33 @@ namespace ace::auton {
 		drive_chassis(24.0 * rad2, DRIVE_SPEED);
 
 		pros::delay(1000);
-		turn_chassis(118.0, TURN_SPEED);
 
-		launch_auton(4000.0, 94.0);
+		turn_chassis(135.0, TURN_SPEED);
+
+		drive_chassis(3.0 * rad2, DRIVE_SPEED);
+
+		turn_chassis(125.0, TURN_SPEED);
+
+		launch_auton(4000.0, 94.0, true);
 		launch_standby(true, 92);
 		intake_toggle(true);
 
 		/* ------------------------------- Get 3 Disks ------------------------------ */
 
 		turn_chassis(135.0, TURN_SPEED);
-		drive_chassis(6.0 * rad2, DRIVE_SPEED);
+		drive_chassis(3.0 * rad2, DRIVE_SPEED);
 
 		drive_chassis(-6.0 * rad2, DRIVE_SPEED);
 
 		turn_chassis(45.0, TURN_SPEED);
 
-		drive_chassis(24.0 * rad2, DRIVE_SPEED_INTAKE);
+		drive_chassis(24.0 * rad2, DRIVE_SPEED);
 
 		pros::delay(1000);
-		turn_chassis(140.0, TURN_SPEED);
+		turn_chassis(135.0, TURN_SPEED);
 		//drive_chassis(6.0 * rad2, DRIVE_SPEED);
 
-		launch_auton(4000.0, 92.0);
+		launch_auton(4000.0, 92.0, true);
 		launch_standby(false, 90);
 		intake_toggle(false);
 
@@ -145,7 +150,7 @@ namespace ace::auton {
 		intake_toggle(false);
 		//turn_chassis(-5, TURN_SPEED);
 		auto_targeting_enabled = true;
-		launch_auton(4000, LAUNCH_SPEED_SHORT);
+		launch_auton(4000, LAUNCH_SPEED_SHORT, true);
 
 		/* ------------------ Intake 3 Disks Along Edge Of Low Goal ----------------- */
 
@@ -166,7 +171,7 @@ namespace ace::auton {
 		intake_toggle(false);
 		//turn_chassis(-5, TURN_SPEED);
 		auto_targeting_enabled = true;
-		launch_auton(4000, LAUNCH_SPEED_SHORT);
+		launch_auton(4000, LAUNCH_SPEED_SHORT, true);
 
 		/* -------------------------- Intake Diagonal Disks ------------------------- */
 		turn_chassis(0, TURN_SPEED);
@@ -189,7 +194,7 @@ namespace ace::auton {
 
 		turn_chassis(-60, TURN_SPEED);
 		intake_toggle(false);
-		launch_auton(4000, LAUNCH_SPEED_SHORT);
+		launch_auton(4000, LAUNCH_SPEED_SHORT, true);
 		auto_targeting_enabled = true;
 		// turn_chassis(-45, TURN_SPEED);
 
@@ -208,7 +213,7 @@ namespace ace::auton {
 		turn_chassis(-110, TURN_SPEED);
 		pros::delay(1000);
 		intake_toggle(false);
-		launch_auton(4000, LAUNCH_SPEED_SHORT);
+		launch_auton(4000, LAUNCH_SPEED_SHORT, true);
 		//turn_chassis(-90, TURN_SPEED);
 		auto_targeting_enabled = true;
 
@@ -305,14 +310,14 @@ namespace ace::auton {
 	}
 
 	/* ------------------------------ Launch Auton ------------------------------ */
-	void launch_auton(float time, float speed, bool early_exit) {
+	void launch_auton(float time, float speed, bool isLong, bool early_exit) {
 
 		ace::util::timer launch_timer(time);
 
 		int launchedCounter = 0;
 		while (1)
 		{
-			launch(speed, false);
+			launch(speed, isLong);
 
 			// detect if disk launched
 			if (light_sensor_detect())

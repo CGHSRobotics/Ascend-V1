@@ -124,7 +124,7 @@ namespace ace {
 	extern util::timer intake_timer;
 
 	extern double theta;
-	const float auto_target_angle_adjustment = 10;
+	const float auto_target_angle_adjustment = 5;
 
 	const double rad2 = 1.4142;
 
@@ -172,7 +172,7 @@ namespace ace {
 	const float INTAKE_SPEED = 100.0;
 
 	// Launcher Speeds
-	const float LAUNCH_SPEED_SHORT = 75.0;
+	const float LAUNCH_SPEED_SHORT = 80.0;
 	const float LAUNCH_SPEED_LONG = 92.0;
 	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_SHORT;
 	const float LAUNCHER_SPEED_CUTOFF = 10.0;
@@ -461,7 +461,7 @@ namespace ace::auton {
 	 */
 	extern void roller_auton(float rollerDegrees);
 
-	extern void launch_auton(float time, float speed, bool early_exit = true);
+	extern void launch_auton(float time, float speed, bool isLong, bool early_exit = true);
 
 	extern void drive_chassis(float distance, float speed, bool wait = true);
 

@@ -190,10 +190,15 @@ void opcontrol()
 		if (ace::auto_targeting_enabled && ace::launch_short_enabled)
 		{
 			ace::auto_target(true);
+
+			// auto brake yes
+			chassis.set_active_brake(0.1);
 		}
 		else
 		{
 			ace::auto_target(false);
+			// auto brake no
+			chassis.set_active_brake(0);
 			chassis.tank();
 		}
 

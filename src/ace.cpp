@@ -232,7 +232,7 @@ namespace ace
 		else
 		{
 			// fire rapidly no matter what if target speed is under 80 while button is held
-			if (isLong)
+			if (!isLong)
 			{
 				curr_launching = true;
 			}
