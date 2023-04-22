@@ -18,10 +18,10 @@ namespace ace::auton {
 
 		turn_chassis(0.0, TURN_SPEED);
 		drive_chassis(-6.0, DRIVE_SPEED);
-		//roller_auton(180);
+		roller_auton(180);
 
 		/* ----------------------------- Pickup 3rd Disk ---------------------------- */
-		drive_chassis(6.0, DRIVE_SPEED);
+		drive_chassis(5.0, DRIVE_SPEED);
 
 		intake_toggle(true);
 		turn_chassis(-45.0, TURN_SPEED);
@@ -33,7 +33,7 @@ namespace ace::auton {
 		drive_chassis(2.0, DRIVE_SPEED);
 		turn_chassis(-7.5, TURN_SPEED);
 
-		launch_auton(4000.0, 94.0);
+		launch_auton(4000.0, 94.0, false);
 		launch_standby(true, 88);
 		intake_toggle(true);
 
@@ -62,12 +62,6 @@ namespace ace::auton {
 	/* ========================================================================== */
 	void two_side() {
 
-
-		roller_auton(45);
-
-		return;
-
-
 		launch_standby(true, 94.0);
 
 		/* ------------------------------- Get Roller ------------------------------- */
@@ -79,7 +73,7 @@ namespace ace::auton {
 		roller_auton(45);
 
 		/* ----------------------------- Move To Shoot 1 ---------------------------- */
-		drive_chassis(6.0, DRIVE_SPEED);
+		drive_chassis(5.0, DRIVE_SPEED);
 		intake_toggle(true);
 
 		turn_chassis(45.0, TURN_SPEED);
@@ -282,7 +276,6 @@ namespace ace::auton {
 	void roller_auton(float rollerDegrees) {
 
 		float actual_degrees = rollerDegrees * 3.0;
-		intakeMotor.set_zero_position(0);
 
 		intakeMotor.move_relative(actual_degrees, 100);
 		while (intakeMotor.is_stopped() == 0)
@@ -330,7 +323,7 @@ namespace ace::auton {
 			// if 3, exit
 			if (launchedCounter >= 3 && early_exit)
 			{
-				break;
+				//break;
 			}
 
 			// Timer

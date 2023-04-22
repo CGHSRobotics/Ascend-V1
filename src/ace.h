@@ -121,6 +121,7 @@ namespace ace {
 	extern bool new_haptic_request;
 
 	extern util::timer endgame_timer;
+	extern util::timer intake_timer;
 
 	extern double theta;
 	const float auto_target_angle_adjustment = 10;
@@ -182,6 +183,7 @@ namespace ace {
 
 	const float TURN_SPEED = 71.0 * 1.27;
 	const float TURN_SPEED_SLOW = 45.0 * 1.27;
+	extern bool curr_launching;
 
 	/* --------------------------- Custom Motor Class --------------------------- */
 	class A_Motor: public pros::Motor {
@@ -220,10 +222,10 @@ namespace ace {
 	/* ------------------------- Other Motors / Devices ------------------------- */
 
 	// Launcher motor
-	static A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
+	extern A_Motor launcherMotor;
 
 	// Motor for intake, roller, and DTS
-	static A_Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_18, false);
+	extern A_Motor intakeMotor;
 
 	// Vision sensor
 	const pros::Vision visionSensor(PORT_VISION, pros::E_VISION_ZERO_CENTER);
@@ -438,6 +440,7 @@ namespace ace::auton {
 
 	extern void three_side();
 	extern void two_side();
+	extern void skills();
 
 	/**
 		 * @brief 	pages up auton control int by one
@@ -463,6 +466,8 @@ namespace ace::auton {
 	extern void drive_chassis(float distance, float speed, bool wait = true);
 
 	extern void turn_chassis(float distance, float speed, bool wait = true);
+
+	extern void endgame_auton();
 
 }
 

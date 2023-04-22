@@ -39,9 +39,14 @@ namespace ace
 	bool is_red_alliance = true;
 
 	util::timer endgame_timer(200);
+	util::timer intake_timer(2000);
 
 	// leds
 	pros::ADILed led(PORT_LED, 60);
+
+	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
+
+	A_Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_18, false);
 
 	/* ========================================================================== */
 	/*                              Class Definitions                             */
@@ -251,7 +256,7 @@ namespace ace
 	{
 		curr_launching = false;
 		if (enabled)
-			launcherMotor.move_voltage(speed * 120.0);
+			launcherMotor.move_velocity(speed * 6);
 		else
 			launcherMotor.move_voltage(0);
 	}
@@ -315,13 +320,33 @@ namespace ace
 
 	void intake_toggle(bool enabled)
 	{
-
+		// intake enabled
 		if (enabled)
 		{
-			intakeMotor.spin_percent(INTAKE_SPEED);
+			//check torque
+			float intakeTorque = intakeMotor.get_percent_torque();
+			// if high, reset torque
+			if (intakeTorque >= 75) {
+				intake_timer.reset();
+			}
+			// update timer
+			//intake_timer.update(ez::util::DELAY_TIME);
+
+			// check if timer done
+			if (intake_timer.done())
+			{
+				intakeMotor.spin_percent(25.0);
+			}
+			else
+			{
+				intakeMotor.spin_percent(INTAKE_SPEED);
+			}
 		}
+
+		// Not enabled
 		else
 		{
+			intake_timer.reset();
 			intakeMotor.spin_percent(0);
 		}
 	}
@@ -337,6 +362,7 @@ namespace ace
 	{
 		int id = (is_red_alliance) ? 1 : 2;
 		pros::vision_object_s_t goal = visionSensor.get_by_sig(0, id);
+
 
 		theta = (((double)(goal.x_middle_coord) / ((double)VISION_FOV_WIDTH / 2.0)) * 30.0) + auto_target_angle_adjustment;
 

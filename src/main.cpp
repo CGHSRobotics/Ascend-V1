@@ -82,6 +82,8 @@ void autonomous()
 
 	std::string curr_auton = ace::auton::auton_selection[ace::auton::auton_selection_index];
 
+	ace::reset_motors();
+
 	if (curr_auton == "two")
 	{
 		ace::auton::two_side();
@@ -90,8 +92,10 @@ void autonomous()
 	{
 		ace::auton::three_side();
 	}
-
-	// ace::update_cntr_haptic("...");
+	else if (curr_auton == "skills")
+	{
+		ace::auton::skills();
+	}
 }
 
 /* ========================================================================== */
@@ -110,12 +114,12 @@ void opcontrol()
 		/* -------------------------------- Get Input ------------------------------- */
 
 		// Intake Toggle
-		/*if (ace::btn_intake_toggle.get_press_new())
+		if (ace::btn_intake_toggle.get_press_new())
 		{
 			ace::intake_enabled = !ace::intake_enabled;
-		}*/
+		}
 
-		ace::intake_enabled = ace::btn_intake_toggle.get_press();
+		//ace::intake_enabled = ace::btn_intake_toggle.get_press();
 
 		// Intake Reverse
 		if (ace::btn_intake_reverse.get_press())
