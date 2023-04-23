@@ -86,9 +86,9 @@ namespace ace::auton {
 
 		turn_chassis(135.0, TURN_SPEED);
 
-		drive_chassis(3.0 * rad2, DRIVE_SPEED);
+		drive_chassis(4.0 * rad2, DRIVE_SPEED);
 
-		turn_chassis(125.0, TURN_SPEED);
+		turn_chassis(135.0, TURN_SPEED);
 
 		launch_auton(4000.0, 94.0, true);
 		launch_standby(true, 92);
