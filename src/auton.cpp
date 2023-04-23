@@ -80,7 +80,7 @@ namespace ace::auton {
 
 		turn_chassis(45.0, TURN_SPEED);
 
-		drive_chassis(24.0 * rad2, DRIVE_SPEED);
+		drive_chassis(25.0 * rad2, DRIVE_SPEED);
 
 		pros::delay(1000);
 
