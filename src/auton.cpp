@@ -64,15 +64,17 @@ namespace ace::auton {
 	/* ========================================================================== */
 	void two_side() {
 
-		launch_standby(true, 94.0);
+		launch_standby(true, 62.0);
 
 		/* ------------------------------- Get Roller ------------------------------- */
 
 		drive_chassis(-20.0, DRIVE_SPEED);
 		turn_chassis(90.0, TURN_SPEED);
 
-		drive_chassis(-10.0, DRIVE_SPEED);
-		roller_auton(45);
+		//Need to start rollers before touching them - Nick
+		roller_auton(100);
+		drive_chassis(-11.0, DRIVE_SPEED);
+		
 
 		/* ----------------------------- Move To Shoot 1 ---------------------------- */
 		drive_chassis(5.0, DRIVE_SPEED);
@@ -83,15 +85,16 @@ namespace ace::auton {
 		drive_chassis(24.0 * rad2, DRIVE_SPEED);
 
 		pros::delay(1000);
-
-		turn_chassis(135.0, TURN_SPEED);
+//135
+		turn_chassis(125.0, TURN_SPEED);
 
 		drive_chassis(4.0 * rad2, DRIVE_SPEED);
 
-		turn_chassis(135.0, TURN_SPEED);
-
-		launch_auton(4000.0, 94.0, true);
-		launch_standby(true, 92);
+		turn_chassis(125.0, TURN_SPEED);
+//92
+//4000
+		launch_auton(4500.0, 62.0, true);
+		launch_standby(true, 67.0);
 		intake_toggle(true);
 
 		/* ------------------------------- Get 3 Disks ------------------------------ */
@@ -103,14 +106,14 @@ namespace ace::auton {
 
 		turn_chassis(45.0, TURN_SPEED);
 
-		drive_chassis(24.0 * rad2, DRIVE_SPEED);
-
+		drive_chassis(24.0 * rad2, DRIVE_SPEED_INTAKE);
+//140
 		pros::delay(1000);
-		turn_chassis(135.0, TURN_SPEED);
-		//drive_chassis(6.0 * rad2, DRIVE_SPEED);
+		turn_chassis(145.0, TURN_SPEED);
+		drive_chassis(6.0 * rad2, DRIVE_SPEED);
 
-		launch_auton(4000.0, 92.0, true);
-		launch_standby(false, 90);
+		launch_auton(4000.0, 67.0, true);
+		launch_standby(false, 67.0);
 		intake_toggle(false);
 
 	}
@@ -325,6 +328,7 @@ namespace ace::auton {
 			if (light_sensor_detect())
 			{
 				launchedCounter++;
+				long_launch_timer.reset();
 			}
 
 			// if 3, exit

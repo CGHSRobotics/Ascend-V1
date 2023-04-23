@@ -210,12 +210,14 @@ namespace ace
 	/* -------------------------------------------------------------------------- */
 
 	bool curr_launching = false;
+	util::timer long_launch_timer(1000);
 
 	// Launch disks
 	void launch(float speed, bool isLong)
 	{
+		long_launch_timer.update(ez::util::DELAY_TIME);
 		// if lower than speed
-		if (!curr_launching && launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0)
+		if (!curr_launching && launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0 || !long_launch_timer.done())
 		{
 			launcherMotor.move_voltage(12000.0);
 			intakeMotor.spin_percent(25);
@@ -247,7 +249,7 @@ namespace ace
 				launcherMotor.move_voltage(speed * 120.0);
 			}
 
-			intakeMotor.spin_percent(-100);
+			intakeMotor.spin_percent(-50);
 		}
 	}
 
@@ -323,24 +325,9 @@ namespace ace
 		// intake enabled
 		if (enabled)
 		{
-			//check torque
-			float intakeTorque = intakeMotor.get_percent_torque();
-			// if high, reset torque
-			if (intakeTorque >= 75) {
-				intake_timer.reset();
-			}
-			// update timer
-			//intake_timer.update(ez::util::DELAY_TIME);
-
-			// check if timer done
-			if (intake_timer.done())
-			{
-				intakeMotor.spin_percent(25.0);
-			}
-			else
-			{
+			
 				intakeMotor.spin_percent(INTAKE_SPEED);
-			}
+			
 		}
 
 		// Not enabled

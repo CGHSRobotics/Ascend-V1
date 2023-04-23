@@ -67,7 +67,6 @@ namespace ace::util {
 /* ========================================================================== */
 namespace ace {
 
-
 	/* ========================================================================== */
 	/*                                Device Ports                                */
 	/* ========================================================================== */
@@ -122,6 +121,7 @@ namespace ace {
 
 	extern util::timer endgame_timer;
 	extern util::timer intake_timer;
+	extern util::timer long_launch_timer;
 
 	extern double theta;
 	const float auto_target_angle_adjustment = 5;
@@ -172,15 +172,17 @@ namespace ace {
 	const float INTAKE_SPEED = 100.0;
 
 	// Launcher Speeds
-	const float LAUNCH_SPEED_SHORT = 80.0;
-	const float LAUNCH_SPEED_LONG = 92.0;
+	//80
+	const float LAUNCH_SPEED_SHORT = 70.0;
+	//95
+	const float LAUNCH_SPEED_LONG = 80.0;
 	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_SHORT;
-	const float LAUNCHER_SPEED_CUTOFF = 10.0;
+	const float LAUNCHER_SPEED_CUTOFF = 5;
 
 	// Chassis Speeds ( * 1.27 to fit in range of [-127, 127])
 	const float DRIVE_SPEED = 87.0 * 1.27;
-	const float DRIVE_SPEED_INTAKE = 20.0 * 1.27;
-
+	const float DRIVE_SPEED_INTAKE = 25.0 * 1.27;
+	//20
 	const float TURN_SPEED = 71.0 * 1.27;
 	const float TURN_SPEED_SLOW = 45.0 * 1.27;
 	extern bool curr_launching;
@@ -283,6 +285,11 @@ namespace ace {
 
 	// Custom Button to switch alliance 
 	static Btn_Digi btn_alliance(pros::E_CONTROLLER_DIGITAL_A, cntr_partner);
+
+	//Custom Button to increase short launch speed
+	static Btn_Digi btn_short_speed_up(pros::E_CONTROLLER_DIGITAL_UP, cntr_partner);
+	//Custom Button to lower short launch speed
+	static Btn_Digi btn_short_speed_down(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_partner);
 
 
 
