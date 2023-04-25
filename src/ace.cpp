@@ -38,6 +38,8 @@ namespace ace
 	bool partner_connected = false;
 	bool is_red_alliance = true;
 
+	float launch_speed = LAUNCH_SPEED_SHORT;
+
 	util::timer endgame_timer(200);
 	util::timer intake_timer(2000);
 
@@ -249,7 +251,7 @@ namespace ace
 				launcherMotor.move_voltage(speed * 120.0);
 			}
 
-			intakeMotor.spin_percent(-50);
+			intakeMotor.spin_percent(-100);
 		}
 	}
 
@@ -325,9 +327,7 @@ namespace ace
 		// intake enabled
 		if (enabled)
 		{
-			
-				intakeMotor.spin_percent(INTAKE_SPEED);
-			
+			intakeMotor.spin_percent(INTAKE_SPEED);
 		}
 
 		// Not enabled

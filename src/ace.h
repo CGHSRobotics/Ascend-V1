@@ -165,6 +165,8 @@ namespace ace {
 	static bool flap_enabled = false;
 	extern bool is_red_alliance;
 
+	extern float launch_speed;
+
 	/* ------------------------------- SPEEEEEEED ------------------------------- */
 
 	// Misc Speeds
@@ -250,6 +252,8 @@ namespace ace {
 	/*                                   Buttons                                  */
 	/* ========================================================================== */
 
+	/* --------------------------------- Master --------------------------------- */
+
 	// Custom Button for Intake Toggle
 	static Btn_Digi btn_intake_toggle(pros::E_CONTROLLER_DIGITAL_L1, cntr_master);
 
@@ -271,11 +275,10 @@ namespace ace {
 	// Custom Button for Endgame
 	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_master);
 
+	/* ---------------------------------- Both ---------------------------------- */
+
 	// Custom Button for Standby
 	static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, cntr_both);
-
-	// Custom Button to Cycle Auton	
-	static Btn_Digi btn_auton(pros::E_CONTROLLER_DIGITAL_X, cntr_partner);
 
 	// Custom Button to engage Auto Targetting
 	static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_both); //Ross wants it B on partner, fix later
@@ -283,13 +286,25 @@ namespace ace {
 	// Custom Button to engage Auto Targetting
 	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_Y, cntr_both); //Ross wants it B on partner, fix later
 
+	/* --------------------------------- Partner -------------------------------- */
+
+	// Custom Button to Cycle Auton	
+	static Btn_Digi btn_auton(pros::E_CONTROLLER_DIGITAL_X, cntr_partner);
+
 	// Custom Button to switch alliance 
 	static Btn_Digi btn_alliance(pros::E_CONTROLLER_DIGITAL_A, cntr_partner);
 
-	//Custom Button to increase short launch speed
-	static Btn_Digi btn_short_speed_up(pros::E_CONTROLLER_DIGITAL_UP, cntr_partner);
-	//Custom Button to lower short launch speed
-	static Btn_Digi btn_short_speed_down(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_partner);
+	// Custom Button that sets launch speed to short launch constant
+	static Btn_Digi btn_launch_speed_short(pros::E_CONTROLLER_DIGITAL_L1, cntr_partner);
+
+	// Custom Button that sets launch speed to long launch constant
+	static Btn_Digi btn_launch_speed_long(pros::E_CONTROLLER_DIGITAL_L2, cntr_partner);
+
+	// Custom Button to lower short launch speed
+	static Btn_Digi btn_launch_speed_increase(pros::E_CONTROLLER_DIGITAL_R1, cntr_partner);
+
+	// Custom Button to lower short launch speed
+	static Btn_Digi btn_launch_speed_decrease(pros::E_CONTROLLER_DIGITAL_R2, cntr_partner);
 
 
 

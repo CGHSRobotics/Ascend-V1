@@ -181,11 +181,26 @@ void opcontrol()
 				ace::led.set_all(ace::led_color_blue_bright);
 		}
 
-		// Launcher Speed Lower/Increase 
+		// Launcher Speed Short
+		if (ace::btn_launch_speed_short.get_press_new())
+			ace::launch_speed = ace::LAUNCH_SPEED_SHORT;
 
+		// Launcher Speed Long
+		if (ace::btn_launch_speed_long.get_press_new())
+			ace::launch_speed = ace::LAUNCH_SPEED_LONG;
+
+		// Launcher Speed Increase
+		if (ace::btn_launch_speed_short.get_press_new())
+			ace::launch_speed += 2.5;
+
+		// Launcher Speed Decrease
+		if (ace::btn_launch_speed_short.get_press_new())
+			ace::launch_speed -= 2.5;
+
+		// Light Sensor
 		if (ace::light_sensor_detect())
 		{
-			// ace::update_cntr_haptic("..");
+			ace::update_cntr_haptic(".");
 		}
 
 		/* --------------------------- Chassis Tank Drive --------------------------- */
@@ -218,19 +233,19 @@ void opcontrol()
 			// Launch Short
 			if (ace::launch_short_enabled)
 			{
-				ace::launch(ace::LAUNCH_SPEED_SHORT, false);
+				ace::launch(ace::launch_speed, false);
 				break;
 			}
 
 			// Launch Long
 			if (ace::launch_long_enabled)
 			{
-				ace::launch(ace::LAUNCH_SPEED_LONG, true);
+				ace::launch(ace::launch_speed, true);
 				break;
 			}
 
 			// launcher standby
-			ace::launch_standby(ace::launcher_standby_enabled, ace::LAUNCH_SPEED_STANDBY);
+			ace::launch_standby(ace::launcher_standby_enabled, ace::launch_speed);
 
 			// roller forward
 			if (ace::roller_forward_enabled)
@@ -267,15 +282,19 @@ void opcontrol()
 
 		/* ------------------------- Controller Screen Draw ------------------------- */
 
+		// Line 1 - Master
 		ace::update_cntr_text(ace::cntr_master, 0,
 			(std::string)"Master" +
 			"  " + std::to_string((int)ace::intakeMotor.get_temp()) + "F" +
 			"  " + std::to_string((int)pros::battery::get_capacity()) + "%");
+
+		// Line 1 - Partner
 		ace::update_cntr_text(ace::cntr_partner, 0,
 			(std::string)"Partner" +
 			"  " + std::to_string((int)ace::intakeMotor.get_temp()) + "F" +
 			"  " + std::to_string((int)pros::battery::get_capacity()) + "%");
 
+		// Line 2
 		std::string ally_str = "";
 		if (ace::is_red_alliance)
 		{
@@ -285,11 +304,27 @@ void opcontrol()
 		{
 			ally_str = "blue";
 		}
+
+		std::string auton_string = "";
+		if (ace::auton::auton_selection[ace::auton::auton_selection_index] == "three")
+		{
+			auton_string = "3";
+		}
+		else if (ace::auton::auton_selection[ace::auton::auton_selection_index] == "two")
+		{
+			auton_string = "2";
+		}
+		else
+		{
+			auton_string = "s";
+		}
 		ace::update_cntr_text(ace::cntr_both, 1,
 			"auto? " + ace::util::bool_to_str(ace::auto_targeting_enabled) +
-			"  " + ace::auton::auton_selection[ace::auton::auton_selection_index] +
+			" l? " + std::to_string((int)ace::launch_speed) +
+			" " + auton_string +
 			" " + ally_str);
 
+		// Line 3
 		ace::update_cntr_text(ace::cntr_both, 2,
 			(std::string)"idle? " + ace::util::bool_to_str(ace::launcher_standby_enabled) +
 			"  flap? " + ace::util::bool_to_str(ace::flap_enabled));
