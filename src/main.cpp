@@ -190,11 +190,11 @@ void opcontrol()
 			ace::launch_speed = ace::LAUNCH_SPEED_LONG;
 
 		// Launcher Speed Increase
-		if (ace::btn_launch_speed_short.get_press_new())
+		if (ace::btn_launch_speed_increase.get_press_new())
 			ace::launch_speed += 2.5;
 
 		// Launcher Speed Decrease
-		if (ace::btn_launch_speed_short.get_press_new())
+		if (ace::btn_launch_speed_decrease.get_press_new())
 			ace::launch_speed -= 2.5;
 
 		// Light Sensor

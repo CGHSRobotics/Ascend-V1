@@ -212,21 +212,21 @@ namespace ace
 	/* -------------------------------------------------------------------------- */
 
 	bool curr_launching = false;
-	util::timer long_launch_timer(1000);
+	util::timer long_launch_timer(500);
 
 	// Launch disks
 	void launch(float speed, bool isLong)
 	{
 		long_launch_timer.update(ez::util::DELAY_TIME);
 		// if lower than speed
-		if (!curr_launching && launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0 || !long_launch_timer.done())
+		if (!curr_launching && launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0)
 		{
-			launcherMotor.move_voltage(12000.0);
+			launcherMotor.move_voltage(12000);
 			intakeMotor.spin_percent(25);
 			return;
 		}
 		// wait for angle auto target
-		else if (!curr_launching && auto_targeting_enabled && std::abs(theta) >= 2.0)
+		else if (!curr_launching && auto_targeting_enabled && std::abs(theta) >= 2.0 || !long_launch_timer.done())
 		{
 			launcherMotor.move_voltage(speed * 120.0);
 			intakeMotor.spin_percent(25);
@@ -242,9 +242,10 @@ namespace ace
 			}
 
 			// if speed drops while rapid firing, boost voltage to 100% to supplement speed loss
-			if (curr_launching && launcherMotor.get_actual_velocity() < (speed - 5.0) * 6.0)
+			if (launcherMotor.get_actual_velocity() < (speed - 5.0) * 6.0)
 			{
-				launcherMotor.move_voltage(12000.0);
+				launcherMotor.move_voltage(12000);
+				//12000 initial, causes slight issues 
 			}
 			else
 			{

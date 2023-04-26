@@ -175,11 +175,11 @@ namespace ace {
 
 	// Launcher Speeds
 	//80
-	const float LAUNCH_SPEED_SHORT = 70.0;
+	const float LAUNCH_SPEED_SHORT = 75.0;
 	//95
 	const float LAUNCH_SPEED_LONG = 80.0;
 	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_SHORT;
-	const float LAUNCHER_SPEED_CUTOFF = 5;
+	const float LAUNCHER_SPEED_CUTOFF = 10;
 
 	// Chassis Speeds ( * 1.27 to fit in range of [-127, 127])
 	const float DRIVE_SPEED = 87.0 * 1.27;

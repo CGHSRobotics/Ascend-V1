@@ -17,10 +17,13 @@ namespace ace::auton {
 		launch_standby(true, 94.0);
 
 		turn_chassis(0.0, TURN_SPEED);
-		drive_chassis(-6.0, DRIVE_SPEED);
-		roller_auton(180);
+		roller_auton(100);
+		drive_chassis(-3.0, DRIVE_SPEED);
+		drive_chassis(3.0, DRIVE_SPEED);
+
 
 		/* ----------------------------- Pickup 3rd Disk ---------------------------- */
+		/*
 		drive_chassis(5.0, DRIVE_SPEED);
 
 		intake_toggle(true);
@@ -51,8 +54,9 @@ namespace ace::auton {
 		turn_chassis(-20.0, TURN_SPEED);
 
 		pros::delay(1000);
-
-		launch_auton(4000.0, 88.0, true);
+		*/
+		turn_chassis(9, TURN_SPEED);
+		launch_auton(4000.0, 100.0, true);
 		launch_standby(false, 90);
 		intake_toggle(false);
 	}
@@ -64,7 +68,7 @@ namespace ace::auton {
 	/* ========================================================================== */
 	void two_side() {
 
-		launch_standby(true, 62.0);
+		launch_standby(true, 95);
 
 		/* ------------------------------- Get Roller ------------------------------- */
 
@@ -74,7 +78,7 @@ namespace ace::auton {
 		//Need to start rollers before touching them - Nick
 		roller_auton(100);
 		drive_chassis(-11.0, DRIVE_SPEED);
-		
+
 
 		/* ----------------------------- Move To Shoot 1 ---------------------------- */
 		drive_chassis(5.0, DRIVE_SPEED);
@@ -84,36 +88,33 @@ namespace ace::auton {
 
 		drive_chassis(24.0 * rad2, DRIVE_SPEED);
 
-		pros::delay(1000);
-//135
-		turn_chassis(125.0, TURN_SPEED);
+		pros::delay(250);
 
-		drive_chassis(4.0 * rad2, DRIVE_SPEED);
-
-		turn_chassis(125.0, TURN_SPEED);
-//92
-//4000
-		launch_auton(4500.0, 62.0, true);
-		launch_standby(true, 67.0);
+		turn_chassis(127.0, TURN_SPEED);
+		//92
+		//4000
+		launch_auton(4500.0, 95, true);
+		launch_standby(true, 95);
 		intake_toggle(true);
 
 		/* ------------------------------- Get 3 Disks ------------------------------ */
 
-		turn_chassis(135.0, TURN_SPEED);
-		drive_chassis(3.0 * rad2, DRIVE_SPEED);
+		/*turn_chassis(135.0, TURN_SPEED);
+		drive_chassis(6.0 * rad2, DRIVE_SPEED);
 
-		drive_chassis(-6.0 * rad2, DRIVE_SPEED);
+		drive_chassis(-6.0 * rad2, DRIVE_SPEED);*/
 
 		turn_chassis(45.0, TURN_SPEED);
 
-		drive_chassis(24.0 * rad2, DRIVE_SPEED_INTAKE);
-//140
-		pros::delay(1000);
-		turn_chassis(145.0, TURN_SPEED);
-		drive_chassis(6.0 * rad2, DRIVE_SPEED);
+		drive_chassis(24.0 * rad2, DRIVE_SPEED);
 
-		launch_auton(4000.0, 67.0, true);
-		launch_standby(false, 67.0);
+		pros::delay(1000);
+
+		turn_chassis(146.0, TURN_SPEED);
+
+		launch_auton(4000.0, 95, true);
+
+		launch_standby(false, 10.0);
 		intake_toggle(false);
 
 	}
