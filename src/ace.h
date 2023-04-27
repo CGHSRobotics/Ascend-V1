@@ -118,6 +118,7 @@ namespace ace {
 
 	extern std::string cntr_haptic_text;
 	extern bool new_haptic_request;
+	extern bool new_haptic_request_is_master;
 
 	extern util::timer endgame_timer;
 	extern util::timer intake_timer;
@@ -179,13 +180,13 @@ namespace ace {
 	//95
 	const float LAUNCH_SPEED_LONG = 80.0;
 	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_SHORT;
-	const float LAUNCHER_SPEED_CUTOFF = 10;
+	const float LAUNCHER_SPEED_CUTOFF = 5;
 
 	// Chassis Speeds ( * 1.27 to fit in range of [-127, 127])
-	const float DRIVE_SPEED = 87.0 * 1.27;
+	const float DRIVE_SPEED = 87.0 * 1.27; // 87
 	const float DRIVE_SPEED_INTAKE = 25.0 * 1.27;
 	//20
-	const float TURN_SPEED = 71.0 * 1.27;
+	const float TURN_SPEED = 71.0 * 1.27; // 71
 	const float TURN_SPEED_SLOW = 45.0 * 1.27;
 	extern bool curr_launching;
 
@@ -406,7 +407,7 @@ namespace ace {
 	 *
 	 * @param new_haptic the haptic text ("-", ".") to rumble. see controller.rumble()
 	 */
-	extern void update_cntr_haptic(std::string new_haptic);
+	extern void update_cntr_haptic(std::string new_haptic, bool is_master = true);
 
 	/**
 	 * @brief	compiles controller string arrays into a single string separated by newline; mainly for internal use

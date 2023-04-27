@@ -117,6 +117,10 @@ void opcontrol()
 		if (ace::btn_intake_toggle.get_press_new())
 		{
 			ace::intake_enabled = !ace::intake_enabled;
+			if (ace::intake_enabled)
+			{
+				ace::update_cntr_haptic("-", false);
+			}
 		}
 
 		//ace::intake_enabled = ace::btn_intake_toggle.get_press();
@@ -133,7 +137,13 @@ void opcontrol()
 		}
 
 		// Launcher Short
+		bool temp = ace::launch_short_enabled;
 		ace::launch_short_enabled = ace::btn_launch_short.get_press();
+		if (!ace::launch_short_enabled && temp)
+		{
+			ace::update_cntr_haptic("-", false);
+		}
+
 
 		// Launcher Short
 		ace::launch_long_enabled = ace::btn_launch_long.get_press();
@@ -175,10 +185,6 @@ void opcontrol()
 		if (ace::btn_alliance.get_press_new())
 		{
 			ace::is_red_alliance = !ace::is_red_alliance;
-
-			(ace::is_red_alliance) ?
-				ace::led.set_all(ace::led_color_red_bright) :
-				ace::led.set_all(ace::led_color_blue_bright);
 		}
 
 		// Launcher Speed Short

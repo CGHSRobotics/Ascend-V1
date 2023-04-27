@@ -222,20 +222,20 @@ namespace ace
 		if (!curr_launching && launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0)
 		{
 			launcherMotor.move_voltage(12000);
-			intakeMotor.spin_percent(25);
+			intakeMotor.spin_percent(100);
 			return;
 		}
 		// wait for angle auto target
 		else if (!curr_launching && auto_targeting_enabled && std::abs(theta) >= 2.0 || !long_launch_timer.done())
 		{
 			launcherMotor.move_voltage(speed * 120.0);
-			intakeMotor.spin_percent(25);
+			intakeMotor.spin_percent(100);
 			return;
 		}
 		// FIRE ZE WEAPON
 		else
 		{
-			// fire rapidly no matter what if target speed is under 80 while button is held
+			// fire rapidly no matter what if target speed  cvis under 80 while button is held
 			if (!isLong)
 			{
 				curr_launching = true;
@@ -407,7 +407,14 @@ namespace ace
 
 			if (new_haptic_request)
 			{
-				master.rumble(cntr_haptic_text.c_str());
+				if (new_haptic_request_is_master)
+				{
+					master.rumble(cntr_haptic_text.c_str());
+				}
+				else
+				{
+					partner.rumble(cntr_haptic_text.c_str());
+				}
 				new_haptic_request = false;
 			}
 
@@ -472,9 +479,12 @@ namespace ace
 		}
 	}
 
-	void update_cntr_haptic(std::string new_haptic)
+	bool new_haptic_request_is_master = false;
+
+	void update_cntr_haptic(std::string new_haptic, bool is_master)
 	{
 		new_haptic_request = true;
+		new_haptic_request_is_master = is_master;
 		cntr_haptic_text = new_haptic;
 	}
 
