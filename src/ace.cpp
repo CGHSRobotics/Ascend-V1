@@ -36,7 +36,7 @@ namespace ace
 	/* ========================================================================== */
 
 	bool partner_connected = false;
-	bool is_red_alliance = true;
+	bool is_red_alliance = false;
 
 	float launch_speed = LAUNCH_SPEED_SHORT;
 
@@ -263,7 +263,7 @@ namespace ace
 		if (enabled)
 			launcherMotor.move_velocity(speed * 6);
 		else
-			launcherMotor.move_voltage(0);
+			launcherMotor.move_velocity(0);
 	}
 
 	// reset motors to 0 voltage

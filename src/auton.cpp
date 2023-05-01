@@ -14,7 +14,7 @@ namespace ace::auton {
 	/* ========================================================================== */
 	void three_side() {
 
-		launch_standby(true, 98.0);
+		launch_standby(true, 92.5);
 
 		turn_chassis(0.0, TURN_SPEED);
 		roller_auton(100);
@@ -56,8 +56,8 @@ namespace ace::auton {
 		pros::delay(1000);
 		*/
 		turn_chassis(4, TURN_SPEED);
-		launch_auton(4000.0, 98.0, true);
-		launch_standby(false, 90);
+		launch_auton(15000.0, 92.5, true);
+		launch_standby(false, 92.5);
 		intake_toggle(false);
 	}
 
@@ -93,7 +93,7 @@ namespace ace::auton {
 
 		turn_chassis(45.0, TURN_SPEED);
 
-		drive_chassis(48.0 * rad2, DRIVE_SPEED);
+		drive_chassis(48.0 * rad2, DRIVE_SPEED_INTAKE);
 
 		/* ------------------------------- Get 3 Disks ------------------------------ */
 
