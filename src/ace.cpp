@@ -300,28 +300,7 @@ namespace ace
 		}
 	}
 
-	// toggles flap
-	void flap_toggle(bool enabled)
-	{
-		if (enabled)
-		{
-			flapPneumatics.set_value(1);
-		}
-		else
-		{
-			flapPneumatics.set_value(0);
-		}
-	}
 
-	void roller_forward()
-	{
-		intakeMotor.spin_percent(ROLLER_SPEED);
-	}
-
-	void roller_reverse()
-	{
-		intakeMotor.spin_percent(-ROLLER_SPEED);
-	}
 
 	void intake_toggle(bool enabled)
 	{
@@ -360,7 +339,7 @@ namespace ace
 			chassis.set_turn_pid(theta, 0.5 * 127.0);
 		}
 	}
-
+/*   
 	/* ------------------------------ Light Sensor ------------------------------ */
 	int ambient_light = 0;
 	float light_diff_factor = 1.2;
@@ -384,6 +363,8 @@ namespace ace
 
 		return false;
 	}
+
+
 
 	/* -------------------------------------------------------------------------- */
 	/*                              Controller Stuffs                             */

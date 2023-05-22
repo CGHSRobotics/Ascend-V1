@@ -327,8 +327,6 @@ namespace ace {
 	 */
 	extern void intake_reverse();
 
-	extern void roller_forward();
-	extern void roller_reverse();
 
 	/**
 	 * @brief	launch function, called once per frame
@@ -359,20 +357,6 @@ namespace ace {
 	 */
 	extern void endgame_auton();
 
-	/* ------------------------------- Flap Toggle ------------------------------ */
-
-	/**
-	 * @brief	flap toggle
-	 *
-	 * @param enabled	bool whether enabled or not
-	 */
-	extern void flap_toggle(bool enabled);
-
-	/**
-	 * @brief 	resets all motors to 0
-	 *
-	 */
-	extern void reset_motors();
 
 	/* ------------------------------ Vision Sensor ----------------------------- */
 
