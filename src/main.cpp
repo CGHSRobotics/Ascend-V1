@@ -135,7 +135,7 @@ void opcontrol()
 		{
 			ace::intake_reverse_enabled = false;
 		}
-
+	/*
 		// Launcher Short
 		bool temp = ace::launch_short_enabled;
 		ace::launch_short_enabled = ace::btn_launch_short.get_press();
@@ -147,15 +147,9 @@ void opcontrol()
 
 		// Launcher Short
 		ace::launch_long_enabled = ace::btn_launch_long.get_press();
-
+	*/
 		// Endgame Enabled
 		ace::endgame_enabled = ace::btn_endgame.get_press();
-
-		// roller forward
-		ace::roller_forward_enabled = ace::btn_roller_forward.get_press();
-
-		// roller forward
-		ace::roller_reverse_enabled = ace::btn_roller_reverse.get_press();
 
 		// Standby Enabled
 		if (ace::btn_standby.get_press_new())
@@ -210,6 +204,7 @@ void opcontrol()
 		}
 
 		/* --------------------------- Chassis Tank Drive --------------------------- */
+		/*
 		if (ace::auto_targeting_enabled && ace::launch_short_enabled)
 		{
 			ace::auto_target(true);
@@ -224,6 +219,7 @@ void opcontrol()
 			chassis.set_active_brake(0);
 			chassis.tank();
 		}
+		*/
 
 		/* ------------------------------ User Control ------------------------------ */
 
@@ -237,35 +233,25 @@ void opcontrol()
 			ace::flap_toggle(ace::flap_enabled);
 
 			// Launch Short
+			/*
 			if (ace::launch_short_enabled)
 			{
 				ace::launch(ace::launch_speed, false);
 				break;
 			}
+			*/
 
 			// Launch Long
+			/*
 			if (ace::launch_long_enabled)
 			{
 				ace::launch(ace::launch_speed, true);
 				break;
 			}
-
+			*/
 			// launcher standby
 			ace::launch_standby(ace::launcher_standby_enabled, ace::launch_speed);
 
-			// roller forward
-			if (ace::roller_forward_enabled)
-			{
-				ace::roller_forward();
-				break;
-			}
-
-			// roller reverse
-			if (ace::roller_reverse_enabled)
-			{
-				ace::roller_reverse();
-				break;
-			}
 
 			// Intake Reverse
 			if (ace::intake_reverse_enabled)

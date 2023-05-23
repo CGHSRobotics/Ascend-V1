@@ -157,14 +157,13 @@ namespace ace {
 	static bool launcher_standby_enabled = false;
 	static bool intake_enabled = false;
 	static bool intake_reverse_enabled = false;
-	static bool launch_short_enabled = false;
-	static bool launch_long_enabled = false;
+	//static bool launch_short_enabled = false;
+	//static bool launch_long_enabled = false;
+	static bool launch_enabled = false;
 	static bool endgame_enabled = false;
-	static bool roller_forward_enabled = false;
-	static bool roller_reverse_enabled = false;
 	static bool auto_targeting_enabled = false;
 	static bool flap_enabled = false;
-	extern bool is_red_alliance;
+	extern bool is_red_alliance; 
 
 	extern float launch_speed;
 
