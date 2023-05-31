@@ -38,7 +38,7 @@ namespace ace
 	bool partner_connected = false;
 	bool is_red_alliance = false;
 
-	float launch_speed = LAUNCH_SPEED_SHORT;
+	float launch_speed = LAUNCH_SPEED;
 
 	util::timer endgame_timer(200);
 	util::timer intake_timer(2000);
@@ -268,7 +268,7 @@ namespace ace
 
 	// reset motors to 0 voltage
 	void reset_motors()
-	{
+	{	
 		launcherMotor.move_voltage(0);
 		intakeMotor.move_voltage(0);
 
@@ -276,6 +276,19 @@ namespace ace
 
 		endgamePneumatics.set_value(false);
 		flapPneumatics.set_value(false);
+	}
+
+	// toggles flap
+	void flap_toggle(bool enabled)
+	{
+		if (enabled)
+		{
+			flapPneumatics.set_value(1);
+		}
+		else
+		{
+			flapPneumatics.set_value(0);
+		}
 	}
 
 	// toggles endgame

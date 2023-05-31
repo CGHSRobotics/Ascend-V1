@@ -145,7 +145,7 @@ namespace ace::auton {
 		intake_toggle(false);
 		//turn_chassis(-5, TURN_SPEED);
 		auto_targeting_enabled = true;
-		launch_auton(4000, LAUNCH_SPEED_SHORT, true);
+		launch_auton(4000, LAUNCH_SPEED, true);
 
 		/* ------------------ Intake 3 Disks Along Edge Of Low Goal ----------------- */
 
@@ -166,7 +166,7 @@ namespace ace::auton {
 		intake_toggle(false);
 		//turn_chassis(-5, TURN_SPEED);
 		auto_targeting_enabled = true;
-		launch_auton(4000, LAUNCH_SPEED_SHORT, true);
+		launch_auton(4000, LAUNCH_SPEED, true);
 
 		/* -------------------------- Intake Diagonal Disks ------------------------- */
 		turn_chassis(0, TURN_SPEED);
@@ -189,7 +189,7 @@ namespace ace::auton {
 
 		turn_chassis(-60, TURN_SPEED);
 		intake_toggle(false);
-		launch_auton(4000, LAUNCH_SPEED_SHORT, true);
+		launch_auton(4000, LAUNCH_SPEED, true);
 		auto_targeting_enabled = true;
 		// turn_chassis(-45, TURN_SPEED);
 
@@ -208,7 +208,7 @@ namespace ace::auton {
 		turn_chassis(-110, TURN_SPEED);
 		pros::delay(1000);
 		intake_toggle(false);
-		launch_auton(4000, LAUNCH_SPEED_SHORT, true);
+		launch_auton(4000, LAUNCH_SPEED, true);
 		//turn_chassis(-90, TURN_SPEED);
 		auto_targeting_enabled = true;
 

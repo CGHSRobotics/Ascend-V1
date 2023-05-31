@@ -174,11 +174,10 @@ namespace ace {
 	const float INTAKE_SPEED = 100.0;
 
 	// Launcher Speeds
-	//80
-	const float LAUNCH_SPEED_SHORT = 75.0;
-	//95
-	const float LAUNCH_SPEED_LONG = 80.0;
-	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED_SHORT;
+	
+	const float LAUNCH_SPEED = 75.0;
+	
+	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED;
 	const float LAUNCHER_SPEED_CUTOFF = 5;
 
 	// Chassis Speeds ( * 1.27 to fit in range of [-127, 127])
@@ -356,6 +355,17 @@ namespace ace {
 	 */
 	extern void endgame_auton();
 
+	/**
+	 * @brief 	calls endgame toggle in skills for auton
+	 *
+	 */
+	extern void flap_toggle(bool enabled);
+
+	/**
+	 * @brief 	resets motors when called
+	 *
+	 */
+	extern void reset_motors();
 
 	/* ------------------------------ Vision Sensor ----------------------------- */
 

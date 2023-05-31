@@ -180,7 +180,7 @@ void opcontrol()
 		{
 			ace::is_red_alliance = !ace::is_red_alliance;
 		}
-
+		/*
 		// Launcher Speed Short
 		if (ace::btn_launch_speed_short.get_press_new())
 			ace::launch_speed = ace::LAUNCH_SPEED_SHORT;
@@ -188,7 +188,7 @@ void opcontrol()
 		// Launcher Speed Long
 		if (ace::btn_launch_speed_long.get_press_new())
 			ace::launch_speed = ace::LAUNCH_SPEED_LONG;
-
+		*/
 		// Launcher Speed Increase
 		if (ace::btn_launch_speed_increase.get_press_new())
 			ace::launch_speed += 2.5;
@@ -220,17 +220,17 @@ void opcontrol()
 			chassis.tank();
 		}
 		*/
-/test comment 
+
 		/* ------------------------------ User Control ------------------------------ */
 
 		for (int i = 0; i < 1; i++)
 		{
 
 			// Endgame
-			ace::endgame_toggle(ace::endgame_enabled);
+			//ace::endgame_toggle(ace::endgame_enabled);
 
 			// flap
-			ace::flap_toggle(ace::flap_enabled);
+			//ace::flap_toggle(ace::flap_enabled);
 
 			// Launch Short
 			/*
