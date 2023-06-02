@@ -273,17 +273,19 @@ namespace ace::auton {
 	}
 
 	/* ------------------------------ Roller Auton ------------------------------ */
+	/*
 	void roller_auton(float rollerDegrees) {
-
+	
 		float actual_degrees = rollerDegrees * 3.0;
-
-		intakeMotor.move_relative(actual_degrees, 100);
-		while (intakeMotor.is_stopped() == 0)
+		//Untested, previously only for 1 motor
+		intakeMotorLeft.move_relative(actual_degrees, 100);
+		intakeMotorRight.move_relative(actual_degrees, 100);
+		while (intakeMotorLeft.is_stopped() == 0)
 		{
 			pros::delay(ez::util::DELAY_TIME);
 		}
 	}
-
+	*/
 	/* --------------------------- Drive Chassis Auton -------------------------- */
 	void drive_chassis(float distance, float speed, bool wait) {
 

@@ -82,6 +82,7 @@ namespace ace {
 
 	/* ------------------------- Other Motors / Devices ------------------------- */
 	#define PORT_INTAKE 20
+	#define PORT_INTAKE_RIGHT 12
 	#define PORT_LAUNCHER 11
 
 	#define PORT_VISION 10
@@ -227,8 +228,11 @@ namespace ace {
 	// Launcher motor
 	extern A_Motor launcherMotor;
 
-	// Motor for intake, roller, and DTS
-	extern A_Motor intakeMotor;
+	// Motor for intake left
+	extern A_Motor intakeMotorLeft;
+
+	// Motor for intake right
+	extern A_Motor intakeMotorRight;
 
 	// Vision sensor
 	const pros::Vision visionSensor(PORT_VISION, pros::E_VISION_ZERO_CENTER);

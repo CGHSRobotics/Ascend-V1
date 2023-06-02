@@ -72,7 +72,9 @@ namespace ace
 
 	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
 
-	A_Motor intakeMotor(PORT_INTAKE, MOTOR_GEARSET_18, false);
+	A_Motor intakeMotorLeft(PORT_INTAKE, MOTOR_GEARSET_18, false);
+
+	A_Motor intakeMotorRight(PORT_INTAKE_RIGHT,MOTOR_GEARSET_18, false);
 
 	/* ========================================================================== */
 	/*                              Class Definitions                             */
@@ -238,7 +240,19 @@ namespace ace
 	bool curr_launching = false;
 	util::timer long_launch_timer(500);
 
+
+	//launch triball
+	void launch(float speed){
+		launcherMotor.move_voltage(speed * 120);
+		pros::delay(10000);
+		launcherMotor.move_voltage(speed * -120 );
+		//This will vary as we need to also counteract the + motion of the motor
+		pros::delay(20000);
+		launcherMotor.move_voltage(0);
+
+	}
 	// Launch disks
+	/*
 	void launch(float speed, bool isLong)
 	{
 		long_launch_timer.update(ez::util::DELAY_TIME);
@@ -279,7 +293,8 @@ namespace ace
 			intakeMotor.spin_percent(-100);
 		}
 	}
-
+*/
+/*
 	// launch standby
 	void launch_standby(bool enabled, float speed)
 	{
@@ -289,12 +304,14 @@ namespace ace
 		else
 			launcherMotor.move_velocity(0);
 	}
-
+*/
 	// reset motors to 0 voltage
 	void reset_motors()
 	{	
 		launcherMotor.move_voltage(0);
-		intakeMotor.move_voltage(0);
+		intakeMotorLeft.move_voltage(0);
+		intakeMotorRight.move_voltage(0);
+	
 
 		launcher_standby_enabled = false;
 
@@ -344,20 +361,23 @@ namespace ace
 		// intake enabled
 		if (enabled)
 		{
-			intakeMotor.spin_percent(INTAKE_SPEED);
+			intakeMotorLeft.spin_percent(INTAKE_SPEED);
+			intakeMotorRight.spin_percent(INTAKE_SPEED);
 		}
 
 		// Not enabled
 		else
 		{
 			intake_timer.reset();
-			intakeMotor.spin_percent(0);
+			intakeMotorLeft.spin_percent(0);
+			intakeMotorRight.spin_percent(0);
 		}
 	}
 
 	void intake_reverse()
 	{
-		intakeMotor.spin_percent(-INTAKE_SPEED);
+		intakeMotorLeft.spin_percent(-INTAKE_SPEED);
+		intakeMotorRight.spin_percent(-INTAKE_SPEED);
 	}
 
 	/* ------------------------------ Vision Sensor ----------------------------- */

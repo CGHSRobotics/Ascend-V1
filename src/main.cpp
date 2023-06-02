@@ -47,7 +47,8 @@ void initialize()
 
 	// init chassis
 	chassis.initialize();
-	ace::intakeMotor.init();
+	ace::intakeMotorLeft.init();
+	ace::intakeMotorRight.init();
 	ace::launcherMotor.init();
 	pros::lcd::shutdown();
 
@@ -226,7 +227,7 @@ void opcontrol()
 		for (int i = 0; i < 1; i++)
 		{
 
-			// Endgame
+			// 
 			//ace::endgame_toggle(ace::endgame_enabled);
 
 			// flap
@@ -268,22 +269,23 @@ void opcontrol()
 			}
 			else
 			{
-				ace::intakeMotor.spin_percent(0);
+				ace::intakeMotorRight.spin_percent(0);
+				ace::intakeMotorLeft.spin_percent(0);
 			}
 		}
 
 		/* ------------------------- Controller Screen Draw ------------------------- */
-
+		//Temproary solution, will only display temp of intake motor 1
 		// Line 1 - Master
 		ace::update_cntr_text(ace::cntr_master, 0,
 			(std::string)"Master" +
-			"  " + std::to_string((int)ace::intakeMotor.get_temp()) + "F" +
+			"  " + std::to_string((int)ace::intakeMotorLeft.get_temp()) + "F" +
 			"  " + std::to_string((int)pros::battery::get_capacity()) + "%");
 
 		// Line 1 - Partner
 		ace::update_cntr_text(ace::cntr_partner, 0,
 			(std::string)"Partner" +
-			"  " + std::to_string((int)ace::intakeMotor.get_temp()) + "F" +
+			"  " + std::to_string((int)ace::intakeMotorLeft.get_temp()) + "F" +
 			"  " + std::to_string((int)pros::battery::get_capacity()) + "%");
 
 		// Line 2
