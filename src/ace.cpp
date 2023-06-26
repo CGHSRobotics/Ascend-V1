@@ -1,30 +1,6 @@
 
 #include "ace.h"
-/*
-Drive chassis(
-	// Left Chassis Ports (negative port will reverse it!)
-	{ PORT_CHASSIS_L_F, PORT_CHASSIS_L_C, PORT_CHASSIS_L_B }
 
-	// Right Chassis Ports (negative port will reverse it!)
-	,
-	{ PORT_CHASSIS_R_F, PORT_CHASSIS_R_C, PORT_CHASSIS_R_B }
-
-	// IMU Port
-	,
-	PORT_IMU
-
-	// Wheel Diameter (Remember, 4" wheels are actually 4.125!)
-	,
-	3.25
-
-	// Cartridge RPM
-	,
-	600
-
-	// External Gear Ratio (MUST BE DECIMAL)
-	,
-	1.25);
-*/
 
 Drive chassis(
 	// Left Chassis Ports (negative port will reverse it!)
@@ -294,7 +270,7 @@ namespace ace
 		}
 	}
 */
-/*
+
 	// launch standby
 	void launch_standby(bool enabled, float speed)
 	{
@@ -304,7 +280,7 @@ namespace ace
 		else
 			launcherMotor.move_velocity(0);
 	}
-*/
+
 	// reset motors to 0 voltage
 	void reset_motors()
 	{	

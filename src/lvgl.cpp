@@ -195,20 +195,19 @@ namespace ace::lvgl {
 				// Set temp Text
 				lv_label_set_text(menu_tab3_cont1_labelTemp1,
 					(
-						(std::string)"Launcher: " + std::to_string((int)ace::launcherMotor.get_temp()) + "\n\n" +
-						"Chassis L F: " + std::to_string((int)ace::util::cel_to_faren(chassis.left_motors[0].get_temperature())) + "\n" +
-						"Chassis L M: " + std::to_string((int)ace::util::cel_to_faren(chassis.left_motors[1].get_temperature())) + "\n" +
-						"Chassis L B: " + std::to_string((int)ace::util::cel_to_faren(chassis.left_motors[2].get_temperature())) + "\n" +
+						(std::string)" Launcher: " + std::to_string((int)ace::launcherMotor.get_temp()) + "\n\n" +
+						" Chassis L F: " + std::to_string((int)ace::util::cel_to_faren(chassis.left_motors[0].get_temperature())) + "\n" +
+						" Chassis L B: " + std::to_string((int)ace::util::cel_to_faren(chassis.left_motors[1].get_temperature())) + "\n" +
 						" "
 						).c_str()
 				);
 				lv_label_set_text(menu_tab3_cont2_labelTemp2,
 					(
-						(std::string)"Intake: " + std::to_string((int)ace::intakeMotor.get_temp()) + "\n\n" +
-						"Chassis R F: " + std::to_string((int)ace::util::cel_to_faren(chassis.right_motors[0].get_temperature())) + "\n" +
-						"Chassis R M: " + std::to_string((int)ace::util::cel_to_faren(chassis.right_motors[1].get_temperature())) + "\n" +
-						"Chassis R B: " + std::to_string((int)ace::util::cel_to_faren(chassis.right_motors[2].get_temperature())) + "\n" +
-						" "
+						
+						(std::string)" Intake: " + std::to_string((int)ace::intakeMotorLeft.get_temp()) + "\n\n" +
+						" Chassis R F: " + std::to_string((int)ace::util::cel_to_faren(chassis.right_motors[0].get_temperature())) + "\n" +
+						" Chassis R B: " + std::to_string((int)ace::util::cel_to_faren(chassis.right_motors[1].get_temperature())) + "\n" +
+						" " 
 						).c_str()
 				);
 
@@ -262,10 +261,10 @@ namespace ace::lvgl {
 					{
 						lv_obj_set_hidden(menu_tab4_ross, true);
 						lv_obj_set_hidden(menu_tab4_chart, false);
-
-						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_rpm, ace::intakeMotor.get_percent_velocity());
-						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_setrpm, ace::intakeMotor.get_voltage() / 120.0f);
-						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_torque, ace::intakeMotor.get_percent_torque());
+						//Change for both intake motors?
+						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_rpm, ace::intakeMotorLeft.get_percent_velocity());
+						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_setrpm, ace::intakeMotorLeft.get_voltage() / 120.0f);
+						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_torque, ace::intakeMotorLeft.get_percent_torque());
 
 					}
 					// if light

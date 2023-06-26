@@ -336,7 +336,7 @@ namespace ace {
 	 * @param speed		speed at which to launch disks
 	 * @param isLong	bool whether is long launch or not
 	 */
-	extern void launch(float speed, bool isLong);
+	extern void launch(float speed);
 
 	/**
 	 * @brief	launch standby, sets speed / enabled once per frame

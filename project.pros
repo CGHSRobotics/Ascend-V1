@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "AceV6",
+    "project_name": "AscendV1",
     "target": "v5",
     "templates": {
       "kernel": {

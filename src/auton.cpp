@@ -54,11 +54,12 @@ namespace ace::auton {
 		turn_chassis(-20.0, TURN_SPEED);
 
 		pros::delay(1000);
-		*/
+		
 		turn_chassis(4, TURN_SPEED);
 		launch_auton(15000.0, 92.5, true);
 		launch_standby(false, 92.5);
 		intake_toggle(false);
+		*/
 	}
 
 	// ross is good
@@ -273,7 +274,7 @@ namespace ace::auton {
 	}
 
 	/* ------------------------------ Roller Auton ------------------------------ */
-	/*
+	
 	void roller_auton(float rollerDegrees) {
 	
 		float actual_degrees = rollerDegrees * 3.0;
@@ -285,7 +286,7 @@ namespace ace::auton {
 			pros::delay(ez::util::DELAY_TIME);
 		}
 	}
-	*/
+	
 	/* --------------------------- Drive Chassis Auton -------------------------- */
 	void drive_chassis(float distance, float speed, bool wait) {
 
@@ -314,8 +315,8 @@ namespace ace::auton {
 		int launchedCounter = 0;
 		while (1)
 		{
-			launch(speed, isLong);
-
+			//launch(speed, isLong);
+			  launch(speed);
 			// detect if disk launched
 			if (light_sensor_detect())
 			{
