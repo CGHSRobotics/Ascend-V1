@@ -589,7 +589,8 @@ namespace ace::lvgl {
 		main_btn = lv_btn_create(main_cont, NULL);
 		lv_btn_set_fit(main_btn, false, false);
 		lv_obj_set_size(main_btn, 80, 40);
-		lv_obj_align(main_btn, NULL, LV_ALIGN_IN_TOP_LEFT, 370, 170);
+		// Change y back to 170 if brain screen is not broke
+		lv_obj_align(main_btn, NULL, LV_ALIGN_IN_TOP_LEFT, 300, 170);
 		lv_btn_set_style(main_btn, LV_BTN_STYLE_REL, &style_btn);
 		lv_btn_set_action(main_btn, LV_BTN_ACTION_PR, main_btn_click);
 
@@ -693,10 +694,11 @@ namespace ace::lvgl {
 		lv_obj_set_size(menu_tab2_btnm_alliance, 225, 80);
 		lv_btnm_set_style(menu_tab2_btnm_alliance, LV_BTNM_STYLE_BTN_REL, &style_btnm);
 
-		/*menu_tab2_cont1_labelCurrAuton = lv_label_create(menu_tab2_cont1, NULL);
+		/*
+		menu_tab2_cont1_labelCurrAuton = lv_label_create(menu_tab2_cont1, NULL);
 		lv_obj_align(menu_tab2_cont_main, NULL, LV_LABEL_ALIGN_LEFT, 0, 0);
-		lv_label_set_text("Curr Auton: " + ace::auton::auton_selection + "/n" + "Curr Ally " + ace::auton::alliance_selection).c_str();*/
-
+		lv_label_set_text("Curr Auton: " + ace::auton::auton_selection + "/n" + "Curr Ally " + ace::auton::alliance_selection).c_str();
+		*/
 		/* ------------------------------ Tab 3 - Temp ------------------------------ */
 		menu_tab3 = lv_tabview_add_tab(menu_tabview, "Temp");
 		lv_page_set_sb_mode(menu_tab3, LV_SB_MODE_OFF);

@@ -454,13 +454,15 @@ namespace ace::auton {
 	/* ------------------------------- Autonomous ------------------------------- */
 
 	static std::vector<std::string> auton_selection = {
-		"skill", "two", "three"
+		"skills", "over", "under"
 	};
 	extern int auton_selection_index;
 
 	extern void three_side();
 	extern void two_side();
 	extern void skills();
+	extern void over_auton();
+	extern void under_auton();
 
 	/**
 		 * @brief 	pages up auton control int by one
