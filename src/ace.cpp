@@ -4,7 +4,7 @@
 
 Drive chassis(
 	// Left Chassis Ports (negative port will reverse it!)
-	{ PORT_CHASSIS_L_F, PORT_CHASSIS_L_B }
+	{ PORT_CHASSIS_L_F,  PORT_CHASSIS_L_B }
 
 	// Right Chassis Ports (negative port will reverse it!)
 	,
@@ -16,11 +16,11 @@ Drive chassis(
 
 	// Wheel Diameter (Remember, 4" wheels are actually 4.125!)
 	,
-	3.25
+	4.125
 
 	// Cartridge RPM
 	,
-	600
+	200
 
 	// External Gear Ratio (MUST BE DECIMAL)
 	,

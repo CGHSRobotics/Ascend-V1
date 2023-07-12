@@ -85,13 +85,13 @@ void autonomous()
 
 	ace::reset_motors();
 
-	if (curr_auton == "two")
+	if (curr_auton == "over")
 	{
-		ace::auton::two_side();
+		ace::auton::over_auton();
 	}
-	else if (curr_auton == "three")
+	else if (curr_auton == "under")
 	{
-		ace::auton::three_side();
+		ace::auton::under_auton();
 	}
 	else if (curr_auton == "skills")
 	{

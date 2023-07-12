@@ -590,7 +590,7 @@ namespace ace::lvgl {
 		lv_btn_set_fit(main_btn, false, false);
 		lv_obj_set_size(main_btn, 80, 40);
 		// Change y back to 170 if brain screen is not broke
-		lv_obj_align(main_btn, NULL, LV_ALIGN_IN_TOP_LEFT, 300, 170);
+		lv_obj_align(main_btn, NULL, LV_ALIGN_IN_TOP_LEFT, 370, 170);
 		lv_btn_set_style(main_btn, LV_BTN_STYLE_REL, &style_btn);
 		lv_btn_set_action(main_btn, LV_BTN_ACTION_PR, main_btn_click);
 
@@ -773,7 +773,7 @@ namespace ace::lvgl {
 	}
 
 	/* ========================================================================== */
-	/*                             Button Click Events                            */
+	/*                             Button Click Events                      s      */
 	/* ========================================================================== */
 	static lv_res_t main_btn_click(lv_obj_t* btn)
 	{
