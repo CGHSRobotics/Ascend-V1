@@ -282,7 +282,7 @@ void opcontrol()
 			(std::string)"Master" +
 			"  " + std::to_string((int)ace::intakeMotorLeft.get_temp()) + "F" +
 			"  " + std::to_string((int)pros::battery::get_capacity()) + "%");
-
+ 
 		// Line 1 - Partner
 		ace::update_cntr_text(ace::cntr_partner, 0,
 			(std::string)"Partner" +
@@ -313,19 +313,22 @@ void opcontrol()
 		{
 			auton_string = "s";
 		}
+		/*
 		ace::update_cntr_text(ace::cntr_both, 1,
 			"auto? " + ace::util::bool_to_str(ace::auto_targeting_enabled) +
 			" l? " + std::to_string((int)ace::launch_speed) +
 			" " + auton_string +
 			" " + ally_str);
-
+		*/
 		// Line 3
+		/*
 		ace::update_cntr_text(ace::cntr_both, 2,
 			(std::string)"idle? " + ace::util::bool_to_str(ace::launcher_standby_enabled) +
 			"  flap? " + ace::util::bool_to_str(ace::flap_enabled));
-
+		*/
 		/* ---------------------------------- Delay --------------------------------- */
 
 		pros::delay(ez::util::DELAY_TIME);
 	}
+}
 
