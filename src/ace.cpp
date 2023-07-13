@@ -218,6 +218,7 @@ namespace ace
 
 
 	//launch triball
+	
 	void launch(float speed){
 		launcherMotor.move_voltage(speed * 120);
 		pros::delay(10000);
