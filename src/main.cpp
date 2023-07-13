@@ -218,9 +218,10 @@ void opcontrol()
 			ace::auto_target(false);
 			// auto brake no
 			chassis.set_active_brake(0);
-			chassis.tank();
-		}
 		*/
+			chassis.tank();
+		
+		
 
 		/* ------------------------------ User Control ------------------------------ */
 
@@ -327,4 +328,4 @@ void opcontrol()
 
 		pros::delay(ez::util::DELAY_TIME);
 	}
-}
+
