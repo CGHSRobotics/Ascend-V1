@@ -290,7 +290,7 @@ namespace ace {
 	/* --------------------------------- Partner -------------------------------- */
 
 	// Custom Button to Cycle Auton	
-	static Btn_Digi btn_auton(pros::E_CONTROLLER_DIGITAL_X, cntr_partner);
+	static Btn_Digi btn_auton(pros::E_CONTROLLER_DIGITAL_X, cntr_both);
 
 	// Custom Button to switch alliance 
 	static Btn_Digi btn_alliance(pros::E_CONTROLLER_DIGITAL_A, cntr_partner);
