@@ -301,17 +301,17 @@ void opcontrol()
 		}
 
 		std::string auton_string = "";
-		if (ace::auton::auton_selection[ace::auton::auton_selection_index] == "three")
+		if (ace::auton::auton_selection[ace::auton::auton_selection_index] == "contact")
 		{
-			auton_string = "3";
+			auton_string = "c";
 		}
-		else if (ace::auton::auton_selection[ace::auton::auton_selection_index] == "two")
+		else if (ace::auton::auton_selection[ace::auton::auton_selection_index] == "score")
 		{
-			auton_string = "2";
+			auton_string = "sc";
 		}
 		else
 		{
-			auton_string = "s";
+			auton_string = "sk";
 		}
 		
 		ace::update_cntr_text(ace::cntr_both, 1,
