@@ -9,9 +9,9 @@ namespace ace::auton {
 
 	int auton_selection_index = 0;
 	/* ========================================================================== */
-	/*                               Over Auton                                   */
+	/*                               Score Auton                                   */
 	/* ========================================================================== */
-	void over_auton() {
+	void score() {
 	drive_chassis(5, DRIVE_SPEED);
 	}
 
@@ -19,9 +19,9 @@ namespace ace::auton {
 
 
 	/* ========================================================================== */
-	/*                               Under Auton                                  */
+	/*                               Contact Auton                                  */
 	/* ========================================================================== */
-	void under_auton() {
+	void contact() {
 		drive_chassis(-5, DRIVE_SPEED);
 	}	
 

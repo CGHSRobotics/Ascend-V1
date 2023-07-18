@@ -85,13 +85,13 @@ void autonomous()
 
 	ace::reset_motors();
 
-	if (curr_auton == "over")
+	if (curr_auton == "score")
 	{
-		ace::auton::over_auton();
+		ace::auton::score();
 	}
-	else if (curr_auton == "under")
+	else if (curr_auton == "contact")
 	{
-		ace::auton::under_auton();
+		ace::auton::contact();
 	}
 	else if (curr_auton == "skills")
 	{
@@ -276,7 +276,7 @@ void opcontrol()
 		}
 
 		/* ------------------------- Controller Screen Draw ------------------------- */
-		//Temproary solution, will only display temp of intake motor 1
+		//Temporary solution, will only display temp of intake motor 1
 		// Line 1 - Master
 		ace::update_cntr_text(ace::cntr_master, 0,
 			(std::string)"Master" +
@@ -313,13 +313,13 @@ void opcontrol()
 		{
 			auton_string = "s";
 		}
-		/*
+		
 		ace::update_cntr_text(ace::cntr_both, 1,
 			"auto? " + ace::util::bool_to_str(ace::auto_targeting_enabled) +
 			" l? " + std::to_string((int)ace::launch_speed) +
 			" " + auton_string +
 			" " + ally_str);
-		*/
+		
 		// Line 3
 		/*
 		ace::update_cntr_text(ace::cntr_both, 2,
