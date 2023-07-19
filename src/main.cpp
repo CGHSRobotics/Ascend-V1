@@ -113,7 +113,7 @@ void opcontrol()
 	{
 
 		/* -------------------------------- Get Input ------------------------------- */
-
+		
 		// Intake Toggle
 		if (ace::btn_intake_toggle.get_press_new())
 		{
@@ -136,6 +136,19 @@ void opcontrol()
 		{
 			ace::intake_reverse_enabled = false;
 		}
+
+		// Launcher
+		if (ace::btn_launch.get_press_new())
+		{
+			ace::launch_enabled = !ace::launch_enabled;
+			if (ace::launch_enabled)
+			{
+
+				ace::update_cntr_haptic("-", false);
+			}
+
+		}
+
 	/*
 		// Launcher Short
 		bool temp = ace::launch_short_enabled;
@@ -233,24 +246,11 @@ void opcontrol()
 
 			// flap
 			//ace::flap_toggle(ace::flap_enabled);
-
-			// Launch Short
-			/*
-			if (ace::launch_short_enabled)
+			if (ace::launch_enabled)
 			{
-				ace::launch(ace::launch_speed, false);
+				ace::launch(ace::launch_speed);
 				break;
 			}
-			*/
-
-			// Launch Long
-			/*
-			if (ace::launch_long_enabled)
-			{
-				ace::launch(ace::launch_speed, true);
-				break;
-			}
-			*/
 			// launcher standby
 			ace::launch_standby(ace::launcher_standby_enabled, ace::launch_speed);
 

@@ -261,12 +261,8 @@ namespace ace {
 	// Custom Button for Intake Reverse
 	static Btn_Digi btn_intake_reverse(pros::E_CONTROLLER_DIGITAL_L2, cntr_master);
 
-	// Custom Button for Short Launch
-	static Btn_Digi btn_launch_short(pros::E_CONTROLLER_DIGITAL_R1, cntr_master);
-
-	// Custom Button for Long Launch
-	static Btn_Digi btn_launch_long(pros::E_CONTROLLER_DIGITAL_R2, cntr_master);
-
+	// Custom Button for Launch
+	static Btn_Digi btn_launch(pros::E_CONTROLLER_DIGITAL_R1, cntr_master);
 	// Custom Button for Roller Forward
 	static Btn_Digi btn_roller_forward(pros::E_CONTROLLER_DIGITAL_A, cntr_master);
 
