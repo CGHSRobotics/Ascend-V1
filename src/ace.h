@@ -475,9 +475,8 @@ namespace ace::auton {
 	 *
 	 * @param rollerDegrees degrees to spin by
 	 */
-	extern void roller_auton(float rollerDegrees);
 
-	extern void launch_auton(float time, float speed, bool isLong, bool early_exit = true);
+	extern void launch_auton(float time, float speed);
 
 	extern void drive_chassis(float distance, float speed, bool wait = true);
 
