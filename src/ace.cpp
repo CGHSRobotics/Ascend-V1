@@ -46,9 +46,9 @@ namespace ace
 	// leds
 	pros::ADILed led(PORT_LED, 60);
 
-	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_06, false);
+	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_36, false);
 
-	A_Motor intakeMotorLeft(PORT_INTAKE, MOTOR_GEARSET_18, false);
+	A_Motor intakeMotorLeft(PORT_INTAKE_LEFT, MOTOR_GEARSET_18, false);
 
 	A_Motor intakeMotorRight(PORT_INTAKE_RIGHT,MOTOR_GEARSET_18, false);
 
@@ -221,10 +221,10 @@ namespace ace
 	
 	void launch(float speed){
 		launcherMotor.move_voltage(speed * 120);
-		pros::delay(10000);
+		pros::delay(1000);
 		launcherMotor.move_voltage(speed * -120 );
 		//This will vary as we need to also counteract the + motion of the motor
-		pros::delay(20000);
+		pros::delay(1000);
 		launcherMotor.move_voltage(0);
 
 	}

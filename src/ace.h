@@ -79,7 +79,7 @@ namespace ace {
 	#define PORT_CHASSIS_R_B 17
 
 	/* ------------------------- Other Motors / Devices ------------------------- */
-	#define PORT_INTAKE 20
+	#define PORT_INTAKE_LEFT 20
 	#define PORT_INTAKE_RIGHT 12
 	#define PORT_LAUNCHER 11
 

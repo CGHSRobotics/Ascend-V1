@@ -143,7 +143,6 @@ void opcontrol()
 			ace::launch_enabled = !ace::launch_enabled;
 			if (ace::launch_enabled)
 			{
-
 				ace::update_cntr_haptic("-", false);
 			}
 
@@ -246,13 +245,16 @@ void opcontrol()
 
 			// flap
 			//ace::flap_toggle(ace::flap_enabled);
+
+			// Launch
 			if (ace::launch_enabled)
 			{
 				ace::launch(ace::launch_speed);
 				break;
 			}
+			
 			// launcher standby
-			ace::launch_standby(ace::launcher_standby_enabled, ace::launch_speed);
+			//ace::launch_standby(ace::launcher_standby_enabled, ace::launch_speed);
 
 
 			// Intake Reverse
