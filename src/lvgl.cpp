@@ -187,8 +187,7 @@ namespace ace::lvgl {
 						"Master Battery: " + std::to_string(master.get_battery_capacity()) + "\n" +
 						"Partner Battery: " + std::to_string(partner.get_battery_capacity()) + "\n" +
 						"Theta: " + std::to_string(ace::theta) + "\n" +
-						"ERRNO: " + std::to_string(errno) + "\n" +
-						"Light Sensor: " + std::to_string(ace::lightSensor.get_value())
+						"ERRNO: " + std::to_string(errno)
 						).c_str()
 				);
 
@@ -268,6 +267,7 @@ namespace ace::lvgl {
 
 					}
 					// if light
+					// inop due to dd menu label removal
 					else if (curr_selected == 3)
 					{
 						lv_obj_set_hidden(menu_tab4_ross, true);
@@ -725,7 +725,7 @@ namespace ace::lvgl {
 
 		menu_tab4_ddlist = lv_ddlist_create(menu_tab4, menu_tab2_auton_drop);
 		lv_obj_set_size(menu_tab4_ddlist, 100, 60);
-		lv_ddlist_set_options(menu_tab4_ddlist, "ROSS\nLauncher\nIntake\nLight");
+		lv_ddlist_set_options(menu_tab4_ddlist, "ROSS\nLauncher\nIntake");
 		lv_obj_align(menu_tab4_ddlist, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 10);
 		lv_ddlist_set_anim_time(menu_tab4_ddlist, 0);
 
