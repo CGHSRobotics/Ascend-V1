@@ -90,7 +90,7 @@ namespace ace {
 
 	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'A' }
 
-	#define PORT_PNEU_FLAP { INTERNAL_ADI_PORT, 'B' }
+	#define PORT_PNEU_CATA { INTERNAL_ADI_PORT, 'B' }
 
 	#define PORT_SENSOR_LIGHT { INTERNAL_ADI_PORT, 'C' }
 
@@ -242,7 +242,7 @@ namespace ace {
 	const pros::ADIDigitalOut endgamePneumatics(PORT_PNEU_ENDGAME, false);
 
 	// Endgame Pneumatics
-	const pros::ADIDigitalOut flapPneumatics(PORT_PNEU_FLAP, false);
+	const pros::ADIDigitalOut cataPneumatics(PORT_PNEU_CATA, false);
 
 	// Light Sensor for disk launching
 	const pros::ADILightSensor lightSensor(PORT_SENSOR_LIGHT);
@@ -357,7 +357,7 @@ namespace ace {
 	 * @brief 	calls endgame toggle in skills for auton
 	 *
 	 */
-	extern void flap_toggle(bool enabled);
+	extern void cata_toggle(bool enabled);
 
 	/**
 	 * @brief 	resets motors when called

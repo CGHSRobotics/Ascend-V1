@@ -232,7 +232,7 @@ namespace ace
 	/*
 	void launch(float speed, bool isLong)
 	{
-		long_launch_timer.update(ez::util::DELAY_TIME);
+		long_launch_timer.update(ez::util::DELAY_TIME);	
 		// if lower than speed
 		if (!curr_launching && launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0)
 		{
@@ -293,10 +293,11 @@ namespace ace
 		launcher_standby_enabled = false;
 
 		endgamePneumatics.set_value(false);
-		flapPneumatics.set_value(false);
+		cataPneumatics.set_value(false);
 	}
 
 	// toggles flap
+	/*
 	void flap_toggle(bool enabled)
 	{
 		if (enabled)
@@ -308,7 +309,7 @@ namespace ace
 			flapPneumatics.set_value(0);
 		}
 	}
-
+*/
 	// toggles endgame
 	void endgame_toggle(bool enabled)
 	{
