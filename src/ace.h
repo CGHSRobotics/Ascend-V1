@@ -174,7 +174,7 @@ namespace ace {
 
 	// Launcher Speeds
 	
-	const float LAUNCH_SPEED = 75.0;
+	const float LAUNCH_SPEED = 100.0;
 	
 	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED;
 	const float LAUNCHER_SPEED_CUTOFF = 5;
@@ -289,7 +289,7 @@ namespace ace {
 	static Btn_Digi btn_auton(pros::E_CONTROLLER_DIGITAL_X, cntr_both);
 
 	// Custom Button to switch alliance 
-	static Btn_Digi btn_alliance(pros::E_CONTROLLER_DIGITAL_A, cntr_partner);
+	static Btn_Digi btn_alliance(pros::E_CONTROLLER_DIGITAL_A, cntr_both);
 
 	// Custom Button that sets launch speed to short launch constant
 	static Btn_Digi btn_launch_speed_short(pros::E_CONTROLLER_DIGITAL_L1, cntr_partner);
