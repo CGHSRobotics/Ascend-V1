@@ -13,7 +13,7 @@ namespace ace::auton {
 	/* ========================================================================== */
 	void score() {
 	drive_chassis(12, DRIVE_SPEED);
-	launch_auton(3, launch_speed);
+	launch_auton(3, LAUNCH_SPEED);
 	turn_chassis(180, TURN_SPEED);
 	drive_chassis(12, DRIVE_SPEED);
 	intake_toggle(true);
@@ -21,12 +21,9 @@ namespace ace::auton {
 	intake_toggle(false);
 	turn_chassis(180, TURN_SPEED);
 	drive_chassis(12, DRIVE_SPEED);
-	launch_auton(3, launch_speed);
+	launch_auton(3, LAUNCH_SPEED);
 	//Go for more goals?
 	}
-
-
-
 
 	/* ========================================================================== */
 	/*                               Contact Auton                                  */
@@ -38,16 +35,12 @@ namespace ace::auton {
 	intake_toggle(false);
 	drive_chassis(-2, DRIVE_SPEED);
 	//Point to Elevation Bar
-	turn_chassis(270, TURN_SPEED);
+	turn_chassis, (-90, TURN_SPEED);
 	drive_chassis(36, DRIVE_SPEED);
 	turn_chassis(-90, TURN_SPEED);
 	//Endgame TBD
 
 	}	
-
-
-	
-
 
 
 

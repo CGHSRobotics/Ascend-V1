@@ -252,7 +252,7 @@ void opcontrol()
 				ace::launch(ace::launch_speed);
 				break;
 			}
-			
+
 			// launcher standby
 			//ace::launch_standby(ace::launcher_standby_enabled, ace::launch_speed);
 
@@ -278,11 +278,10 @@ void opcontrol()
 		}
 
 		/* ------------------------- Controller Screen Draw ------------------------- */
-		//Temporary solution, will only display temp of intake motor 1
 		// Line 1 - Master
 		ace::update_cntr_text(ace::cntr_master, 0,
 			(std::string)"Master" +
-			"  " + std::to_string((int)ace::intakeMotorLeft.get_temp()) + "F" +
+			"  " + std::to_string((int)ace::intakeMotorLeft.get_temp()) + "F" + " " + std::to_string((int)ace::intakeMotorRight.get_temp()) +
 			"  " + std::to_string((int)pros::battery::get_capacity()) + "%");
  
 		// Line 1 - Partner
