@@ -46,13 +46,13 @@ namespace ace
 	// leds
 	pros::ADILed led(PORT_LED, 60);
 
-	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_36, false);
+	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_36, true);
 
 	A_Motor intakeMotorLeft(PORT_INTAKE_LEFT, MOTOR_GEARSET_18, false);
 
-	A_Motor intakeMotorRight(PORT_INTAKE_RIGHT,MOTOR_GEARSET_18, false);
+	A_Motor intakeMotorRight(PORT_INTAKE_RIGHT,MOTOR_GEARSET_18, true);
 
-	/* ========================================================================== */
+	/* ========================================================================= */
 	/*                              Class Definitions                             */
 	/* ========================================================================== */
 
@@ -221,12 +221,15 @@ namespace ace
 	
 	void launch(float speed){
 		launcherMotor.move_voltage(speed * 120);
+		pros::delay(500);
+		launcherMotor.move_voltage(speed * -120);
+		/*
 		pros::delay(1000);
 		launcherMotor.move_voltage(speed * -120 );
 		//This will vary as we need to also counteract the + motion of the motor
 		pros::delay(1000);
 		launcherMotor.move_voltage(0);
-
+	*/
 	}
 	// Launch disks
 	/*
@@ -292,8 +295,8 @@ namespace ace
 
 		launcher_standby_enabled = false;
 
+		flapPneumatics.set_value(false);
 		endgamePneumatics.set_value(false);
-		cataPneumatics.set_value(false);
 	}
 
 	// toggles flap
@@ -310,6 +313,25 @@ namespace ace
 		}
 	}
 */
+
+	// toggles flapjack
+
+	void flap_toggle(bool enabled)
+	{
+		if (enabled)
+		{
+			flapPneumatics.set_value(1);
+			return;
+
+		}
+		else
+		{
+			endgamePneumatics.set_value(1);
+		}
+
+
+
+	}
 	// toggles endgame
 	void endgame_toggle(bool enabled)
 	{

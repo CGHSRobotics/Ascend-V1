@@ -90,7 +90,7 @@ namespace ace {
 
 	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'A' }
 
-	#define PORT_PNEU_CATA { INTERNAL_ADI_PORT, 'B' }
+	#define PORT_PNEU_FLAP { INTERNAL_ADI_PORT, 'B' }
 
 	#define PORT_SENSOR_LIGHT { INTERNAL_ADI_PORT, 'C' }
 
@@ -174,7 +174,7 @@ namespace ace {
 
 	// Launcher Speeds
 	
-	const float LAUNCH_SPEED = 100.0;
+	const float LAUNCH_SPEED = 75.0;
 	
 	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED;
 	const float LAUNCHER_SPEED_CUTOFF = 5;
@@ -238,6 +238,9 @@ namespace ace {
 	// IMU Sensor
 	const pros::IMU imuSensor(PORT_IMU);
 
+	// Flap Pneumatics
+	const pros::ADIDigitalOut flapPneumatics(PORT_PNEU_FLAP, false);
+
 	// Endgame Pneumatics
 	const pros::ADIDigitalOut endgamePneumatics(PORT_PNEU_ENDGAME, false);
 
@@ -272,6 +275,9 @@ namespace ace {
 	// Custom Button for Endgame
 	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_master);
 
+	// Custom Button for Flapjack Toggle
+	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_RIGHT, cntr_master);
+
 	/* ---------------------------------- Both ---------------------------------- */
 
 	// Custom Button for Standby
@@ -281,7 +287,7 @@ namespace ace {
 	static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_both); //Ross wants it B on partner, fix later
 
 	// Custom Button to engage Auto Targetting
-	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_Y, cntr_both); //Ross wants it B on partner, fix later
+	//static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_Y, cntr_both); //Ross wants it B on partner, fix later
 
 	/* --------------------------------- Partner -------------------------------- */
 
@@ -345,6 +351,14 @@ namespace ace {
 	 *
 	 * @param enabled	bool whether enabled or not
 	 */
+
+	extern void flap_toggle(bool enabled);
+
+	/**
+	 * @brief 	calls flapjack toggle
+	 *
+	 */
+
 	extern void endgame_toggle(bool enabled);
 
 	/**

@@ -122,7 +122,9 @@ void opcontrol()
 			{
 				ace::update_cntr_haptic("-", false);
 			}
+
 		}
+
 
 		//ace::intake_enabled = ace::btn_intake_toggle.get_press();
 
@@ -140,12 +142,14 @@ void opcontrol()
 		// Launcher
 		if (ace::btn_launch.get_press_new())
 		{
+			ace::launch(ace::launch_speed);		
+			/*
 			ace::launch_enabled = !ace::launch_enabled;
 			if (ace::launch_enabled)
 			{
 				ace::update_cntr_haptic("-", false);
 			}
-
+			*/
 		}
 
 	/*
@@ -163,6 +167,13 @@ void opcontrol()
 	*/
 		// Endgame Enabled
 		ace::endgame_enabled = ace::btn_endgame.get_press();
+
+		// Flapjack Enabled
+		if (ace::btn_flap.get_press_new())
+		{
+			ace::flap_enabled = !ace::flap_enabled;
+
+		}
 
 		// Standby Enabled
 		if (ace::btn_standby.get_press_new())
@@ -240,19 +251,24 @@ void opcontrol()
 		for (int i = 0; i < 1; i++)
 		{
 
-			// 
-			//ace::endgame_toggle(ace::endgame_enabled);
+			 
+			ace::endgame_toggle(ace::endgame_enabled);
 
-			// flap
-			//ace::flap_toggle(ace::flap_enabled);
+			// flapjack
+			ace::flap_toggle(ace::flap_enabled);
 
 			// Launch
+			/*s
 			if (ace::launch_enabled)
 			{
 				ace::launch(ace::launch_speed);
-				break;
-			}
+				
+			
+			} else {
+				ace::launch(0);
 
+			}
+			*/
 			// launcher standby
 			//ace::launch_standby(ace::launcher_standby_enabled, ace::launch_speed);
 
