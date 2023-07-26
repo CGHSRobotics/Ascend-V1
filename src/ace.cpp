@@ -299,20 +299,6 @@ namespace ace
 		endgamePneumatics.set_value(false);
 	}
 
-	// toggles flap
-	/*
-	void flap_toggle(bool enabled)
-	{
-		if (enabled)
-		{
-			flapPneumatics.set_value(1);
-		}
-		else
-		{
-			flapPneumatics.set_value(0);
-		}
-	}
-*/
 
 	// toggles flapjack
 
@@ -326,7 +312,7 @@ namespace ace
 		}
 		else
 		{
-			endgamePneumatics.set_value(1);
+			endgamePneumatics.set_value(0);
 		}
 
 
