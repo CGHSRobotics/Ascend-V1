@@ -278,8 +278,8 @@ namespace ace {
 	// Custom Button for Standby
 	static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, cntr_both);
 
-	// Custom Button to engage Auto Targetting
-	static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_both); //Ross wants it B on partner, fix later
+	// Custom Button to engage Auto Targetting and grab nearest Triball
+	static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_both); 
 
 	// Custom Button to engage Auto Targetting
 	//static Bstn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_Y, cntr_both); //Ross wants it B on partner, fix later

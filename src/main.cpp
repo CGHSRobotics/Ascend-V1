@@ -189,11 +189,7 @@ void opcontrol()
 		}
 		*/
 
-		// auto targeting toggle
-		if (ace::btn_flap.get_press_new())
-		{
-			ace::flap_enabled = !ace::flap_enabled;
-		}
+	
 
 		// Auton Page Up
 		if (ace::btn_auton.get_press_new())
@@ -230,8 +226,8 @@ void opcontrol()
 		}
 
 		/* --------------------------- Chassis Tank Drive --------------------------- */
-		/*
-		if (ace::auto_targeting_enabled && ace::launch_short_enabled)
+		
+		if (ace::auto_targeting_enabled)
 		{
 			ace::auto_target(true);
 
@@ -243,8 +239,9 @@ void opcontrol()
 			ace::auto_target(false);
 			// auto brake no
 			chassis.set_active_brake(0);
-		*/
+		
 			chassis.tank();
+		}
 		
 		
 

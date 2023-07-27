@@ -253,7 +253,7 @@ namespace ace
 		// FIRE ZE WEAPON
 		else
 		{
-			// fire rapidly no matter what if target speed  cvis under 80 while button is held
+2			// fire rapidly no matter what if target speed  cvis under 80 while button is held
 			if (!isLong)
 			{
 				curr_launching = true;
@@ -370,16 +370,24 @@ namespace ace
 	double theta = 0;
 	void auto_target(bool enabled)
 	{
-		int id = (is_red_alliance) ? 1 : 2;
-		pros::vision_object_s_t goal = visionSensor.get_by_sig(0, id);
-
+		pros::vision_object_s_t goal = visionSensor.get_by_sig(0, 0);
 
 		theta = (((double)(goal.x_middle_coord) / ((double)VISION_FOV_WIDTH / 2.0)) * 30.0) + auto_target_angle_adjustment;
 
-		if (enabled && std::abs(theta) > 1 && std::abs(theta) <= 30)
+		if (enabled && std::abs(theta) <= 30)
 		{
-			chassis.reset_gyro();
-			chassis.set_turn_pid(theta, 0.5 * 127.0);
+			if (std::abs(theta) > 1)
+			{
+				chassis.reset_gyro();
+				chassis.set_turn_pid(theta, 0.5 * 127.0);
+				// Have to figure out finding correct distance , or have Ross adjust manually using preset 
+				auton::drive_chassis(1, DRIVE_SPEED);
+			} else {
+				// Have to figure out finding correct distance , or have Ross adjust manually using preset 
+				auton::drive_chassis(1, DRIVE_SPEED);
+
+			}
+
 		}
 	}
 /*   
