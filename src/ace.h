@@ -266,17 +266,12 @@ namespace ace {
 
 	// Custom Button for Launch
 	static Btn_Digi btn_launch(pros::E_CONTROLLER_DIGITAL_R1, cntr_master);
-	// Custom Button for Roller Forward
-	static Btn_Digi btn_roller_forward(pros::E_CONTROLLER_DIGITAL_A, cntr_master);
-
-	// Custom Button for Roller Reverse
-	static Btn_Digi btn_roller_reverse(pros::E_CONTROLLER_DIGITAL_B, cntr_master);
 
 	// Custom Button for Endgame
 	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_master);
 
 	// Custom Button for Flapjack Toggle
-	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_RIGHT, cntr_master);
+	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_B, cntr_master);
 
 	/* ---------------------------------- Both ---------------------------------- */
 
