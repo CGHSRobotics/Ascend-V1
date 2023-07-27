@@ -256,9 +256,6 @@ void opcontrol()
 			 
 			ace::endgame_toggle(ace::endgame_enabled);
 
-			// flapjack
-			ace::flap_toggle(ace::flap_enabled);
-
 			// Launch
 			/*s
 			if (ace::launch_enabled)
@@ -293,6 +290,10 @@ void opcontrol()
 				ace::intakeMotorRight.spin_percent(0);
 				ace::intakeMotorLeft.spin_percent(0);
 			}
+
+			// flapjack
+			ace::flap_toggle(ace::flap_enabled);
+
 		}
 
 		/* ------------------------- Controller Screen Draw ------------------------- */
