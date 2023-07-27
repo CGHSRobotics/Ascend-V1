@@ -187,9 +187,6 @@ void opcontrol()
 		{
 			ace::auto_targeting_enabled = !ace::auto_targeting_enabled;
 		}
-		
-
-	
 
 		// Auton Page Up
 		if (ace::btn_auton.get_press_new())
@@ -254,7 +251,7 @@ void opcontrol()
 			ace::endgame_toggle(ace::endgame_enabled);
 
 			ace::auto_target(ace::auto_targeting_enabled);
-			
+
 			// Launch
 			/*s
 			if (ace::launch_enabled)
