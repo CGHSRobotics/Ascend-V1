@@ -182,12 +182,12 @@ void opcontrol()
 		}
 
 		// auto targeting toggle
-		/*
+		
 		if (ace::btn_auto_targeting.get_press_new())
 		{
 			ace::auto_targeting_enabled = !ace::auto_targeting_enabled;
 		}
-		*/
+		
 
 	
 
@@ -253,6 +253,8 @@ void opcontrol()
 			 
 			ace::endgame_toggle(ace::endgame_enabled);
 
+			ace::auto_target(ace::auto_targeting_enabled);
+			
 			// Launch
 			/*s
 			if (ace::launch_enabled)
