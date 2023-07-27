@@ -187,7 +187,7 @@ void opcontrol()
 		{
 			ace::auto_targeting_enabled = !ace::auto_targeting_enabled;
 		}
-		*/54
+		*/
 
 		// auto targeting toggle
 		if (ace::btn_flap.get_press_new())
