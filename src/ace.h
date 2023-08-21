@@ -244,8 +244,6 @@ namespace ace {
 	// Endgame Pneumatics
 	const pros::ADIDigitalOut endgamePneumatics(PORT_PNEU_ENDGAME, false);
 
-	// Endgame Pneumatics
-	const pros::ADIDigitalOut cataPneumatics(PORT_PNEU_CATA, false);
 
 	// Light Sensor for disk launching
 	const pros::ADILightSensor lightSensor(PORT_SENSOR_LIGHT);
