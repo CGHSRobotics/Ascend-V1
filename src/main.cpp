@@ -81,8 +81,9 @@ void autonomous()
 	chassis.reset_drive_sensor();              // Reset drive sensors to 0
 	chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
 
-	std::string curr_auton = ace::auton::auton_selection[ace::auton::auton_selection_index];
+	//std::string curr_auton = ace::auton::auton_selection[ace::auton::auton_selection_index];
 
+	std::string curr_auton = "score";
 	ace::reset_motors();
 
 	if (curr_auton == "score")
