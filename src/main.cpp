@@ -184,7 +184,7 @@ void opcontrol()
 
 		// auto targeting toggle
 		
-		if (ace::btn_auto_targeting.get_press_new())
+		if (ace::btn_auto_targeting.get_press_new())\
 		{
 			ace::auto_targeting_enabled = !ace::auto_targeting_enabled;
 		}
