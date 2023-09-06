@@ -370,7 +370,9 @@ namespace ace {
 	 * @brief 	resets motors when called
 	 *
 	 */
-	extern void reset_motors();
+	extern void reset_motors(float speed);
+
+	extern void reset_launcher();
 
 	/* ------------------------------ Vision Sensor ----------------------------- */
 

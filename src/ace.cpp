@@ -48,7 +48,7 @@ namespace ace
 	//True
 	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_36, false);
 
-	A_Motor intakeMotorLeft(PORT_INTAKE_LEFT, MOTOR_GEARSET_18, false);
+	A_Motor intakeMotorLeft(PORT_INTAKE_LEFT, MOTOR_GEARSET_18, true);
 
 	A_Motor intakeMotorRight(PORT_INTAKE_RIGHT,MOTOR_GEARSET_18, true);
 
@@ -220,10 +220,10 @@ namespace ace
 	//launch triball
 	
 	void launch(float speed){
-		launcherMotor.move_voltage(speed * 120);
-		pros::delay(400);
 		launcherMotor.move_voltage(speed * -120);
-		pros::delay(400);
+		pros::delay(1000);
+		//launcherMotor.move_voltage(speed * 120);
+		//pros::delay(350);
 		launcherMotor.move_voltage(speed * 0);
 		/*
 		pros::delay(1000);
@@ -301,6 +301,11 @@ namespace ace
 		endgamePneumatics.set_value(false);
 	}
 
+void reset_launcher(speed)
+{
+	launcherMotor.move_voltage(speed * 120);
+	pros::delay(500);
+}
 
 	// toggles flapjack
 

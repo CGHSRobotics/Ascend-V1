@@ -61,6 +61,7 @@ void initialize()
 	lv_label_set_text(ace::lvgl::label_load_imu, "IMU Calibrate -  OK");
 	ace::lvgl::start_preloader_anim();
 
+	ace::reset_launcher(ace::launch_speed);
 	ace::update_cntr_haptic(".");
 }
 
@@ -85,6 +86,7 @@ void autonomous()
 
 	std::string curr_auton = "score";
 	ace::reset_motors();
+	ace::reset_launcher();
 
 	if (curr_auton == "score")
 	{
