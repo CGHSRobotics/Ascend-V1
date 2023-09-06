@@ -86,7 +86,7 @@ void autonomous()
 
 	std::string curr_auton = "score";
 	ace::reset_motors();
-	ace::reset_launcher();
+	ace::reset_launcher(ace::launch_speed);
 
 	if (curr_auton == "score")
 	{

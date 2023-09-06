@@ -221,10 +221,22 @@ namespace ace
 	
 	void launch(float speed){
 		launcherMotor.move_voltage(speed * -120);
-		pros::delay(1000);
-		//launcherMotor.move_voltage(speed * 120);
-		//pros::delay(350);
+		pros::delay(50);
+		//Delay to cause release and rubber bands to snap
 		launcherMotor.move_voltage(speed * 0);
+		//Stop motor to prevent yanking 
+		pros::delay(250);
+		//Delay to let triball exit
+		launcherMotor.move_voltage(speed * -120);
+		pros::delay(500);
+		//Delay to reset cata
+		launcherMotor.move_voltage(speed * 0);
+		//Stop
+
+
+
+
+		
 		/*
 		pros::delay(1000);
 		launcherMotor.move_voltage(speed * -120 );
@@ -301,7 +313,7 @@ namespace ace
 		endgamePneumatics.set_value(false);
 	}
 
-void reset_launcher(speed)
+void reset_launcher(float speed)
 {
 	launcherMotor.move_voltage(speed * 120);
 	pros::delay(500);
