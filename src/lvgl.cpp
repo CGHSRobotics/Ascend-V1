@@ -296,8 +296,8 @@ namespace ace::lvgl {
 
 		// Style for Screen
 		lv_style_copy(&style_screen, &lv_style_plain);
-		style_screen.body.main_color = LV_COLOR_BLACK;
-		style_screen.body.grad_color = LV_COLOR_BLACK;
+		style_screen.body.main_color = LV_COLOR_WHITE;
+		style_screen.body.grad_color = LV_COLOR_GRAY;
 
 		// Style for text
 		lv_style_copy(&style_text, &lv_style_pretty);
@@ -315,7 +315,7 @@ namespace ace::lvgl {
 
 		// Style for Empty Container
 		lv_style_copy(&style_container_empty, &lv_style_plain);
-		style_container_empty.body.grad_color = LV_COLOR_BLACK;
+		style_container_empty.body.grad_color = LV_COLOR_GRAY;
 		style_container_empty.body.main_color = LV_COLOR_BLACK;
 		style_container_empty.body.border.color = LV_COLOR_BLACK;
 		style_container_empty.body.border.width = 0;
@@ -325,7 +325,7 @@ namespace ace::lvgl {
 
 		// Style for Container with Red Border
 		lv_style_copy(&style_container_red, &lv_style_plain);
-		style_container_red.body.grad_color = LV_COLOR_BLACK;
+		style_container_red.body.grad_color = LV_COLOR_GRAY;
 		style_container_red.body.main_color = LV_COLOR_BLACK;
 		style_container_red.body.border.color = LV_COLOR_RED;
 		style_container_red.body.border.width = 2;
