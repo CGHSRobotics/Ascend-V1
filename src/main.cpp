@@ -63,6 +63,8 @@ void initialize()
 
 	ace::reset_launcher(ace::launch_speed);
 	ace::update_cntr_haptic(".");
+
+	float CALIBRATED_ANGLE = ace::potentiometer.get_angle();
 }
 
 /* -------------------------------- Disabled -------------------------------- */

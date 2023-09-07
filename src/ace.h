@@ -85,6 +85,7 @@ namespace ace {
 
 	#define PORT_VISION 10
 	#define PORT_IMU 15
+	 
 
 	/* ------------------------------- ADI Devices ------------------------------ */
 
@@ -96,7 +97,7 @@ namespace ace {
 
 	#define PORT_LED { INTERNAL_ADI_PORT, 'D' }
 
-
+	#define PORT_POTENTIOMETER {INTERNAL_ADI_PORT, 'E'}
 
 	/* ========================================================================== */
 	/*                              Global Variables                              */
@@ -187,6 +188,11 @@ namespace ace {
 	const float TURN_SPEED_SLOW = 45.0 * 1.27;
 	extern bool curr_launching;
 
+	//Angle turn
+	const float ANGLE_ADJUST = 10;
+
+	extern float CALIBRATED_ANGLE;
+
 	/* --------------------------- Custom Motor Class --------------------------- */
 	class A_Motor: public pros::Motor {
 		public:
@@ -247,6 +253,8 @@ namespace ace {
 
 	// Light Sensor for disk launching
 	const pros::ADILightSensor lightSensor(PORT_SENSOR_LIGHT);
+
+	const pros::ADIPotentiometer potentiometer(PORT_POTENTIOMETER);
 
 	extern pros::ADILed led;
 
@@ -374,6 +382,8 @@ namespace ace {
 
 	extern void reset_launcher(float speed);
 
+	extern void align_launcher(float speed);
+
 	/* ------------------------------ Vision Sensor ----------------------------- */
 
 	/**
@@ -384,6 +394,8 @@ namespace ace {
 	 * @return false
 	 */
 	extern void auto_target(bool enabled);
+
+	//
 
 	/* ------------------------------ Light Sensor ------------------------------ */
 

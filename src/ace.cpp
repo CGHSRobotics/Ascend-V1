@@ -35,6 +35,8 @@ namespace ace
 	/*                         Global Variable Definitions                        */
 	/* ========================================================================== */
 
+	//float calibrated_angle = CALIBRATED_ANGLE; 
+
 	bool partner_connected = false;
 	bool is_red_alliance = false;
 
@@ -220,6 +222,7 @@ namespace ace
 	//launch triball
 	
 	void launch(float speed){
+	
 		launcherMotor.move_voltage(speed * -120);
 		pros::delay(50);
 		//Delay to cause release and rubber bands to snap
@@ -232,9 +235,8 @@ namespace ace
 		//Delay to reset cata
 		launcherMotor.move_voltage(speed * 0);
 		//Stop
-
-
-
+		
+	}
 
 		
 		/*
@@ -244,7 +246,7 @@ namespace ace
 		pros::delay(1000);
 		launcherMotor.move_voltage(0);
 	*/
-	}
+	//}
 	// Launch disks
 	/*
 	void launch(float speed, bool isLong)
@@ -288,7 +290,7 @@ namespace ace
 		}
 	}
 */
-
+	
 	// launch standby
 	void launch_standby(bool enabled, float speed)
 	{
@@ -312,13 +314,23 @@ namespace ace
 		flapPneumatics.set_value(false);
 		endgamePneumatics.set_value(false);
 	}
+/*
+void reset_launcher(float speed)
+{
+	while (calibrated_angle != CALIBRATED_ANGLE + ANGLE_ADJUST){
+		launcherMotor.move_voltage(speed * -120);
+	}
+
+}
+	*/	
 
 void reset_launcher(float speed)
 {
-	launcherMotor.move_voltage(speed * 120);
-	pros::delay(500);
-}
+	while (potentiometer.get_angle() != CALIBRATED_ANGLE - ANGLE_ADJUST){
+		launcherMotor.move_voltage(speed * -120);
+	}
 
+}
 	// toggles flapjack
 
 	void flap_toggle(bool enabled)
@@ -331,8 +343,20 @@ void reset_launcher(float speed)
 		}
 		else
 		{
-			endgamePneumatics.set_value(0);
+			flapPneumatics.set_value(0);
 		}
+
+
+
+	}
+	//Uses the potentiometer to reset the launcher after it fires 
+	void align_launcher()
+	{
+
+
+
+
+
 
 
 
