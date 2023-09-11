@@ -61,7 +61,7 @@ void initialize()
 	lv_label_set_text(ace::lvgl::label_load_imu, "IMU Calibrate -  OK");
 	ace::lvgl::start_preloader_anim();
 
-	ace::reset_launcher(ace::launch_speed);
+	//ace::reset_launcher(ace::launch_speed);
 	ace::update_cntr_haptic(".");
 
 	float CALIBRATED_ANGLE = ace::potentiometer.get_angle();
@@ -88,7 +88,7 @@ void autonomous()
 
 	std::string curr_auton = "score";
 	ace::reset_motors();
-	ace::reset_launcher(ace::launch_speed);
+	//ace::reset_launcher(ace::launch_speed);
 
 	if (curr_auton == "score")
 	{
@@ -173,6 +173,8 @@ void opcontrol()
 		// Endgame Enabled
 		ace::endgame_enabled = ace::btn_endgame.get_press();
 
+		ace::endgame_reverse_enabled = ace::btn_endgame_reverse.get_press();
+
 		// Flapjack Enabled
 		if (ace::btn_flap.get_press_new())
 		{
@@ -181,11 +183,12 @@ void opcontrol()
 		}
 
 		// Standby Enabled
+		/*
 		if (ace::btn_standby.get_press_new())
 		{
 			ace::launcher_standby_enabled = !ace::launcher_standby_enabled;
 		}
-
+		*/
 		// auto targeting toggle
 		
 		if (ace::btn_auto_targeting.get_press_new())\
@@ -254,6 +257,8 @@ void opcontrol()
 
 			 
 			ace::endgame_toggle(ace::endgame_enabled);
+
+			ace::endgame_reverse_toggle(ace::endgame_reverse_enabled);
 
 			ace::auto_target(ace::auto_targeting_enabled);
 

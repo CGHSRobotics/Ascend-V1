@@ -35,7 +35,7 @@ namespace ace
 	/*                         Global Variable Definitions                        */
 	/* ========================================================================== */
 
-	//float calibrated_angle = CALIBRATED_ANGLE; 
+	float CALIBRATED_ANGLE = 1431; 
 
 	bool partner_connected = false;
 	bool is_red_alliance = false;
@@ -53,6 +53,10 @@ namespace ace
 	A_Motor intakeMotorLeft(PORT_INTAKE_LEFT, MOTOR_GEARSET_18, true);
 
 	A_Motor intakeMotorRight(PORT_INTAKE_RIGHT,MOTOR_GEARSET_18, true);
+
+	A_Motor endgameMotorLeft(PORT_ENDGAME_LEFT, MOTOR_GEARSET_18, false);
+
+	A_Motor endgameMotorRight(PORT_ENDGAME_RIGHT, MOTOR_GEARSET_18, true);
 
 	/* ========================================================================= */
 	/*                              Class Definitions                             */
@@ -224,16 +228,19 @@ namespace ace
 	void launch(float speed){
 	
 		launcherMotor.move_voltage(speed * -120);
-		pros::delay(50);
+		pros::delay(5000);
+		launcherMotor.move_voltage(0);
+
+		
 		//Delay to cause release and rubber bands to snap
-		launcherMotor.move_voltage(speed * 0);
+		//launcherMotor.move_voltage(speed * 0);
 		//Stop motor to prevent yanking 
-		pros::delay(250);
+		//pros::delay(250);
 		//Delay to let triball exit
-		launcherMotor.move_voltage(speed * -120);
-		pros::delay(500);
+		//launcherMotor.move_voltage(speed * -120);
+		//pros::delay(500);
 		//Delay to reset cata
-		launcherMotor.move_voltage(speed * 0);
+		//launcherMotor.move_voltage(speed * 0);
 		//Stop
 		
 	}
@@ -314,6 +321,21 @@ namespace ace
 		flapPneumatics.set_value(false);
 		endgamePneumatics.set_value(false);
 	}
+//735
+void reset_launcher(float speed)
+{
+	launcherMotor.move_voltage(speed*-120);
+	pros::delay(745);
+	launcherMotor.move_voltage(speed*0);
+}
+
+void reset_launcher_after(float speed)
+{
+	launcherMotor.move_voltage(speed*-120);
+	pros::delay(742.5);
+	launcherMotor.move_voltage(speed*0);
+}
+
 /*
 void reset_launcher(float speed)
 {
@@ -323,14 +345,37 @@ void reset_launcher(float speed)
 
 }
 	*/	
-
+/*
 void reset_launcher(float speed)
 {
-	while (potentiometer.get_angle() != CALIBRATED_ANGLE - ANGLE_ADJUST){
+	while (potentiometer.get_angle() != CALIBRATED_ANGLE- ANGLE_ADJUST){
 		launcherMotor.move_voltage(speed * -120);
 	}
 
 }
+*/
+/*
+void reset_launcher(float speed)
+{ 
+
+	while(potentiometer.get_angle() <= 80){
+		launcherMotor.move_voltage(speed * -120);
+
+	}
+}
+*/
+/*
+void reset_launcher(float speed)
+{ 
+
+	if(!limit.get_value()){
+		launcherMotor.move_voltage(speed * -120);
+	}else{
+		launcherMotor.move_voltage(speed*0);
+	}
+}
+*/
+
 	// toggles flapjack
 
 	void flap_toggle(bool enabled)
@@ -366,12 +411,16 @@ void reset_launcher(float speed)
 	{
 		if (enabled)
 		{
-			endgame_timer.reset();
-			endgamePneumatics.set_value(1);
-			return;
+			//endgame_timer.reset();
+			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 120);
+			endgameMotorRight.move_voltage(LAUNCH_SPEED * 120);
+			//return;
 		}
 		else
 		{
+			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 0);
+			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 0);
+			/*
 			if (endgame_timer.done())
 			{
 				endgamePneumatics.set_value(0);
@@ -380,10 +429,30 @@ void reset_launcher(float speed)
 
 			endgame_timer.update(20);
 			endgamePneumatics.set_value(1);
-		}
+			*/
+		
+		}	
+
 	}
 
 
+	void endgame_reverse_toggle(bool enabled)
+	{
+		if (enabled)
+		{
+			//endgame_timer.reset();
+			endgameMotorLeft.move_voltage(LAUNCH_SPEED * -120);
+			endgameMotorRight.move_voltage(LAUNCH_SPEED * -120);
+			//return;
+		}
+		else
+		{
+			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 0);
+			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 0);
+			
+		}	
+
+	}
 
 	void intake_toggle(bool enabled)
 	{

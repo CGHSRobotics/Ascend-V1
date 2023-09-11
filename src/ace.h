@@ -80,11 +80,13 @@ namespace ace {
 
 	/* ------------------------- Other Motors / Devices ------------------------- */
 	#define PORT_INTAKE_LEFT 20
-	#define PORT_INTAKE_RIGHT 12
+	#define PORT_INTAKE_RIGHT 2
+	#define PORT_ENDGAME_LEFT 12
+	#define PORT_ENDGAME_RIGHT 19
 	#define PORT_LAUNCHER 11
 
 	#define PORT_VISION 10
-	#define PORT_IMU 15
+	#define PORT_IMU 1
 	 
 
 	/* ------------------------------- ADI Devices ------------------------------ */
@@ -98,6 +100,8 @@ namespace ace {
 	#define PORT_LED { INTERNAL_ADI_PORT, 'D' }
 
 	#define PORT_POTENTIOMETER {INTERNAL_ADI_PORT, 'E'}
+
+	#define PORT_LIMIT {INTERNAL_ADI_PORT, 'G'}
 
 	/* ========================================================================== */
 	/*                              Global Variables                              */
@@ -161,6 +165,7 @@ namespace ace {
 	//static bool launch_long_enabled = false;
 	static bool launch_enabled = false;
 	static bool endgame_enabled = false;
+	static bool endgame_reverse_enabled = false;
 	static bool auto_targeting_enabled = false;
 	static bool flap_enabled = false;
 	extern bool is_red_alliance; 
@@ -175,7 +180,7 @@ namespace ace {
 
 	// Launcher Speeds
 	
-	const float LAUNCH_SPEED = 75.0;
+	const float LAUNCH_SPEED = 50.0;
 	
 	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED;
 	const float LAUNCHER_SPEED_CUTOFF = 5;
@@ -189,7 +194,7 @@ namespace ace {
 	extern bool curr_launching;
 
 	//Angle turn
-	const float ANGLE_ADJUST = 10;
+	const float ANGLE_ADJUST = 5;
 
 	extern float CALIBRATED_ANGLE;
 
@@ -238,6 +243,10 @@ namespace ace {
 	// Motor for intake right
 	extern A_Motor intakeMotorRight;
 
+	extern A_Motor endgameMotorLeft;
+
+	extern A_Motor endgameMotorRight;
+
 	// Vision sensor
 	const pros::Vision visionSensor(PORT_VISION, pros::E_VISION_ZERO_CENTER);
 
@@ -255,6 +264,8 @@ namespace ace {
 	const pros::ADILightSensor lightSensor(PORT_SENSOR_LIGHT);
 
 	const pros::ADIPotentiometer potentiometer(PORT_POTENTIOMETER);
+
+	const pros::ADIDigitalIn limit(PORT_LIMIT);
 
 	extern pros::ADILed led;
 
@@ -274,7 +285,10 @@ namespace ace {
 	static Btn_Digi btn_launch(pros::E_CONTROLLER_DIGITAL_R1, cntr_master);
 
 	// Custom Button for Endgame
-	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_master);
+	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_UP, cntr_master);
+
+	// Custom Button for Endgame Reverse 
+	static Btn_Digi btn_endgame_reverse(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_master);
 
 	// Custom Button for Flapjack Toggle
 	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_B, cntr_master);
@@ -282,7 +296,7 @@ namespace ace {
 	/* ---------------------------------- Both ---------------------------------- */
 
 	// Custom Button for Standby
-	static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, cntr_both);
+	//static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, cntr_both);
 
 	// Custom Button to engage Auto Targetting and grab nearest Triball
 	static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_both); 
@@ -366,6 +380,15 @@ namespace ace {
 	 * @brief 	calls endgame toggle in skills for auton
 	 *
 	 */
+
+	extern void endgame_reverse_toggle(bool enabled);
+
+	/**
+	 * @brief 	calls endgame toggle in skills for auton
+	 *
+	 */
+
+
 	extern void endgame_auton();
 
 	/**
@@ -381,6 +404,8 @@ namespace ace {
 	extern void reset_motors();
 
 	extern void reset_launcher(float speed);
+
+	extern void reset_launcher_after(float speed);
 
 	extern void align_launcher(float speed);
 
