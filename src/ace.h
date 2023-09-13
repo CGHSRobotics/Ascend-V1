@@ -168,6 +168,7 @@ namespace ace {
 	static bool endgame_reverse_enabled = false;
 	static bool auto_targeting_enabled = false;
 	static bool flap_enabled = false;
+	static bool lock_enabled = false;
 	extern bool is_red_alliance; 
 
 	extern float launch_speed;
@@ -290,8 +291,10 @@ namespace ace {
 	// Custom Button for Endgame Reverse 
 	static Btn_Digi btn_endgame_reverse(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_master);
 
+	static Btn_Digi btn_endgame_lock(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_master);
+
 	// Custom Button for Flapjack Toggle
-	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_B, cntr_master);
+	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_RIGHT, cntr_master);
 
 	/* ---------------------------------- Both ---------------------------------- */
 
@@ -299,7 +302,6 @@ namespace ace {
 	//static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, cntr_both);
 
 	// Custom Button to engage Auto Targetting and grab nearest Triball
-	static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_both); 
 
 	// Custom Button to engage Auto Targetting
 	//static Bstn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_Y, cntr_both); //Ross wants it B on partner, fix later
@@ -313,16 +315,18 @@ namespace ace {
 	static Btn_Digi btn_alliance(pros::E_CONTROLLER_DIGITAL_A, cntr_both);
 
 	// Custom Button that sets launch speed to short launch constant
-	static Btn_Digi btn_launch_speed_short(pros::E_CONTROLLER_DIGITAL_L1, cntr_partner);
+	//static Btn_Digi btn_launch_speed_short(pros::E_CONTROLLER_DIGITAL_L1, cntr_partner);
 
 	// Custom Button that sets launch speed to long launch constant
-	static Btn_Digi btn_launch_speed_long(pros::E_CONTROLLER_DIGITAL_L2, cntr_partner);
+	//static Btn_Digi btn_launch_speed_long(pros::E_CONTROLLER_DIGITAL_L2, cntr_partner);
 
 	// Custom Button to lower short launch speed
 	static Btn_Digi btn_launch_speed_increase(pros::E_CONTROLLER_DIGITAL_R1, cntr_partner);
 
 	// Custom Button to lower short launch speed
 	static Btn_Digi btn_launch_speed_decrease(pros::E_CONTROLLER_DIGITAL_R2, cntr_partner);
+
+	static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_Y, cntr_partner); 
 
 
 
@@ -377,18 +381,23 @@ namespace ace {
 	extern void endgame_toggle(bool enabled);
 
 	/**
-	 * @brief 	calls endgame toggle in skills for auton
+	 * @brief 	calls endgame toggle 
 	 *
 	 */
 
 	extern void endgame_reverse_toggle(bool enabled);
 
 	/**
-	 * @brief 	calls endgame toggle in skills for auton
+	 * @brief 	calls endgame reverse toggle
 	 *
 	 */
 
+	extern void endgame_lock_toggle(bool enabled);
 
+	/**
+	 * @brief 	calls engame lock toggle
+	 *
+	 */
 	extern void endgame_auton();
 
 	/**

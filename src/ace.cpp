@@ -419,7 +419,7 @@ void reset_launcher(float speed)
 		else
 		{
 			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 0);
-			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 0);
+			endgameMotorRight.move_voltage(LAUNCH_SPEED * 0);
 			/*
 			if (endgame_timer.done())
 			{
@@ -448,9 +448,26 @@ void reset_launcher(float speed)
 		else
 		{
 			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 0);
-			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 0);
+			endgameMotorRight.move_voltage(LAUNCH_SPEED * 0);
 			
 		}	
+
+	}
+
+	void endgame_lock_toggle(bool enabled) {
+		if (enabled)
+		{
+			endgamePneumatics.set_value(1);
+			return;
+		}
+		else
+		{
+			endgamePneumatics.set_value(0);
+			
+		}	
+
+
+
 
 	}
 

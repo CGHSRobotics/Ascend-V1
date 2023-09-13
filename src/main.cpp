@@ -175,12 +175,22 @@ void opcontrol()
 
 		ace::endgame_reverse_enabled = ace::btn_endgame_reverse.get_press();
 
+		//ace::endgame_lock_toggle = ace::btn_endgame_lock.get_press();
+
 		// Flapjack Enabled
 		if (ace::btn_flap.get_press_new())
 		{
 			ace::flap_enabled = !ace::flap_enabled;
 
 		}
+
+		//Engame lock enabled
+		if (ace::btn_endgame_lock.get_press_new())
+		{
+			ace::lock_enabled = !ace::lock_enabled;
+
+		}
+
 
 		// Standby Enabled
 		/*
@@ -191,7 +201,7 @@ void opcontrol()
 		*/
 		// auto targeting toggle
 		
-		if (ace::btn_auto_targeting.get_press_new())\
+		if (ace::btn_auto_targeting.get_press_new())
 		{
 			ace::auto_targeting_enabled = !ace::auto_targeting_enabled;
 		}
@@ -261,6 +271,8 @@ void opcontrol()
 			ace::endgame_reverse_toggle(ace::endgame_reverse_enabled);
 
 			ace::auto_target(ace::auto_targeting_enabled);
+
+			ace::endgame_lock_toggle(ace::lock_enabled);
 
 			// Launch
 			/*s
