@@ -109,13 +109,13 @@ void autonomous()
 /* ========================================================================== */
 void opcontrol()
 {
-
 	int i = 0;
 
 	chassis.set_drive_brake(MOTOR_BRAKE_COAST);
 
 	while (true)
 	{
+		ace::reset_launcher(ace::launch_speed);
 
 		/* -------------------------------- Get Input ------------------------------- */
 		

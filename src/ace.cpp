@@ -322,13 +322,14 @@ namespace ace
 		endgamePneumatics.set_value(false);
 	}
 //735
+/*
 void reset_launcher(float speed)
 {
 	launcherMotor.move_voltage(speed*-120);
 	pros::delay(745);
 	launcherMotor.move_voltage(speed*0);
 }
-
+*/
 void reset_launcher_after(float speed)
 {
 	launcherMotor.move_voltage(speed*-120);
@@ -364,17 +365,16 @@ void reset_launcher(float speed)
 	}
 }
 */
-/*
+
 void reset_launcher(float speed)
 { 
-
 	if(!limit.get_value()){
 		launcherMotor.move_voltage(speed * -120);
 	}else{
 		launcherMotor.move_voltage(speed*0);
 	}
 }
-*/
+
 
 	// toggles flapjack
 
