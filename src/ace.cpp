@@ -42,7 +42,7 @@ namespace ace
 
 	float launch_speed = LAUNCH_SPEED;
 
-	util::timer endgame_timer(200);
+	//util::timer endgame_timer(200);
 	util::timer intake_timer(2000);
 
 	// leds
@@ -54,7 +54,7 @@ namespace ace
 
 	A_Motor intakeMotorRight(PORT_INTAKE_RIGHT,MOTOR_GEARSET_18, true);
 
-	A_Motor endgameMotorLeft(PORT_ENDGAME_LEFT, MOTOR_GEARSET_18, false);
+	A_Motor endgameMotorLeft(PORT_ENDGAME_LEFT, MOTOR_GEARSET_18, true);
 
 	A_Motor endgameMotorRight(PORT_ENDGAME_RIGHT, MOTOR_GEARSET_18, true);
 
@@ -394,62 +394,45 @@ void reset_launcher(float speed)
 
 
 	}
-	//Uses the potentiometer to reset the launcher after it fires 
-	void align_launcher()
+
+	void endgame(bool enabled)
 	{
 
-
-
-
-
-
-
-
-	}
-	// toggles endgame
-	void endgame_toggle(bool enabled)
-	{
 		if (enabled)
 		{
-			//endgame_timer.reset();
-			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 120);
-			endgameMotorRight.move_voltage(LAUNCH_SPEED * 120);
-			//return;
+			endgameMotorLeft.move_voltage(LAUNCH_SPEED * -120);
+			endgameMotorRight.move_voltage(LAUNCH_SPEED * -120);
+
+
 		}
 		else
 		{
 			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 0);
 			endgameMotorRight.move_voltage(LAUNCH_SPEED * 0);
-			/*
-			if (endgame_timer.done())
-			{
-				endgamePneumatics.set_value(0);
-				return;
-			}
 
-			endgame_timer.update(20);
-			endgamePneumatics.set_value(1);
-			*/
-		
-		}	
+		}
+
 
 	}
-
 
 	void endgame_reverse_toggle(bool enabled)
 	{
 		if (enabled)
 		{
 			//endgame_timer.reset();
-			endgameMotorLeft.move_voltage(LAUNCH_SPEED * -120);
-			endgameMotorRight.move_voltage(LAUNCH_SPEED * -120);
-			//return;
+			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 120);
+			endgameMotorRight.move_voltage(LAUNCH_SPEED * 120);
+			pros::delay(500);
+			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 0);
+			endgameMotorRight.move_voltage(LAUNCH_SPEED * 0);
 		}
 		else
 		{
+			endgameMotorLeft.move_voltage(LAUNCH_SPEED * -120);
+			endgameMotorRight.move_voltage(LAUNCH_SPEED * -120);
+			pros::delay(500);
 			endgameMotorLeft.move_voltage(LAUNCH_SPEED * 0);
 			endgameMotorRight.move_voltage(LAUNCH_SPEED * 0);
-			
 		}	
 
 	}

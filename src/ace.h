@@ -91,13 +91,13 @@ namespace ace {
 
 	/* ------------------------------- ADI Devices ------------------------------ */
 
-	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'A' }
+	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'H' }
 
-	#define PORT_PNEU_FLAP { INTERNAL_ADI_PORT, 'B' }
+	#define PORT_PNEU_FLAP { INTERNAL_ADI_PORT, 'D' }
 
 	#define PORT_SENSOR_LIGHT { INTERNAL_ADI_PORT, 'C' }
 
-	#define PORT_LED { INTERNAL_ADI_PORT, 'D' }
+	#define PORT_LED { INTERNAL_ADI_PORT, 'A' }
 
 	#define PORT_POTENTIOMETER {INTERNAL_ADI_PORT, 'E'}
 
@@ -124,7 +124,7 @@ namespace ace {
 	extern bool new_haptic_request;
 	extern bool new_haptic_request_is_master;
 
-	extern util::timer endgame_timer;
+	//extern util::timer endgame_timer;
 	extern util::timer intake_timer;
 	extern util::timer long_launch_timer;
 
@@ -181,7 +181,7 @@ namespace ace {
 
 	// Launcher Speeds
 	
-	const float LAUNCH_SPEED = 50.0;
+	const float LAUNCH_SPEED = 75.0;
 	
 	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED;
 	const float LAUNCHER_SPEED_CUTOFF = 5;
@@ -285,16 +285,16 @@ namespace ace {
 	// Custom Button for Launch
 	static Btn_Digi btn_launch(pros::E_CONTROLLER_DIGITAL_R1, cntr_master);
 
-	// Custom Button for Endgame
-	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_UP, cntr_master);
-
 	// Custom Button for Endgame Reverse 
-	static Btn_Digi btn_endgame_reverse(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_master);
+	static Btn_Digi btn_endgame_reverse(pros::E_CONTROLLER_DIGITAL_UP, cntr_master);
 
+	// Custom Button for Endgmame Lock
 	static Btn_Digi btn_endgame_lock(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_master);
 
 	// Custom Button for Flapjack Toggle
 	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_RIGHT, cntr_master);
+
+	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_X, cntr_master);
 
 	/* ---------------------------------- Both ---------------------------------- */
 
@@ -378,12 +378,7 @@ namespace ace {
 	 *
 	 */
 
-	extern void endgame_toggle(bool enabled);
-
-	/**
-	 * @brief 	calls endgame toggle 
-	 *
-	 */
+	extern void endgame(bool enabled);
 
 	extern void endgame_reverse_toggle(bool enabled);
 

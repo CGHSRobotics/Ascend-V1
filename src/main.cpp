@@ -52,7 +52,7 @@ void initialize()
 	ace::launcherMotor.init();
 	pros::lcd::shutdown();
 
-	ace::endgame_timer.currTime = ace::endgame_timer.maxTime + 100;
+	//ace::endgame_timer.currTime = ace::endgame_timer.maxTime + 100;
 
 	// get ambient light sample
 	ace::ambient_light = ace::lightSensor.get_value();
@@ -157,26 +157,28 @@ void opcontrol()
 			*/
 		}
 
-	/*
-		// Launcher Short
-		bool temp = ace::launch_short_enabled;
-		ace::launch_short_enabled = ace::btn_launch_short.get_press();
-		if (!ace::launch_short_enabled && temp)
-		{
-			ace::update_cntr_haptic("-", false);
-		}
 
 
 		// Launcher Short
-		ace::launch_long_enabled = ace::btn_launch_long.get_press();
-	*/
+
 		// Endgame Enabled
-		ace::endgame_enabled = ace::btn_endgame.get_press();
+		//ace::endgame_enabled = ace::btn_endgame.get_press();
 
-		ace::endgame_reverse_enabled = ace::btn_endgame_reverse.get_press();
+		//ace::endgame_reverse_enabled = ace::btn_endgame_reverse.get_press();
 
 		//ace::endgame_lock_toggle = ace::btn_endgame_lock.get_press();
 
+
+	
+
+		
+
+		if (ace::btn_endgame_reverse.get_press_new())
+		{
+			ace::endgame_reverse_enabled = !ace::endgame_reverse_enabled;
+
+
+		}
 		// Flapjack Enabled
 		if (ace::btn_flap.get_press_new())
 		{
@@ -266,7 +268,7 @@ void opcontrol()
 		{
 
 			 
-			ace::endgame_toggle(ace::endgame_enabled);
+			ace::endgame(ace::endgame_enabled);
 
 			ace::endgame_reverse_toggle(ace::endgame_reverse_enabled);
 

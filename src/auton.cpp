@@ -177,6 +177,7 @@ namespace ace::auton {
 
 
 	/* ------------------------------ Endgame Auton ----------------------------- */
+	/*
 	void endgame_auton() {
 
 		endgame_toggle(true);
@@ -187,4 +188,5 @@ namespace ace::auton {
 		}
 		endgame_toggle(false);
 	}
+	*/
 }
