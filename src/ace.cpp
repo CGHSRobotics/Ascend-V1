@@ -35,7 +35,6 @@ namespace ace
 	/*                         Global Variable Definitions                        */
 	/* ========================================================================== */
 
-	float CALIBRATED_ANGLE = 1431; 
 
 	bool partner_connected = false;
 	bool is_red_alliance = false;
@@ -46,7 +45,7 @@ namespace ace
 	util::timer intake_timer(2000);
 
 	// leds
-	pros::ADILed led(PORT_LED, 60);
+	//pros::ADILed led(PORT_LED, 60);
 	//True
 	A_Motor launcherMotor(PORT_LAUNCHER, MOTOR_GEARSET_36, false);
 
@@ -228,85 +227,14 @@ namespace ace
 	void launch(float speed){
 	
 		launcherMotor.move_voltage(speed * -120);
+		//Enough time for 1 cycle to trigger limit again
 		pros::delay(5000);
 		launcherMotor.move_voltage(0);
 
 		
-		//Delay to cause release and rubber bands to snap
-		//launcherMotor.move_voltage(speed * 0);
-		//Stop motor to prevent yanking 
-		//pros::delay(250);
-		//Delay to let triball exit
-		//launcherMotor.move_voltage(speed * -120);
-		//pros::delay(500);
-		//Delay to reset cata
-		//launcherMotor.move_voltage(speed * 0);
-		//Stop
-		
 	}
 
 		
-		/*
-		pros::delay(1000);
-		launcherMotor.move_voltage(speed * -120 );
-		//This will vary as we need to also counteract the + motion of the motor
-		pros::delay(1000);
-		launcherMotor.move_voltage(0);
-	*/
-	//}
-	// Launch disks
-	/*
-	void launch(float speed, bool isLong)
-	{
-		long_launch_timer.update(ez::util::DELAY_TIME);	
-		// if lower than speed
-		if (!curr_launching && launcherMotor.get_actual_velocity() < (speed - LAUNCHER_SPEED_CUTOFF) * 6.0)
-		{
-			launcherMotor.move_voltage(12000);
-			intakeMotor.spin_percent(100);
-			return;
-		}
-		// wait for angle auto target
-		else if (!curr_launching && auto_targeting_enabled && std::abs(theta) >= 2.0 || !long_launch_timer.done())
-		{
-			launcherMotor.move_voltage(speed * 120.0);
-			intakeMotor.spin_percent(100);
-			return;
-		}
-		// FIRE ZE WEAPON
-		else
-		{
-2			// fire rapidly no matter what if target speed  cvis under 80 while button is held
-			if (!isLong)
-			{
-				curr_launching = true;
-			}
-
-			// if speed drops while rapid firing, boost voltage to 100% to supplement speed loss
-			if (launcherMotor.get_actual_velocity() < (speed - 5.0) * 6.0)
-			{
-				launcherMotor.move_voltage(12000);
-				//12000 initial, causes slight issues 
-			}
-			else
-			{
-				launcherMotor.move_voltage(speed * 120.0);
-			}
-
-			intakeMotor.spin_percent(-100);
-		}
-	}
-*/
-	
-	// launch standby
-	void launch_standby(bool enabled, float speed)
-	{
-		curr_launching = false;
-		if (enabled)
-			launcherMotor.move_velocity(speed * 6);
-		else
-			launcherMotor.move_velocity(0);
-	}
 
 	// reset motors to 0 voltage
 	void reset_motors()
@@ -321,50 +249,6 @@ namespace ace
 		flapPneumatics.set_value(false);
 		endgamePneumatics.set_value(false);
 	}
-//735
-/*
-void reset_launcher(float speed)
-{
-	launcherMotor.move_voltage(speed*-120);
-	pros::delay(745);
-	launcherMotor.move_voltage(speed*0);
-}
-*/
-void reset_launcher_after(float speed)
-{
-	launcherMotor.move_voltage(speed*-120);
-	pros::delay(742.5);
-	launcherMotor.move_voltage(speed*0);
-}
-
-/*
-void reset_launcher(float speed)
-{
-	while (calibrated_angle != CALIBRATED_ANGLE + ANGLE_ADJUST){
-		launcherMotor.move_voltage(speed * -120);
-	}
-
-}
-	*/	
-/*
-void reset_launcher(float speed)
-{
-	while (potentiometer.get_angle() != CALIBRATED_ANGLE- ANGLE_ADJUST){
-		launcherMotor.move_voltage(speed * -120);
-	}
-
-}
-*/
-/*
-void reset_launcher(float speed)
-{ 
-
-	while(potentiometer.get_angle() <= 80){
-		launcherMotor.move_voltage(speed * -120);
-
-	}
-}
-*/
 
 void reset_launcher(float speed)
 { 
@@ -504,11 +388,13 @@ void reset_launcher(float speed)
 	}
 /*   
 	/* ------------------------------ Light Sensor ------------------------------ */
+	//Depreciated
 	int ambient_light = 0;
 	float light_diff_factor = 1.2;
 
 	bool current_detecting = false;
 
+	/*
 	bool light_sensor_detect()
 	{
 		// if is detecting disk
@@ -526,7 +412,7 @@ void reset_launcher(float speed)
 
 		return false;
 	}
-
+	*/
 
 
 	/* -------------------------------------------------------------------------- */

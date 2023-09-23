@@ -54,8 +54,7 @@ void initialize()
 
 	//ace::endgame_timer.currTime = ace::endgame_timer.maxTime + 100;
 
-	// get ambient light sample
-	ace::ambient_light = ace::lightSensor.get_value();
+
 
 	// Go to main screen
 	lv_label_set_text(ace::lvgl::label_load_imu, "IMU Calibrate -  OK");
@@ -64,7 +63,7 @@ void initialize()
 	//ace::reset_launcher(ace::launch_speed);
 	ace::update_cntr_haptic(".");
 
-	float CALIBRATED_ANGLE = ace::potentiometer.get_angle();
+	
 }
 
 /* -------------------------------- Disabled -------------------------------- */
@@ -157,22 +156,6 @@ void opcontrol()
 			*/
 		}
 
-
-
-		// Launcher Short
-
-		// Endgame Enabled
-		//ace::endgame_enabled = ace::btn_endgame.get_press();
-
-		//ace::endgame_reverse_enabled = ace::btn_endgame_reverse.get_press();
-
-		//ace::endgame_lock_toggle = ace::btn_endgame_lock.get_press();
-
-
-	
-
-		
-
 		if (ace::btn_endgame_reverse.get_press_new())
 		{
 			ace::endgame_reverse_enabled = !ace::endgame_reverse_enabled;
@@ -192,16 +175,6 @@ void opcontrol()
 			ace::lock_enabled = !ace::lock_enabled;
 
 		}
-
-
-		// Standby Enabled
-		/*
-		if (ace::btn_standby.get_press_new())
-		{
-			ace::launcher_standby_enabled = !ace::launcher_standby_enabled;
-		}
-		*/
-		// auto targeting toggle
 		
 		if (ace::btn_auto_targeting.get_press_new())
 		{
@@ -219,15 +192,7 @@ void opcontrol()
 		{
 			ace::is_red_alliance = !ace::is_red_alliance;
 		}
-		/*
-		// Launcher Speed Short
-		if (ace::btn_launch_speed_short.get_press_new())
-			ace::launch_speed = ace::LAUNCH_SPEED_SHORT;
 
-		// Launcher Speed Long
-		if (ace::btn_launch_speed_long.get_press_new())
-			ace::launch_speed = ace::LAUNCH_SPEED_LONG;
-		*/
 		// Launcher Speed Increase
 		if (ace::btn_launch_speed_increase.get_press_new())
 			ace::launch_speed += 2.5;
@@ -237,11 +202,12 @@ void opcontrol()
 			ace::launch_speed -= 2.5;
 
 		// Light Sensor
+		/*
 		if (ace::light_sensor_detect())
 		{
 			ace::update_cntr_haptic(".");
 		}
-
+		*/
 		/* --------------------------- Chassis Tank Drive --------------------------- */
 		
 		if (ace::auto_targeting_enabled)
@@ -320,7 +286,8 @@ void opcontrol()
 		// Line 1 - Master
 		ace::update_cntr_text(ace::cntr_master, 0,
 			(std::string)"Master" +
-			"  " + std::to_string((int)ace::launcherMotor.get_temp()) + "F" + " " + std::to_string((int)pros::battery::get_capacity()) + "%");
+			"  " + std::to_string((int)ace::launcherMotor.get_temp()) + "F" + 
+			" " + std::to_string((int)pros::battery::get_capacity()) + "%");
  
 		// Line 1 - Partner
 		ace::update_cntr_text(ace::cntr_partner, 0,
@@ -328,16 +295,6 @@ void opcontrol()
 			"  " + std::to_string((int)ace::intakeMotorLeft.get_temp()) + "F" +
 			"  " + std::to_string((int)pros::battery::get_capacity()) + "%");
 
-		// Line 2
-		std::string ally_str = "";
-		if (ace::is_red_alliance)
-		{
-			ally_str = "red";
-		}
-		else
-		{
-			ally_str = "blue";
-		}
 
 		std::string auton_string = "";
 		if (ace::auton::auton_selection[ace::auton::auton_selection_index] == "contact")
@@ -354,17 +311,8 @@ void opcontrol()
 		}
 		
 		ace::update_cntr_text(ace::cntr_both, 1,
-			"auto? " + ace::util::bool_to_str(ace::auto_targeting_enabled) +
-			" l? " + std::to_string((int)ace::launch_speed) +
-			" " + auton_string +
-			" " + ally_str);
+			 auton_string);
 		
-		// Line 3
-		/*
-		ace::update_cntr_text(ace::cntr_both, 2,
-			(std::string)"idle? " + ace::util::bool_to_str(ace::launcher_standby_enabled) +
-			"  flap? " + ace::util::bool_to_str(ace::flap_enabled));
-		*/
 		/* ---------------------------------- Delay --------------------------------- */
 
 		pros::delay(ez::util::DELAY_TIME);
