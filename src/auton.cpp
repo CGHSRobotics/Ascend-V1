@@ -12,33 +12,19 @@ namespace ace::auton {
 	/*                               Score Auton                                   */
 	/* ========================================================================== */
 	void score() {
-	drive_chassis(12, DRIVE_SPEED);
-	launch_auton(3, LAUNCH_SPEED);
-	turn_chassis(180, TURN_SPEED);
-	drive_chassis(12, DRIVE_SPEED);
-	intake_toggle(true);
-	pros::delay(1000);
-	intake_toggle(false);
-	turn_chassis(180, TURN_SPEED);
-	drive_chassis(12, DRIVE_SPEED);
-	launch_auton(3, LAUNCH_SPEED);
-	//Go for more goals?
+		ace::reset_launcher(LAUNCH_SPEED);
+		launch_auton(LAUNCH_SPEED);
+		pros::delay(1000);
+		launch_auton(LAUNCH_SPEED);
+	
 	}
 
 	/* ========================================================================== */
 	/*                               Contact Auton                                  */
 	/* ========================================================================== */
 	void contact() {
-	drive_chassis(2, DRIVE_SPEED);
-	intake_toggle(true);
-	pros::delay(1000);
-	intake_toggle(false);
-	drive_chassis(-2, DRIVE_SPEED);
-	//Point to Elevation Bar
-	turn_chassis, (-90, TURN_SPEED);
-	drive_chassis(36, DRIVE_SPEED);
-	turn_chassis(-90, TURN_SPEED);
-	//Endgame TBD
+		ace::reset_launcher(LAUNCH_SPEED);
+		launch_auton(LAUNCH_SPEED);
 	}	
 
 
@@ -122,6 +108,9 @@ namespace ace::auton {
 	}
 
 	/* ------------------------------ Launch Auton ------------------------------ */
+	void launch_auton(float speed) {
+		ace::launch(speed);
+	}
 	/*void launch_auton(float time, float speed, bool isLong, bool early_exit) {
 
 		ace::util::timer launch_timer(time);
@@ -156,7 +145,7 @@ namespace ace::auton {
 		launcherMotor.spin_percent(0);
 	}
 	*/
-
+	/*
 	void launch_auton(float time, float speed)
 	{
 		ace::util::timer launch_timer(time);
@@ -174,7 +163,7 @@ namespace ace::auton {
 		}
 
 	}
-
+	*/
 
 	/* ------------------------------ Endgame Auton ----------------------------- */
 	/*

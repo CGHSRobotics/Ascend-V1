@@ -498,7 +498,7 @@ namespace ace::auton {
 	/* ------------------------------- Autonomous ------------------------------- */
 
 	static std::vector<std::string> auton_selection = {
-		"skills", "score", "contact"
+		"score", "contact", "skills"
 	};
 	extern int auton_selection_index;
 
@@ -526,7 +526,7 @@ namespace ace::auton {
 	 * @param rollerDegrees degrees to spin by
 	 */
 
-	extern void launch_auton(float time, float speed);
+	extern void launch_auton(float speed);
 
 	extern void drive_chassis(float distance, float speed, bool wait = true);
 
