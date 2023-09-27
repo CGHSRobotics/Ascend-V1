@@ -273,7 +273,7 @@ namespace ace::lvgl {
 						lv_obj_set_hidden(menu_tab4_ross, true);
 						lv_obj_set_hidden(menu_tab4_chart, false);
 
-						//lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_rpm, ace::lightSensor.get_value());
+						lv_chart_set_next(menu_tab4_chart, menu_tab4_chart_ser_rpm, ace::lightSensor.get_value());
 					}
 					else {
 						//printf("options in tab4 ddlist no worky :(");

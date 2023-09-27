@@ -91,9 +91,15 @@ namespace ace {
 
 	/* ------------------------------- ADI Devices ------------------------------ */
 
-	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'H' }
+	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'A' }
 
-	#define PORT_PNEU_FLAP { INTERNAL_ADI_PORT, 'D' }
+	#define PORT_PNEU_FLAP { INTERNAL_ADI_PORT, 'B' }
+
+	#define PORT_SENSOR_LIGHT { INTERNAL_ADI_PORT, 'C' }
+
+	#define PORT_LED { INTERNAL_ADI_PORT, 'D' }
+
+	#define PORT_POTENTIOMETER {INTERNAL_ADI_PORT, 'E'}
 
 	#define PORT_LIMIT {INTERNAL_ADI_PORT, 'G'}
 
@@ -118,7 +124,7 @@ namespace ace {
 	extern bool new_haptic_request;
 	extern bool new_haptic_request_is_master;
 
-	//extern util::timer endgame_timer;
+	extern util::timer endgame_timer;
 	extern util::timer intake_timer;
 	extern util::timer long_launch_timer;
 
@@ -130,7 +136,6 @@ namespace ace {
 	extern int ambient_light;
 
 	/* ------------------------------ LED Variables ----------------------------- */
-	//Depreciated
 
 	// enum of possible states
 	enum led_state_t {
@@ -156,6 +161,8 @@ namespace ace {
 	static bool launcher_standby_enabled = false;
 	static bool intake_enabled = false;
 	static bool intake_reverse_enabled = false;
+	//static bool launch_short_enabled = false;
+	//static bool launch_long_enabled = false;
 	static bool launch_enabled = false;
 	static bool endgame_enabled = false;
 	static bool endgame_reverse_enabled = false;
@@ -174,7 +181,10 @@ namespace ace {
 
 	// Launcher Speeds
 	
-	const float LAUNCH_SPEED = 75.0;
+	const float LAUNCH_SPEED = 50.0;
+	
+	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED;
+	const float LAUNCHER_SPEED_CUTOFF = 5;
 
 	// Chassis Speeds ( * 1.27 to fit in range of [-127, 127])
 	const float DRIVE_SPEED = 87.0 * 1.27; // 87
@@ -183,6 +193,11 @@ namespace ace {
 	const float TURN_SPEED = 71.0 * 1.27; // 71
 	const float TURN_SPEED_SLOW = 45.0 * 1.27;
 	extern bool curr_launching;
+
+	//Angle turn
+	const float ANGLE_ADJUST = 5;
+
+	extern float CALIBRATED_ANGLE;
 
 	/* --------------------------- Custom Motor Class --------------------------- */
 	class A_Motor: public pros::Motor {
@@ -229,13 +244,11 @@ namespace ace {
 	// Motor for intake right
 	extern A_Motor intakeMotorRight;
 
-	// Motor for endgame left
 	extern A_Motor endgameMotorLeft;
 
-	// Motor for endgame right
 	extern A_Motor endgameMotorRight;
 
-	// Vision Sensor
+	// Vision sensor
 	const pros::Vision visionSensor(PORT_VISION, pros::E_VISION_ZERO_CENTER);
 
 	// IMU Sensor
@@ -247,9 +260,15 @@ namespace ace {
 	// Endgame Pneumatics
 	const pros::ADIDigitalOut endgamePneumatics(PORT_PNEU_ENDGAME, false);
 
-	// Limit switch
+
+	// Light Sensor for disk launching
+	const pros::ADILightSensor lightSensor(PORT_SENSOR_LIGHT);
+
+	const pros::ADIPotentiometer potentiometer(PORT_POTENTIOMETER);
+
 	const pros::ADIDigitalIn limit(PORT_LIMIT);
 
+	extern pros::ADILed led;
 
 	/* ========================================================================== */
 	/*                                   Buttons                                  */
@@ -266,20 +285,26 @@ namespace ace {
 	// Custom Button for Launch
 	static Btn_Digi btn_launch(pros::E_CONTROLLER_DIGITAL_R1, cntr_master);
 
-	// Custom Button for Endgame Reverse 
-	static Btn_Digi btn_endgame_reverse(pros::E_CONTROLLER_DIGITAL_UP, cntr_master);
+	// Custom Button for Endgame
+	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_UP, cntr_master);
 
-	// Custom Button for Endgmame Lock
+	// Custom Button for Endgame Reverse 
+	static Btn_Digi btn_endgame_reverse(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_master);
+
 	static Btn_Digi btn_endgame_lock(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_master);
 
 	// Custom Button for Flapjack Toggle
 	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_RIGHT, cntr_master);
 
-	// Custom Button for Engame Toggle
-	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_X, cntr_master);
-
 	/* ---------------------------------- Both ---------------------------------- */
-	//Depreciated
+
+	// Custom Button for Standby
+	//static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, cntr_both);
+
+	// Custom Button to engage Auto Targetting and grab nearest Triball
+
+	// Custom Button to engage Auto Targetting
+	//static Bstn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_Y, cntr_both); //Ross wants it B on partner, fix later
 
 	/* --------------------------------- Partner -------------------------------- */
 
@@ -289,6 +314,11 @@ namespace ace {
 	// Custom Button to switch alliance 
 	static Btn_Digi btn_alliance(pros::E_CONTROLLER_DIGITAL_A, cntr_both);
 
+	// Custom Button that sets launch speed to short launch constant
+	//static Btn_Digi btn_launch_speed_short(pros::E_CONTROLLER_DIGITAL_L1, cntr_partner);
+
+	// Custom Button that sets launch speed to long launch constant
+	//static Btn_Digi btn_launch_speed_long(pros::E_CONTROLLER_DIGITAL_L2, cntr_partner);
 
 	// Custom Button to lower short launch speed
 	static Btn_Digi btn_launch_speed_increase(pros::E_CONTROLLER_DIGITAL_R1, cntr_partner);
@@ -328,6 +358,14 @@ namespace ace {
 	extern void launch(float speed);
 
 	/**
+	 * @brief	launch standby, sets speed / enabled once per frame
+	 *
+	 * @param enabled	bool whether enabled
+	 * @param speed		speed % on how fast standby is
+	 */
+	extern void launch_standby(bool enabled, float speed);
+
+	/**
 	 * @brief	endgame toggle, minimum 200 msec timer on press
 	 *
 	 * @param enabled	bool whether enabled or not
@@ -340,7 +378,12 @@ namespace ace {
 	 *
 	 */
 
-	extern void endgame(bool enabled);
+	extern void endgame_toggle(bool enabled);
+
+	/**
+	 * @brief 	calls endgame toggle 
+	 *
+	 */
 
 	extern void endgame_reverse_toggle(bool enabled);
 
@@ -361,7 +404,8 @@ namespace ace {
 	 * @brief 	calls endgame toggle in skills for auton
 	 *
 	 */
-	
+	extern void cata_toggle(bool enabled);
+
 	/**
 	 * @brief 	resets motors when called
 	 *
@@ -370,6 +414,9 @@ namespace ace {
 
 	extern void reset_launcher(float speed);
 
+	extern void reset_launcher_after(float speed);
+
+	extern void align_launcher(float speed);
 
 	/* ------------------------------ Vision Sensor ----------------------------- */
 
@@ -433,7 +480,7 @@ namespace ace {
 	/* ========================================================================== */
 	/*                                Update LED's                                */
 	/* ========================================================================== */
-	//Depreciated
+
 	/**
 	 * @brief	function that runs every 10ms and updates leds screen
 	 *
@@ -456,7 +503,7 @@ namespace ace::auton {
 	/* ------------------------------- Autonomous ------------------------------- */
 
 	static std::vector<std::string> auton_selection = {
-		"score", "contact", "skills"
+		"skills", "score", "contact"
 	};
 	extern int auton_selection_index;
 
@@ -484,7 +531,7 @@ namespace ace::auton {
 	 * @param rollerDegrees degrees to spin by
 	 */
 
-	extern void launch_auton(float speed);
+	extern void launch_auton(float time, float speed);
 
 	extern void drive_chassis(float distance, float speed, bool wait = true);
 
