@@ -13,538 +13,527 @@ extern pros::Controller partner;
 /* ========================================================================== */
 namespace ace::util {
 
-	/* ========================================================================== */
-	/*                            Function Declarations                           */
-	/* ========================================================================== */
+/* ========================================================================== */
+/*                            Function Declarations                           */
+/* ========================================================================== */
 
-	/* -------------------------- Celsius To Farenheit -------------------------- */
-	static float cel_to_faren(float celsius) {
-		return (float)((celsius * 9.0 / 5.0) + 32.0);
-	}
-
-	/* -------------------------- Farenheit To Celsius -------------------------- */
-	static float faren_to_cel(float farenheit) {
-		return (float)((farenheit - 32.0) * 5.0 / 9.0);
-	}
-
-	/* ----------------------------- Bool To String ----------------------------- */
-	static std::string bool_to_str(bool input) {
-		if (input)
-			return "y";
-		else
-			return "n";
-	}
-
-	/* ------------------------------- Timer Class ------------------------------ */
-	class timer {
-		public:
-
-		float maxTime = 0;
-		float currTime = 0;
-
-		timer(float max_time) {
-			maxTime = max_time;
-			currTime = 0;
-		}
-
-		void update(float updateTime) {
-			currTime += updateTime;
-		}
-
-		bool done() {
-			return currTime >= maxTime;
-		}
-
-		void reset() {
-			currTime = 0;
-		}
-	};
+/* -------------------------- Celsius To Farenheit -------------------------- */
+static float cel_to_faren(float celsius) {
+  return (float)((celsius * 9.0 / 5.0) + 32.0);
 }
 
+/* -------------------------- Farenheit To Celsius -------------------------- */
+static float faren_to_cel(float farenheit) {
+  return (float)((farenheit - 32.0) * 5.0 / 9.0);
+}
+
+/* ----------------------------- Bool To String ----------------------------- */
+static std::string bool_to_str(bool input) {
+  if (input)
+    return "y";
+  else
+    return "n";
+}
+
+/* ------------------------------- Timer Class ------------------------------ */
+class timer {
+ public:
+  float maxTime = 0;
+  float currTime = 0;
+
+  timer(float max_time) {
+    maxTime = max_time;
+    currTime = 0;
+  }
+
+  void update(float updateTime) {
+    currTime += updateTime;
+  }
+
+  bool done() {
+    return currTime >= maxTime;
+  }
+
+  void reset() {
+    currTime = 0;
+  }
+};
+}  // namespace ace::util
 
 /* ========================================================================== */
 /*                             Main Ace Namespace                             */
 /* ========================================================================== */
 namespace ace {
 
-	/* ========================================================================== */
-	/*                                Device Ports                                */
-	/* ========================================================================== */
+/* ========================================================================== */
+/*                                Device Ports                                */
+/* ========================================================================== */
+
+/* --------------------------------- Chassis -------------------------------- */
+#define PORT_CHASSIS_L_F -14
+#define PORT_CHASSIS_L_B -13
+
+#define PORT_CHASSIS_R_F 18
+#define PORT_CHASSIS_R_B 17
+
+/* ------------------------- Other Motors / Devices ------------------------- */
+#define PORT_INTAKE_LEFT 20
+#define PORT_INTAKE_RIGHT 2
+#define PORT_ENDGAME_LEFT 12
+#define PORT_ENDGAME_RIGHT 19
+#define PORT_LAUNCHER 11
 
-	/* --------------------------------- Chassis -------------------------------- */
-	#define PORT_CHASSIS_L_F -14
-	#define PORT_CHASSIS_L_B -13
+#define PORT_VISION 10
+#define PORT_IMU 1
 
-	#define PORT_CHASSIS_R_F 18
-	#define PORT_CHASSIS_R_B 17
+/* ------------------------------- ADI Devices ------------------------------ */
 
-	/* ------------------------- Other Motors / Devices ------------------------- */
-	#define PORT_INTAKE_LEFT 20
-	#define PORT_INTAKE_RIGHT 2
-	#define PORT_ENDGAME_LEFT 12
-	#define PORT_ENDGAME_RIGHT 19
-	#define PORT_LAUNCHER 11
+#define PORT_PNEU_ENDGAME \
+  { INTERNAL_ADI_PORT, 'D' }
 
-	#define PORT_VISION 10
-	#define PORT_IMU 1
-	 
+#define PORT_PNEU_FLAP \
+  { INTERNAL_ADI_PORT, 'H' }
 
-	/* ------------------------------- ADI Devices ------------------------------ */
+#define PORT_SENSOR_LIGHT \
+  { INTERNAL_ADI_PORT, 'C' }
 
-	#define PORT_PNEU_ENDGAME { INTERNAL_ADI_PORT, 'A' }
+#define PORT_LED \
+  { INTERNAL_ADI_PORT, 'D' }
 
-	#define PORT_PNEU_FLAP { INTERNAL_ADI_PORT, 'B' }
+#define PORT_POTENTIOMETER \
+  { INTERNAL_ADI_PORT, 'E' }
 
-	#define PORT_SENSOR_LIGHT { INTERNAL_ADI_PORT, 'C' }
+#define PORT_LIMIT \
+  { INTERNAL_ADI_PORT, 'A' }
 
-	#define PORT_LED { INTERNAL_ADI_PORT, 'D' }
+/* ========================================================================== */
+/*                              Global Variables                              */
+/* ========================================================================== */
 
-	#define PORT_POTENTIOMETER {INTERNAL_ADI_PORT, 'E'}
+/* ------------------------------ Miscellaneous ----------------------------- */
+
+// Controller type enum
+enum cntr_t {
+  cntr_master = 1,
+  cntr_partner = 2,
+  cntr_both = 3
+};
+// bool whether
+extern bool partner_connected;
+static std::vector<std::string> cntr_master_text_arr = {"", "", "", ""};
+static std::vector<std::string> cntr_partner_text_arr = {"", "", "", ""};
+
+extern std::string cntr_haptic_text;
+extern bool new_haptic_request;
+extern bool new_haptic_request_is_master;
+
+extern util::timer endgame_timer;
+extern util::timer intake_timer;
+extern util::timer long_launch_timer;
+
+extern double theta;
+const float auto_target_angle_adjustment = 5;
+
+const double rad2 = 1.4142;
+
+extern int ambient_light;
+
+/* ------------------------------ LED Variables ----------------------------- */
+
+// enum of possible states
+enum led_state_t {
+  led_idle = 1,
+  led_intake = 2,
+  led_launch = 3
+};
+
+// current led state
+// extern led_state_t curr_led_state;
 
-	#define PORT_LIMIT {INTERNAL_ADI_PORT, 'G'}
+// color for red alliance
+const int led_color_red = 0xaa0000;
+const int led_color_red_bright = 0xff0000;
+// color for blue alliance
+const int led_color_blue = 0x0000aa;
+const int led_color_blue_bright = 0x0000ff;
 
-	/* ========================================================================== */
-	/*                              Global Variables                              */
-	/* ========================================================================== */
+/* ----------------------- User Control Enabled Bools ----------------------- */
 
-	/* ------------------------------ Miscellaneous ----------------------------- */
+static bool launcher_standby_enabled = false;
+static bool intake_enabled = false;
+static bool intake_reverse_enabled = false;
+// static bool launch_short_enabled = false;
+// static bool launch_long_enabled = false;
+static bool launch_enabled = false;
+static bool endgame_enabled = false;
+static bool endgame_reverse_enabled = false;
+static bool auto_targeting_enabled = false;
+static bool flap_enabled = false;
+static bool lock_enabled = false;
+extern bool is_red_alliance;
 
-	// Controller type enum
-	enum cntr_t {
-		cntr_master = 1,
-		cntr_partner = 2,
-		cntr_both = 3
-	};
-	// bool whether
-	extern bool partner_connected;
-	static std::vector<std::string> cntr_master_text_arr = { "", "", "", "" };
-	static std::vector<std::string> cntr_partner_text_arr = { "", "", "", "" };
+extern float launch_speed;
 
-	extern std::string cntr_haptic_text;
-	extern bool new_haptic_request;
-	extern bool new_haptic_request_is_master;
+/* ------------------------------- SPEEEEEEED ------------------------------- */
 
-	extern util::timer endgame_timer;
-	extern util::timer intake_timer;
-	extern util::timer long_launch_timer;
-
-	extern double theta;
-	const float auto_target_angle_adjustment = 5;
-
-	const double rad2 = 1.4142;
-
-	extern int ambient_light;
+// Misc Speeds
+const float ROLLER_SPEED = 100.0;
+const float INTAKE_SPEED = 100.0;
 
-	/* ------------------------------ LED Variables ----------------------------- */
+// Launcher Speeds
 
-	// enum of possible states
-	enum led_state_t {
-		led_idle = 1,
-		led_intake = 2,
-		led_launch = 3
-	};
+const float LAUNCH_SPEED = 50.0;
 
-	// current led state
-	//extern led_state_t curr_led_state;
+const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED;
+const float LAUNCHER_SPEED_CUTOFF = 5;
 
-	// color for red alliance
-	const int led_color_red = 0xaa0000;
-	const int led_color_red_bright = 0xff0000;
-	// color for blue alliance
-	const int led_color_blue = 0x0000aa;
-	const int led_color_blue_bright = 0x0000ff;
+// Chassis Speeds ( * 1.27 to fit in range of [-127, 127])
+const float DRIVE_SPEED = 87.0 * 1.27;  // 87
+const float DRIVE_SPEED_INTAKE = 25.0 * 1.27;
+// 20
+const float TURN_SPEED = 71.0 * 1.27;  // 71
+const float TURN_SPEED_SLOW = 45.0 * 1.27;
+extern bool curr_launching;
 
+// Angle turn
+const float ANGLE_ADJUST = 5;
 
+extern float CALIBRATED_ANGLE;
 
-	/* ----------------------- User Control Enabled Bools ----------------------- */
+/* --------------------------- Custom Motor Class --------------------------- */
+class A_Motor : public pros::Motor {
+ public:
+  using Motor::Motor;
+  bool has_init = false;
 
-	static bool launcher_standby_enabled = false;
-	static bool intake_enabled = false;
-	static bool intake_reverse_enabled = false;
-	//static bool launch_short_enabled = false;
-	//static bool launch_long_enabled = false;
-	static bool launch_enabled = false;
-	static bool endgame_enabled = false;
-	static bool endgame_reverse_enabled = false;
-	static bool auto_targeting_enabled = false;
-	static bool flap_enabled = false;
-	static bool lock_enabled = false;
-	extern bool is_red_alliance; 
+  void init();
+  float get_temp();
+  void spin_percent(float percent);
+  float get_percent_velocity();
+  float get_percent_torque();
+};
 
-	extern float launch_speed;
+/* --------------------------- Custom Button Class -------------------------- */
+class Btn_Digi {
+ public:
+  pros::controller_digital_e_t btn_master;
+  pros::controller_digital_e_t btn_partner;
+  cntr_t mode;
 
-	/* ------------------------------- SPEEEEEEED ------------------------------- */
+  // Constructor with one btn
+  Btn_Digi(pros::controller_digital_e_t btn_assign, cntr_t is_master);
+  // get whether button pressed
+  bool get_press();
+  // get whether new button press
+  bool get_press_new();
+};
 
-	// Misc Speeds
-	const float ROLLER_SPEED = 100.0;
-	const float INTAKE_SPEED = 100.0;
+/* ========================================================================== */
+/*                      Device Declaration / Definitions                      */
+/* ========================================================================== */
 
-	// Launcher Speeds
-	
-	const float LAUNCH_SPEED = 50.0;
-	
-	const float LAUNCH_SPEED_STANDBY = LAUNCH_SPEED;
-	const float LAUNCHER_SPEED_CUTOFF = 5;
+/* ------------------------- Other Motors / Devices ------------------------- */
 
-	// Chassis Speeds ( * 1.27 to fit in range of [-127, 127])
-	const float DRIVE_SPEED = 87.0 * 1.27; // 87
-	const float DRIVE_SPEED_INTAKE = 25.0 * 1.27;
-	//20
-	const float TURN_SPEED = 71.0 * 1.27; // 71
-	const float TURN_SPEED_SLOW = 45.0 * 1.27;
-	extern bool curr_launching;
+// Launcher motor
+extern A_Motor launcherMotor;
 
-	//Angle turn
-	const float ANGLE_ADJUST = 5;
+// Motor for intake left
+extern A_Motor intakeMotorLeft;
 
-	extern float CALIBRATED_ANGLE;
+// Motor for intake right
+extern A_Motor intakeMotorRight;
 
-	/* --------------------------- Custom Motor Class --------------------------- */
-	class A_Motor: public pros::Motor {
-		public:
-		using Motor::Motor;
-		bool has_init = false;
+extern A_Motor endgameMotorLeft;
 
-		void init();
-		float get_temp();
-		void spin_percent(float percent);
-		float get_percent_velocity();
-		float get_percent_torque();
-	};
+extern A_Motor endgameMotorRight;
 
-	/* --------------------------- Custom Button Class -------------------------- */
-	class Btn_Digi {
-		public:
+// Vision sensor
+const pros::Vision visionSensor(PORT_VISION, pros::E_VISION_ZERO_CENTER);
 
-		pros::controller_digital_e_t btn_master;
-		pros::controller_digital_e_t btn_partner;
-		cntr_t mode;
+// IMU Sensor
+const pros::IMU imuSensor(PORT_IMU);
 
-		// Constructor with one btn
-		Btn_Digi(pros::controller_digital_e_t btn_assign, cntr_t is_master);
-		// get whether button pressed
-		bool get_press();
-		// get whether new button press
-		bool get_press_new();
-	};
+// Flap Pneumatics
+const pros::ADIDigitalOut flapPneumatics(PORT_PNEU_FLAP, false);
 
-	/* ========================================================================== */
-	/*                      Device Declaration / Definitions                      */
-	/* ========================================================================== */
+// Endgame Pneumatics
+const pros::ADIDigitalOut endgamePneumatics(PORT_PNEU_ENDGAME, false);
 
+// Light Sensor for disk launching
+const pros::ADILightSensor lightSensor(PORT_SENSOR_LIGHT);
 
-	/* ------------------------- Other Motors / Devices ------------------------- */
+const pros::ADIPotentiometer potentiometer(PORT_POTENTIOMETER);
 
-	// Launcher motor
-	extern A_Motor launcherMotor;
+const pros::ADIDigitalIn limit(PORT_LIMIT);
 
-	// Motor for intake left
-	extern A_Motor intakeMotorLeft;
+extern pros::ADILed led;
 
-	// Motor for intake right
-	extern A_Motor intakeMotorRight;
+/* ========================================================================== */
+/*                                   Buttons                                  */
+/* ========================================================================== */
 
-	extern A_Motor endgameMotorLeft;
+/* --------------------------------- Master --------------------------------- */
 
-	extern A_Motor endgameMotorRight;
+// Custom Button for Intake Toggle
+static Btn_Digi btn_intake_toggle(pros::E_CONTROLLER_DIGITAL_L1, cntr_master);
 
-	// Vision sensor
-	const pros::Vision visionSensor(PORT_VISION, pros::E_VISION_ZERO_CENTER);
+// Custom Button for Intake Reverse
+static Btn_Digi btn_intake_reverse(pros::E_CONTROLLER_DIGITAL_L2, cntr_master);
 
-	// IMU Sensor
-	const pros::IMU imuSensor(PORT_IMU);
+// Custom Button for Launch
+static Btn_Digi btn_launch(pros::E_CONTROLLER_DIGITAL_R1, cntr_master);
 
-	// Flap Pneumatics
-	const pros::ADIDigitalOut flapPneumatics(PORT_PNEU_FLAP, false);
+// Custom Button for Endgame
+static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_UP, cntr_master);
 
-	// Endgame Pneumatics
-	const pros::ADIDigitalOut endgamePneumatics(PORT_PNEU_ENDGAME, false);
+// Custom Button for Endgame Reverse
+static Btn_Digi btn_endgame_reverse(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_master);
 
+static Btn_Digi btn_endgame_lock(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_master);
 
-	// Light Sensor for disk launching
-	const pros::ADILightSensor lightSensor(PORT_SENSOR_LIGHT);
+// Custom Button for Flapjack Toggle
+static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_RIGHT, cntr_master);
 
-	const pros::ADIPotentiometer potentiometer(PORT_POTENTIOMETER);
+/* ---------------------------------- Both ---------------------------------- */
 
-	const pros::ADIDigitalIn limit(PORT_LIMIT);
+// Custom Button for Standby
+// static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, cntr_both);
 
-	extern pros::ADILed led;
+// Custom Button to engage Auto Targetting and grab nearest Triball
 
-	/* ========================================================================== */
-	/*                                   Buttons                                  */
-	/* ========================================================================== */
+// Custom Button to engage Auto Targetting
+// static Bstn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_Y, cntr_both); //Ross wants it B on partner, fix later
 
-	/* --------------------------------- Master --------------------------------- */
+/* --------------------------------- Partner -------------------------------- */
 
-	// Custom Button for Intake Toggle
-	static Btn_Digi btn_intake_toggle(pros::E_CONTROLLER_DIGITAL_L1, cntr_master);
+// Custom Button to Cycle Auton
+static Btn_Digi btn_auton(pros::E_CONTROLLER_DIGITAL_X, cntr_both);
 
-	// Custom Button for Intake Reverse
-	static Btn_Digi btn_intake_reverse(pros::E_CONTROLLER_DIGITAL_L2, cntr_master);
+// Custom Button to switch alliance
+static Btn_Digi btn_alliance(pros::E_CONTROLLER_DIGITAL_A, cntr_both);
 
-	// Custom Button for Launch
-	static Btn_Digi btn_launch(pros::E_CONTROLLER_DIGITAL_R1, cntr_master);
+// Custom Button that sets launch speed to short launch constant
+// static Btn_Digi btn_launch_speed_short(pros::E_CONTROLLER_DIGITAL_L1, cntr_partner);
 
-	// Custom Button for Endgame
-	static Btn_Digi btn_endgame(pros::E_CONTROLLER_DIGITAL_UP, cntr_master);
+// Custom Button that sets launch speed to long launch constant
+// static Btn_Digi btn_launch_speed_long(pros::E_CONTROLLER_DIGITAL_L2, cntr_partner);
 
-	// Custom Button for Endgame Reverse 
-	static Btn_Digi btn_endgame_reverse(pros::E_CONTROLLER_DIGITAL_DOWN, cntr_master);
+// Custom Button to lower short launch speed
+static Btn_Digi btn_launch_speed_increase(pros::E_CONTROLLER_DIGITAL_R1, cntr_partner);
 
-	static Btn_Digi btn_endgame_lock(pros::E_CONTROLLER_DIGITAL_LEFT, cntr_master);
+// Custom Button to lower short launch speed
+static Btn_Digi btn_launch_speed_decrease(pros::E_CONTROLLER_DIGITAL_R2, cntr_partner);
 
-	// Custom Button for Flapjack Toggle
-	static Btn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_RIGHT, cntr_master);
+static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_Y, cntr_partner);
 
-	/* ---------------------------------- Both ---------------------------------- */
+/* ========================================================================== */
+/*                            Function Declarations                           */
+/* ========================================================================== */
 
-	// Custom Button for Standby
-	//static Btn_Digi btn_standby(pros::E_CONTROLLER_DIGITAL_UP, cntr_both);
+/* --------------------------------- Standby -------------------------------- */
 
-	// Custom Button to engage Auto Targetting and grab nearest Triball
+/**
+ * @brief 	runs intake forward
+ *
+ */
+extern void intake_toggle(bool enabled);
 
-	// Custom Button to engage Auto Targetting
-	//static Bstn_Digi btn_flap(pros::E_CONTROLLER_DIGITAL_Y, cntr_both); //Ross wants it B on partner, fix later
+/**
+ * @brief 	runs intake reverse
+ *
+ */
+extern void intake_reverse();
 
-	/* --------------------------------- Partner -------------------------------- */
+/**
+ * @brief	launch function, called once per frame
+ *
+ * @param speed		speed at which to launch disks
+ * @param isLong	bool whether is long launch or not
+ */
+extern void launch(float speed);
 
-	// Custom Button to Cycle Auton	
-	static Btn_Digi btn_auton(pros::E_CONTROLLER_DIGITAL_X, cntr_both);
+/**
+ * @brief	launch standby, sets speed / enabled once per frame
+ *
+ * @param enabled	bool whether enabled
+ * @param speed		speed % on how fast standby is
+ */
+extern void launch_standby(bool enabled, float speed);
 
-	// Custom Button to switch alliance 
-	static Btn_Digi btn_alliance(pros::E_CONTROLLER_DIGITAL_A, cntr_both);
+/**
+ * @brief	endgame toggle, minimum 200 msec timer on press
+ *
+ * @param enabled	bool whether enabled or not
+ */
 
-	// Custom Button that sets launch speed to short launch constant
-	//static Btn_Digi btn_launch_speed_short(pros::E_CONTROLLER_DIGITAL_L1, cntr_partner);
+extern void flap_toggle(bool enabled);
 
-	// Custom Button that sets launch speed to long launch constant
-	//static Btn_Digi btn_launch_speed_long(pros::E_CONTROLLER_DIGITAL_L2, cntr_partner);
+/**
+ * @brief 	calls flapjack toggle
+ *
+ */
 
-	// Custom Button to lower short launch speed
-	static Btn_Digi btn_launch_speed_increase(pros::E_CONTROLLER_DIGITAL_R1, cntr_partner);
+extern void endgame_toggle(bool enabled);
 
-	// Custom Button to lower short launch speed
-	static Btn_Digi btn_launch_speed_decrease(pros::E_CONTROLLER_DIGITAL_R2, cntr_partner);
+/**
+ * @brief 	calls endgame toggle
+ *
+ */
 
-	static Btn_Digi btn_auto_targeting(pros::E_CONTROLLER_DIGITAL_Y, cntr_partner); 
+extern void endgame_reverse_toggle(bool enabled);
 
+/**
+ * @brief 	calls endgame reverse toggle
+ *
+ */
 
+extern void endgame_lock_toggle(bool enabled);
 
-	/* ========================================================================== */
-	/*                            Function Declarations                           */
-	/* ========================================================================== */
+/**
+ * @brief 	calls engame lock toggle
+ *
+ */
+extern void endgame_auton();
 
-	/* --------------------------------- Standby -------------------------------- */
+/**
+ * @brief 	calls endgame toggle in skills for auton
+ *
+ */
+extern void cata_toggle(bool enabled);
 
-	/**
-	 * @brief 	runs intake forward
-	 *
-	 */
-	extern void intake_toggle(bool enabled);
+/**
+ * @brief 	resets motors when called
+ *
+ */
+extern void reset_motors();
 
-	/**
-	 * @brief 	runs intake reverse
-	 *
-	 */
-	extern void intake_reverse();
+extern void reset_launcher(float speed);
 
+extern void reset_launcher_after(float speed);
 
-	/**
-	 * @brief	launch function, called once per frame
-	 *
-	 * @param speed		speed at which to launch disks
-	 * @param isLong	bool whether is long launch or not
-	 */
-	extern void launch(float speed);
+extern void align_launcher(float speed);
 
-	/**
-	 * @brief	launch standby, sets speed / enabled once per frame
-	 *
-	 * @param enabled	bool whether enabled
-	 * @param speed		speed % on how fast standby is
-	 */
-	extern void launch_standby(bool enabled, float speed);
+/* ------------------------------ Vision Sensor ----------------------------- */
 
-	/**
-	 * @brief	endgame toggle, minimum 200 msec timer on press
-	 *
-	 * @param enabled	bool whether enabled or not
-	 */
+/**
+ * @brief
+ *
+ * @param enabled 	bool whether to actually move robot or not; in either case will still do theta calculations
+ * @return true
+ * @return false
+ */
+extern void auto_target(bool enabled);
 
-	extern void flap_toggle(bool enabled);
+//
 
-	/**
-	 * @brief 	calls flapjack toggle
-	 *
-	 */
+/* ------------------------------ Light Sensor ------------------------------ */
 
-	extern void endgame_toggle(bool enabled);
+extern bool light_sensor_detect();
 
-	/**
-	 * @brief 	calls endgame toggle 
-	 *
-	 */
+/* ========================================================================== */
+/*                           Controller Screen Task                           */
+/* ========================================================================== */
 
-	extern void endgame_reverse_toggle(bool enabled);
+/**
+ * @brief	updates controller text buffers at given row
+ *
+ * @param cntr	controller to display on, from cntr_t enum
+ * @param row	row (0-2) at which to draw text
+ * @param text	std::string text that wants to be drawn
+ */
+extern void update_cntr_text(cntr_t cntr, u_int8_t row, std::string text);
 
-	/**
-	 * @brief 	calls endgame reverse toggle
-	 *
-	 */
+/**
+ * @brief takes in new haptic text to be rumbled on next frame
+ *
+ * @param new_haptic the haptic text ("-", ".") to rumble. see controller.rumble()
+ */
+extern void update_cntr_haptic(std::string new_haptic, bool is_master = true);
 
-	extern void endgame_lock_toggle(bool enabled);
+/**
+ * @brief	compiles controller string arrays into a single string separated by newline; mainly for internal use
+ *
+ * @param arr	array to compile
+ * @return		string in stated format
+ */
+extern std::string cntr_compile_string(std::vector<std::string> arr);
 
-	/**
-	 * @brief 	calls engame lock toggle
-	 *
-	 */
-	extern void endgame_auton();
+/**
+ * @brief	function that runs every 50ms and updates controller screen
+ *
+ */
+extern void update_cntr_task();
 
-	/**
-	 * @brief 	calls endgame toggle in skills for auton
-	 *
-	 */
-	extern void cata_toggle(bool enabled);
+// init bool
+extern bool cntr_task_init;
 
-	/**
-	 * @brief 	resets motors when called
-	 *
-	 */
-	extern void reset_motors();
+// Actual pros::Task for controller update screen function
+static pros::Task __task_update_cntr_task(update_cntr_task, "cntr_update");
 
-	extern void reset_launcher(float speed);
+/* ========================================================================== */
+/*                                Update LED's                                */
+/* ========================================================================== */
 
-	extern void reset_launcher_after(float speed);
+/**
+ * @brief	function that runs every 10ms and updates leds screen
+ *
+ */
+// extern void update_leds_task();
 
-	extern void align_launcher(float speed);
+// init bool
+// extern bool led_task_init;
 
-	/* ------------------------------ Vision Sensor ----------------------------- */
-
-	/**
-	 * @brief
-	 *
-	 * @param enabled 	bool whether to actually move robot or not; in either case will still do theta calculations
-	 * @return true
-	 * @return false
-	 */
-	extern void auto_target(bool enabled);
-
-	//
-
-	/* ------------------------------ Light Sensor ------------------------------ */
-
-	extern bool light_sensor_detect();
-
-	/* ========================================================================== */
-	/*                           Controller Screen Task                           */
-	/* ========================================================================== */
-
-	/**
-	 * @brief	updates controller text buffers at given row
-	 *
-	 * @param cntr	controller to display on, from cntr_t enum
-	 * @param row	row (0-2) at which to draw text
-	 * @param text	std::string text that wants to be drawn
-	 */
-	extern void update_cntr_text(cntr_t cntr, u_int8_t row, std::string text);
-
-	/**
-	 * @brief takes in new haptic text to be rumbled on next frame
-	 *
-	 * @param new_haptic the haptic text ("-", ".") to rumble. see controller.rumble()
-	 */
-	extern void update_cntr_haptic(std::string new_haptic, bool is_master = true);
-
-	/**
-	 * @brief	compiles controller string arrays into a single string separated by newline; mainly for internal use
-	 *
-	 * @param arr	array to compile
-	 * @return		string in stated format
-	 */
-	extern std::string cntr_compile_string(std::vector<std::string> arr);
-
-	/**
-	 * @brief	function that runs every 50ms and updates controller screen
-	 *
-	 */
-	extern void update_cntr_task();
-
-	// init bool
-	extern bool cntr_task_init;
-
-
-	// Actual pros::Task for controller update screen function
-	static pros::Task __task_update_cntr_task(update_cntr_task, "cntr_update");
-
-
-	/* ========================================================================== */
-	/*                                Update LED's                                */
-	/* ========================================================================== */
-
-	/**
-	 * @brief	function that runs every 10ms and updates leds screen
-	 *
-	 */
-	 //extern void update_leds_task();
-
-	 // init bool
-	 //extern bool led_task_init;
-
-	 // Actual pros::Task for controller update screen function
-	 //static pros::Task __task_update_leds_task(update_leds_task, "leds_update");
-}
-
+// Actual pros::Task for controller update screen function
+// static pros::Task __task_update_leds_task(update_leds_task, "leds_update");
+}  // namespace ace
 
 /* ========================================================================== */
 /*                             Ace Auton Namepace                             */
 /* ========================================================================== */
 namespace ace::auton {
 
-	/* ------------------------------- Autonomous ------------------------------- */
+/* ------------------------------- Autonomous ------------------------------- */
 
-	static std::vector<std::string> auton_selection = {
-		"skills", "score", "contact"
-	};
-	extern int auton_selection_index;
+static std::vector<std::string> auton_selection = {
+    "skills", "score", "contact"};
+extern int auton_selection_index;
 
-	extern void three_side();
-	extern void two_side();
-	extern void skills();
-	extern void score();
-	extern void contact();
+extern void three_side();
+extern void two_side();
+extern void skills();
+extern void score();
+extern void contact();
 
-	/**
-		 * @brief 	pages up auton control int by one
-		 *
-		 */
-	extern void auton_page_up();
+/**
+ * @brief 	pages up auton control int by one
+ *
+ */
+extern void auton_page_up();
 
-	/**
-	 * @brief 	pages down auton control int by one
-	 *
-	 */
-	extern void auton_page_down();
+/**
+ * @brief 	pages down auton control int by one
+ *
+ */
+extern void auton_page_down();
 
-	/**
-	 * @brief 	spins roller by x relative degrees; autonomously
-	 *
-	 * @param rollerDegrees degrees to spin by
-	 */
+/**
+ * @brief 	spins roller by x relative degrees; autonomously
+ *
+ * @param rollerDegrees degrees to spin by
+ */
 
-	extern void launch_auton(float time, float speed);
+extern void launch_auton(float time, float speed);
 
-	extern void drive_chassis(float distance, float speed, bool wait = true);
+extern void drive_chassis(float distance, float speed, bool wait = true);
 
-	extern void turn_chassis(float distance, float speed, bool wait = true);
+extern void turn_chassis(float distance, float speed, bool wait = true);
 
-	extern void endgame_auton();
+extern void endgame_auton();
 
-}
-
+}  // namespace ace::auton
 
 /* ========================================================================== */
 /*                            Ace Launch Namespace                            */
 /* ========================================================================== */
-
 
 #endif
